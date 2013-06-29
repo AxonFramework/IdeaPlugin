@@ -1,0 +1,20 @@
+<idea-plugin version="2">
+    <id>org.axonframework.ide.intellij.axonplugin</id>
+    <name>Axon Plugin</name>
+    <version>0.0.1-SNAPSHOT</version>
+    <vendor email="intellijplugin@axonframework.org/" url="http://www.axonframework.org/">Axon Framework</vendor>
+
+    <description>This plugin helps to navigate from and to the axon framework event handlers</description>
+
+    <change-notes/>
+
+    <idea-version since-build="107.105"/>
+
+    <application-components/>
+
+    <project-components/>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <annotator language="JAVA" implementationClass="org.axonframework.ide.intellij.inspection.AxonGutterAnnotator"/>
+    </extensions>
+</idea-plugin>
