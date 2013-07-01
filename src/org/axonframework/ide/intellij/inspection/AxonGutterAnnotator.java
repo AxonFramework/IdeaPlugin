@@ -44,7 +44,7 @@ public class AxonGutterAnnotator implements Annotator {
                         final NavigationGutterIconBuilder<PsiElement> iconBuilder =
                                 NavigationGutterIconBuilder.create(AxonIcon, PsiElementConverter.INSTANCE);
                         iconBuilder.
-                                setTargets(findMethods(element.getProject())).
+                                setTargets(findEventHandlers(element.getProject(), psiElement)).
                                 setPopupTitle("Event Handlers").
                                 setCellRenderer(new DefaultPsiElementCellRenderer()).
                                 setTooltipText("The list of event handlers for this command").
@@ -56,7 +56,7 @@ public class AxonGutterAnnotator implements Annotator {
         }
     }
 
-    public static List<PsiElement> findMethods(Project project) {
+    public static List<PsiElement> findEventHandlers(Project project, PsiElement psiElement) {
         List<PsiElement> eventHandlers = new ArrayList<PsiElement>();
         Collection<VirtualFile> virtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, JavaFileType.INSTANCE,
                 GlobalSearchScope.projectScope(project));
@@ -68,7 +68,16 @@ public class AxonGutterAnnotator implements Annotator {
                     for (PsiAnnotation psiAnnotation : parameterList) {
                         String typeParameters = psiAnnotation.getText();
                         if (typeParameters.contains("@EventHandler")) {
-                            eventHandlers.add(psiAnnotation);
+                            ExtractMethodArgumentVisitor visitor = new ExtractMethodArgumentVisitor();
+                            psiElement.accept(visitor);
+                            ExtractMethodArgumentVisitor visitor1 = new ExtractMethodArgumentVisitor();
+                            psiAnnotation.getParent().getParent().accept(visitor1);
+
+                            if (visitor.hasArgument() && visitor1.hasArgument()) {
+                                if (visitor.getArgument().getText().equals(visitor1.getArgument().getText())) {
+                                    eventHandlers.add(psiAnnotation);
+                                }
+                            }
                         }
                     }
                 }
