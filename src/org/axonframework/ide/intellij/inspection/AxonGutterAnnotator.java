@@ -1,22 +1,19 @@
 package org.axonframework.ide.intellij.inspection;
 
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
-import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.PsiSearchHelper;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.NotNullFunction;
-import com.intellij.util.indexing.FileBasedIndex;
+import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -40,50 +37,17 @@ public class AxonGutterAnnotator implements Annotator {
 
             for (PsiElement elementUnderAnnotation : elementsUnderAnnotation.getChildren()) {
                 for (PsiElement psiElement : elementUnderAnnotation.getChildren()) {
-                    if (psiElement.getText().contains("apply")) {
-                        final NavigationGutterIconBuilder<PsiElement> iconBuilder =
-                                NavigationGutterIconBuilder.create(AxonIcon, PsiElementConverter.INSTANCE);
-                        iconBuilder.
-                                setTargets(findEventHandlers(element.getProject(), psiElement)).
-                                setPopupTitle("Event Handlers").
-                                setCellRenderer(new DefaultPsiElementCellRenderer()).
-                                setTooltipText("The list of event handlers for this command").
-                                install(holder, psiElement);
-                        return;
-                    }
+                    findEventHandlers(element.getProject(), psiElement, holder);
                 }
             }
         }
     }
 
-    public static List<PsiElement> findEventHandlers(Project project, PsiElement psiElement) {
-        List<PsiElement> eventHandlers = new ArrayList<PsiElement>();
-        Collection<VirtualFile> virtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, JavaFileType.INSTANCE,
-                GlobalSearchScope.projectScope(project));
-        for (VirtualFile virtualFile : virtualFiles) {
-            PsiFile file = PsiManager.getInstance(project).findFile(virtualFile);
-            if (file != null) {
-                Collection<PsiAnnotation> parameterList = PsiTreeUtil.findChildrenOfAnyType(file.getNode().getPsi(), PsiAnnotation.class);
-                if (parameterList != null) {
-                    for (PsiAnnotation psiAnnotation : parameterList) {
-                        String typeParameters = psiAnnotation.getText();
-                        if (typeParameters.contains("@EventHandler")) {
-                            ExtractMethodArgumentVisitor visitor = new ExtractMethodArgumentVisitor();
-                            psiElement.accept(visitor);
-                            ExtractMethodArgumentVisitor visitor1 = new ExtractMethodArgumentVisitor();
-                            psiAnnotation.getParent().getParent().accept(visitor1);
+    public static void findEventHandlers(Project project, PsiElement psiElement, AnnotationHolder holder) {
+        PsiSearchHelper psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(project);
 
-                            if (visitor.hasArgument() && visitor1.hasArgument()) {
-                                if (visitor.getArgument().getText().equals(visitor1.getArgument().getText())) {
-                                    eventHandlers.add(psiAnnotation);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return eventHandlers;
+        AxonEventHandlerProcessor axonEventHandlerProcessor = new AxonEventHandlerProcessor(psiElement, holder);
+        psiSearchHelper.processAllFilesWithWord("EventHandler", GlobalSearchScope.allScope(project), axonEventHandlerProcessor, true);
     }
 
 
@@ -96,4 +60,51 @@ public class AxonGutterAnnotator implements Annotator {
         }
     }
 
+    private static class AxonEventHandlerProcessor implements Processor<PsiFile> {
+
+        private final PsiElement psiElement;
+        private AnnotationHolder holder;
+
+        public AxonEventHandlerProcessor(PsiElement psiElement, AnnotationHolder holder) {
+            this.psiElement = psiElement;
+            this.holder = holder;
+        }
+
+        @Override
+        public boolean process(PsiFile psiFile) {
+            List<PsiAnnotation> annotations = new ArrayList<PsiAnnotation>();
+
+            Collection<PsiAnnotation> parameterList = PsiTreeUtil.findChildrenOfAnyType(psiFile.getNode().getPsi(), PsiAnnotation.class);
+            if (parameterList != null) {
+                for (PsiAnnotation psiAnnotation : parameterList) {
+                    String typeParameters = psiAnnotation.getText();
+                    if (typeParameters.contains("@EventHandler")) {
+                        ExtractMethodArgumentVisitor visitor = new ExtractMethodArgumentVisitor();
+                        psiElement.accept(visitor);
+                        ExtractMethodArgumentVisitor visitor1 = new ExtractMethodArgumentVisitor();
+                        psiAnnotation.getParent().getParent().accept(visitor1);
+                        if (visitor.hasArgument() && visitor1.hasArgument()) {
+                            if (visitor.getArgument().getText().equals(visitor1.getArgument().getText()) && psiElement.getText().contains("apply")) {
+                                annotations.add(psiAnnotation);
+                            }
+                        }
+                    }
+                }
+                annotate(annotations, psiFile);
+            }
+
+            return true;
+        }
+
+        private void annotate(List<PsiAnnotation> psiAnnotations, PsiFile psiFile) {
+            final NavigationGutterIconBuilder<PsiElement> iconBuilder =
+                    NavigationGutterIconBuilder.create(AxonIcon, PsiElementConverter.INSTANCE);
+            iconBuilder.
+                    setTargets(psiAnnotations).
+                    setPopupTitle("Event Handlers").
+                    setCellRenderer(new DefaultPsiElementCellRenderer()).
+                    setTooltipText("The list of event handlers for this command in " + psiFile.getName()).
+                    install(holder, psiElement);
+        }
+    }
 }
