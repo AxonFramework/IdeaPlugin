@@ -25,7 +25,8 @@ public class ExtractCommandMethodArgumentVisitor extends JavaRecursiveElementVis
             return false;
         }
         for (int i = 0; i < eventHandlerArgument.length; i++) {
-            if(! eventHandlerArgument[i].isAssignableFrom(arguments[i])) {
+            if(eventHandlerArgument[i] == null || arguments[i] == null ||
+                    !eventHandlerArgument[i].isAssignableFrom(arguments[i])) {
                 return false;
             }
         }
