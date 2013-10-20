@@ -17,10 +17,7 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class shows an icon in the gutter when an Axon annotation is found. The icon can be used to navigate to all
@@ -79,14 +76,12 @@ public class AxonGutterAnnotator implements Annotator {
                 for (PsiAnnotation psiAnnotation : parameterList) {
                     String typeParameters = psiAnnotation.getText();
                     if (typeParameters.contains("@EventHandler")) {
-                        ExtractMethodArgumentVisitor visitor = new ExtractMethodArgumentVisitor();
-                        psiElement.accept(visitor);
-                        ExtractMethodArgumentVisitor visitor1 = new ExtractMethodArgumentVisitor();
-                        psiAnnotation.getParent().getParent().accept(visitor1);
-                        if (visitor.hasArgument() && visitor1.hasArgument()) {
-                            if (visitor.getArgument().getText().equals(visitor1.getArgument().getText()) && psiElement.getText().contains("apply")) {
-                                annotations.add(psiAnnotation);
-                            }
+                        ExtractCommandMethodArgumentVisitor commandHandlerVisitor = new ExtractCommandMethodArgumentVisitor();
+                        psiElement.accept(commandHandlerVisitor);
+                        ExtractEventMethodArgumentVisitor eventHandlerVisitor = new ExtractEventMethodArgumentVisitor();
+                        psiAnnotation.getParent().getParent().accept(eventHandlerVisitor);
+                        if (commandHandlerVisitor.commandCanHandleArguments(eventHandlerVisitor.getArguments())) {
+                            annotations.add(psiAnnotation);
                         }
                     }
                 }
