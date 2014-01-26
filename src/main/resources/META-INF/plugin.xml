@@ -1,6 +1,6 @@
 <idea-plugin version="2">
-    <id>org.axonframework.ide.intellij.axonplugin</id>
-    <name>Axon Plugin</name>
+    <id>org.axonframework.intellij.axonplugin</id>
+    <name>Axon Framework Plugin</name>
     <version>0.0.1-SNAPSHOT</version>
     <vendor email="intellijplugin@axonframework.org/" url="http://www.axonframework.org/">Axon Framework</vendor>
 
@@ -8,13 +8,13 @@
 
     <change-notes/>
 
-    <idea-version since-build="107.105"/>
+    <idea-version since-build="129.1359"/>
 
     <application-components/>
 
     <project-components/>
 
     <extensions defaultExtensionNs="com.intellij">
-        <annotator language="JAVA" implementationClass="org.axonframework.ide.intellij.inspection.AxonGutterAnnotator"/>
+        <annotator language="JAVA" implementationClass="org.axonframework.intellij.ide.plugin.AxonGutterAnnotator"/>
     </extensions>
 </idea-plugin>

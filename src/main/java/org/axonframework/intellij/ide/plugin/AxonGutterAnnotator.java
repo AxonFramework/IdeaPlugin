@@ -1,4 +1,4 @@
-package org.axonframework.ide.intellij.inspection;
+package org.axonframework.intellij.ide.plugin;
 
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
@@ -17,7 +17,10 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This class shows an icon in the gutter when an Axon annotation is found. The icon can be used to navigate to all
@@ -72,21 +75,19 @@ public class AxonGutterAnnotator implements Annotator {
             List<PsiAnnotation> annotations = new ArrayList<PsiAnnotation>();
 
             Collection<PsiAnnotation> parameterList = PsiTreeUtil.findChildrenOfAnyType(psiFile.getNode().getPsi(), PsiAnnotation.class);
-            if (parameterList != null) {
-                for (PsiAnnotation psiAnnotation : parameterList) {
-                    String typeParameters = psiAnnotation.getText();
-                    if (typeParameters.contains("@EventHandler")) {
-                        ExtractCommandMethodArgumentVisitor commandHandlerVisitor = new ExtractCommandMethodArgumentVisitor();
-                        psiElement.accept(commandHandlerVisitor);
-                        ExtractEventMethodArgumentVisitor eventHandlerVisitor = new ExtractEventMethodArgumentVisitor();
-                        psiAnnotation.getParent().getParent().accept(eventHandlerVisitor);
-                        if (commandHandlerVisitor.commandCanHandleArguments(eventHandlerVisitor.getArguments())) {
-                            annotations.add(psiAnnotation);
-                        }
+            for (PsiAnnotation psiAnnotation : parameterList) {
+                String typeParameters = psiAnnotation.getText();
+                if (typeParameters.contains("@EventHandler")) {
+                    ExtractCommandMethodArgumentVisitor commandHandlerVisitor = new ExtractCommandMethodArgumentVisitor();
+                    psiElement.accept(commandHandlerVisitor);
+                    ExtractEventMethodArgumentVisitor eventHandlerVisitor = new ExtractEventMethodArgumentVisitor();
+                    psiAnnotation.getParent().getParent().accept(eventHandlerVisitor);
+                    if (commandHandlerVisitor.commandCanHandleArguments(eventHandlerVisitor.getArguments())) {
+                        annotations.add(psiAnnotation);
                     }
                 }
-                annotate(annotations, psiFile);
             }
+            annotate(annotations, psiFile);
 
             return true;
         }

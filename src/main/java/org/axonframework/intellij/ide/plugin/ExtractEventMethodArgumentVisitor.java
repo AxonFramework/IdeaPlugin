@@ -1,4 +1,4 @@
-package org.axonframework.ide.intellij.inspection;
+package org.axonframework.intellij.ide.plugin;
 
 import com.intellij.psi.JavaRecursiveElementVisitor;
 import com.intellij.psi.PsiParameter;
