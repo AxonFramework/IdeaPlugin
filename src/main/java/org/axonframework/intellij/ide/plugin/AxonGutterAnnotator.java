@@ -1,7 +1,7 @@
 package org.axonframework.intellij.ide.plugin;
 
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
-import com.intellij.ide.util.DefaultPsiElementCellRenderer;
+import com.intellij.ide.util.MethodCellRenderer;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.project.Project;
@@ -12,15 +12,13 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiSearchHelper;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.NotNullFunction;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import javax.swing.*;
 
 /**
  * This class shows an icon in the gutter when an Axon annotation is found. The icon can be used to navigate to all
@@ -46,35 +44,42 @@ public class AxonGutterAnnotator implements Annotator {
     public static void findEventHandlers(Project project, PsiElement psiElement, AnnotationHolder holder) {
         PsiSearchHelper psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(project);
 
-        AxonEventHandlerProcessor axonEventHandlerProcessor = new AxonEventHandlerProcessor(psiElement, holder);
-        psiSearchHelper.processAllFilesWithWord("EventHandler", GlobalSearchScope.allScope(project), axonEventHandlerProcessor, true);
+        AxonEventHandlerProcessor axonEventHandlerProcessor = new AxonEventHandlerProcessor(psiElement);
+        psiSearchHelper.processAllFilesWithWord("EventHandler",
+                                                GlobalSearchScope.allScope(project),
+                                                axonEventHandlerProcessor,
+                                                true);
+        Collection<PsiElement> psiAnnotations = axonEventHandlerProcessor.getTargetLocations();
+        createGutterIcon(psiElement, holder, psiAnnotations);
     }
 
-
-    private static class PsiElementConverter implements NotNullFunction<PsiElement, Collection<? extends PsiElement>> {
-        public static final PsiElementConverter INSTANCE = new PsiElementConverter();
-
-        @NotNull
-        public Collection<? extends PsiElement> fun(final PsiElement pointer) {
-            return Collections.singleton(pointer);
+    private static void createGutterIcon(PsiElement psiElement, AnnotationHolder holder,
+                                         Collection<PsiElement> targets) {
+        if (!targets.isEmpty()) {
+            final NavigationGutterIconBuilder<PsiElement> iconBuilder =
+                    NavigationGutterIconBuilder.create(AxonIcon);
+            iconBuilder.setTargets(targets)
+                       .setPopupTitle("Event Handlers")
+                       .setCellRenderer(new MethodCellRenderer(true))
+                       .setTooltipText("The list of event handlers for this event")
+                       .install(holder, psiElement);
         }
     }
+
 
     private static class AxonEventHandlerProcessor implements Processor<PsiFile> {
 
         private final PsiElement psiElement;
-        private AnnotationHolder holder;
+        private Set<PsiElement> targetLocations = new HashSet<PsiElement>();
 
-        public AxonEventHandlerProcessor(PsiElement psiElement, AnnotationHolder holder) {
+        public AxonEventHandlerProcessor(PsiElement psiElement) {
             this.psiElement = psiElement;
-            this.holder = holder;
         }
 
         @Override
         public boolean process(PsiFile psiFile) {
-            List<PsiAnnotation> annotations = new ArrayList<PsiAnnotation>();
-
-            Collection<PsiAnnotation> parameterList = PsiTreeUtil.findChildrenOfAnyType(psiFile.getNode().getPsi(), PsiAnnotation.class);
+            Collection<PsiAnnotation> parameterList = PsiTreeUtil.findChildrenOfType(psiFile.getNode().getPsi(),
+                                                                                     PsiAnnotation.class);
             for (PsiAnnotation psiAnnotation : parameterList) {
                 String typeParameters = psiAnnotation.getText();
                 if (typeParameters.contains("@EventHandler")) {
@@ -83,24 +88,15 @@ public class AxonGutterAnnotator implements Annotator {
                     ExtractEventMethodArgumentVisitor eventHandlerVisitor = new ExtractEventMethodArgumentVisitor();
                     psiAnnotation.getParent().getParent().accept(eventHandlerVisitor);
                     if (commandHandlerVisitor.commandCanHandleArguments(eventHandlerVisitor.getArguments())) {
-                        annotations.add(psiAnnotation);
+                        targetLocations.add(psiAnnotation.getParent().getParent());
                     }
                 }
             }
-            annotate(annotations, psiFile);
-
             return true;
         }
 
-        private void annotate(List<PsiAnnotation> psiAnnotations, PsiFile psiFile) {
-            final NavigationGutterIconBuilder<PsiElement> iconBuilder =
-                    NavigationGutterIconBuilder.create(AxonIcon, PsiElementConverter.INSTANCE);
-            iconBuilder.
-                    setTargets(psiAnnotations).
-                    setPopupTitle("Event Handlers").
-                    setCellRenderer(new DefaultPsiElementCellRenderer()).
-                    setTooltipText("The list of event handlers for this command in " + psiFile.getName()).
-                    install(holder, psiElement);
+        public Set<PsiElement> getTargetLocations() {
+            return targetLocations;
         }
     }
 }
