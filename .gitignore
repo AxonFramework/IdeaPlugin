@@ -15,6 +15,7 @@
 # .idea/dynamic.xml
 
 ## File-based project format
+*.iml
 *.ipr
 *.iws
 
