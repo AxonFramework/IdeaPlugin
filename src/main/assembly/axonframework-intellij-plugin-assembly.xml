@@ -14,4 +14,10 @@
             <scope>runtime</scope>
         </dependencySet>
     </dependencySets>
+    <files>
+        <file>
+            <source>META-INF/plugin.xml</source>
+            <outputDirectory>/META-INF</outputDirectory>
+        </file>
+    </files>
 </assembly>
