@@ -1,19 +1,12 @@
 package org.axonframework.intellij.ide.plugin;
 
-import com.intellij.psi.JavaRecursiveElementVisitor;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiAnnotationMemberValue;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiParameter;
-import com.intellij.psi.PsiParameterList;
-import com.intellij.psi.PsiType;
-import org.axonframework.eventhandling.annotation.EventHandler;
+import com.intellij.psi.*;
 
 /**
  */
 public class ExtractEventMethodArgumentVisitor extends JavaRecursiveElementVisitor {
 
-    public static final String AXONFRAMEWORK_EVENTHANDLING_ANNOTATION = EventHandler.class.getCanonicalName();
+    public static final String AXONFRAMEWORK_EVENTHANDLING_ANNOTATION = "org.axonframework.eventhandling.annotation.EventHandler";
     public static final String EVENT_HANDLER_ARGUMENT = "eventType";
 
     private PsiType[] argument = new PsiType[]{};
@@ -26,7 +19,7 @@ public class ExtractEventMethodArgumentVisitor extends JavaRecursiveElementVisit
             if (eventType != null) {
                 if (hasChildren(eventType)) {
                     // TODO: convert to type and prefer the annotation argument instead of the function argument
-                    String classNameOfEventTypeArgument = eventType.getFirstChild().getFirstChild().getReference().getCanonicalText();
+                    PsiElement classNameOfEventTypeArgument = eventType.getFirstChild().getFirstChild().getReference().resolve();
                 }
             }
             PsiParameterList list = method.getParameterList();
