@@ -15,10 +15,10 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import javax.swing.*;
 
 /**
  * This class shows an icon in the gutter when an Axon annotation is found. The icon can be used to navigate to all
@@ -28,9 +28,11 @@ public class AxonGutterAnnotator implements Annotator {
 
     public static final Icon AxonIcon = IconLoader.getIcon("/icons/axon12x12.png"); // 10x14
 
+    public static final String AXONFRAMEWORK_COMMANDHANDLING_ANNOTATION = "org.axonframework.commandhandling.annotation.CommandHandler";
+
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (element instanceof PsiAnnotation && element.textMatches("@CommandHandler")) {
+        if (element instanceof PsiAnnotation && AXONFRAMEWORK_COMMANDHANDLING_ANNOTATION.equals(((PsiAnnotation) element).getQualifiedName())) {
             PsiElement elementsUnderAnnotation = element.getParent().getParent();
 
             for (PsiElement elementUnderAnnotation : elementsUnderAnnotation.getChildren()) {
