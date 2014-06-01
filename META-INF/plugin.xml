@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>org.axonframework.intellij.axonplugin</id>
     <name>Axon Framework Plugin</name>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
     <vendor email="intellijplugin@axonframework.org/" url="http://www.axonframework.org/">Axon Framework</vendor>
 
     <description>This plugin helps to navigate from and to the axon framework event handlers</description>
