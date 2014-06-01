@@ -14,23 +14,50 @@ public class ExtractEventMethodArgumentVisitor extends JavaRecursiveElementVisit
     @Override
     public void visitMethod(PsiMethod method) {
         PsiAnnotation annotation = method.getModifierList().findAnnotation(AXONFRAMEWORK_EVENTHANDLING_ANNOTATION);
-        if (annotation != null) {
+        if (methodHasAnnotation(annotation)) {
             PsiAnnotationMemberValue eventType = annotation.findAttributeValue(EVENT_HANDLER_ARGUMENT);
-            if (eventType != null) {
-                if (hasChildren(eventType)) {
-                    // TODO: convert to type and prefer the annotation argument instead of the function argument
-                    PsiElement classNameOfEventTypeArgument = eventType.getFirstChild().getFirstChild().getReference().resolve();
-                }
-            }
-            PsiParameterList list = method.getParameterList();
-            argument = new PsiType[list.getParametersCount()];
-            for (int i = 0; i < list.getParameters().length; i++) {
-                PsiParameter psiParameter = list.getParameters()[i];
-                argument[i] = psiParameter.getType();
+            if (annotationHasEventTypeArgument(eventType) && hasChildren(eventType)) {
+                argument = getAnnotationArguments(eventType);
+            } else {
+                argument = getMethodArguments(method);
             }
         }
-
         super.visitMethod(method);
+    }
+
+    private PsiType[] getMethodArguments(PsiMethod method) {
+        PsiParameterList list = method.getParameterList();
+        PsiType[] argument = new PsiType[list.getParametersCount()];
+        for (int i = 0; i < list.getParameters().length; i++) {
+            PsiParameter psiParameter = list.getParameters()[i];
+            argument[i] = psiParameter.getType();
+        }
+        return argument;
+    }
+
+    private PsiType[] getAnnotationArguments(PsiAnnotationMemberValue eventType) {
+        if (eventType.getChildren().length > 0 && eventType.getFirstChild().getChildren().length > 0) {
+            if (eventType instanceof PsiExpression) {
+                PsiType typeOfArgument = ((PsiExpression) eventType).getType();
+                if (typeIsKnown(typeOfArgument)) {
+                    return new PsiType[]{typeOfArgument};
+                }
+            }
+        }
+        return new PsiType[]{};
+    }
+
+    private boolean typeIsKnown(PsiType type) {
+        return type != null;
+    }
+
+    private boolean methodHasAnnotation(PsiAnnotation annotation) {
+        return annotation != null;
+    }
+
+    private boolean annotationHasEventTypeArgument(PsiAnnotationMemberValue eventType) {
+        return eventType instanceof PsiExpression &&
+                !((PsiExpression) eventType).getType().getCanonicalText().equals("java.lang.Class<java.lang.Void>");
     }
 
     private boolean hasChildren(PsiAnnotationMemberValue eventType) {

@@ -3,6 +3,7 @@ package org.axonframework.intellij.ide.plugin;
 import com.intellij.psi.JavaRecursiveElementVisitor;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiType;
+import com.intellij.psi.impl.source.PsiImmediateClassType;
 
 /**
  */
@@ -26,7 +27,7 @@ public class ExtractCommandMethodArgumentVisitor extends JavaRecursiveElementVis
         }
         for (int i = 0; i < eventHandlerArgument.length; i++) {
             if(eventHandlerArgument[i] == null || arguments[i] == null ||
-                    !eventHandlerArgument[i].isAssignableFrom(arguments[i])) {
+                    !(eventHandlerArgument[i].isAssignableFrom(arguments[i]) || eventHandlerArgument[i] instanceof PsiImmediateClassType && ((PsiImmediateClassType) eventHandlerArgument[i]).getParameters()[0].isAssignableFrom(arguments[i]))) {
                 return false;
             }
         }
