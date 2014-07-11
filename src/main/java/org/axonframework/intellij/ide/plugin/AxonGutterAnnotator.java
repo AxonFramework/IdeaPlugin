@@ -89,7 +89,7 @@ public class AxonGutterAnnotator implements Annotator {
 
                     CommandHandler commandHandler = commandHandlerVisitor.getCommandHandler();
                     EventHandler eventHandler = eventHandlerVisitor.getEventHandler();
-                    if (commandHandlerVisitor.hasCommandHandler() && commandHandler.commandCanHandleEvent(eventHandler)) {
+                    if (commandHandlerVisitor.hasCommandHandler() && commandHandler.canHandleEvent(eventHandler)) {
                         targetLocations.add(psiAnnotation.getParent().getParent());
                     }
                 }

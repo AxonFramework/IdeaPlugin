@@ -12,7 +12,11 @@ public class CommandHandler {
         this.expressionTypes = expressionTypes;
     }
 
-    public boolean commandCanHandleEvent(EventHandler eventHandler) {
+    public boolean canHandleEvent(EventHandler eventHandler) {
+        if (eventHandler == null) {
+            return false;
+        }
+
         PsiType[] eventHandlerArgumentArguments = eventHandler.getArguments();
         if (expressionTypes == null || eventHandlerArgumentArguments == null || eventHandlerArgumentArguments.length != expressionTypes.length) {
             return false;
