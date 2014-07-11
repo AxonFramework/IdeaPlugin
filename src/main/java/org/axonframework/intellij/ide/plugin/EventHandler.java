@@ -7,22 +7,22 @@ public class EventHandler {
     public static final String AXONFRAMEWORK_EVENTHANDLING_ANNOTATION = "org.axonframework.eventhandling.annotation.EventHandler";
     public static final String EVENT_HANDLER_ARGUMENT = "eventType";
 
-    private final PsiType[] annotationArguments;
+    private final PsiType[] annotationOrMethodArguments;
     private final PsiAnnotation annotation;
 
 
     private EventHandler(PsiAnnotation annotation, PsiMethod method) {
         this.annotation = annotation;
-        this.annotationArguments = getMethodArguments(method);
+        this.annotationOrMethodArguments = getMethodArguments(method);
     }
 
     private EventHandler(PsiAnnotation annotation, PsiAnnotationMemberValue eventType) {
         this.annotation = annotation;
-        this.annotationArguments = getAnnotationArguments(eventType);
+        this.annotationOrMethodArguments = getAnnotationArguments(eventType);
     }
 
     public PsiType[] getArguments() {
-        return annotationArguments;
+        return annotationOrMethodArguments;
     }
 
     private PsiType[] getMethodArguments(PsiMethod method) {
