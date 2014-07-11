@@ -81,4 +81,11 @@ public class EventHandler {
     private static boolean hasChildren(PsiAnnotationMemberValue eventType) {
         return eventType.getChildren().length > 0 && eventType.getFirstChild().getChildren().length > 0;
     }
+
+    @Override
+    public String toString() {
+        return "EventHandler{" +
+                "annotation=" + annotation +
+                '}';
+    }
 }

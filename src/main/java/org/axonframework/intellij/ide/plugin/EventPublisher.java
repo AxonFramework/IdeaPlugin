@@ -39,4 +39,11 @@ public class EventPublisher {
     public PsiElement getPsiElement() {
         return psiElement;
     }
+
+    @Override
+    public String toString() {
+        return "EventPublisher{" +
+                "psiElement=" + psiElement +
+                '}';
+    }
 }
