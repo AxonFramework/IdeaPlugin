@@ -47,6 +47,6 @@ public class EventHandler {
     }
 
     public static boolean isEventHandlerAnnotation(PsiAnnotation psiAnnotation) {
-        return psiAnnotation.getText().contains("@EventHandler");
+        return psiAnnotation != null && AXONFRAMEWORK_EVENTHANDLING_ANNOTATION.equals(psiAnnotation.getQualifiedName());
     }
 }
