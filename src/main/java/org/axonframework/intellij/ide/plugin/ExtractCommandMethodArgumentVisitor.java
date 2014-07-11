@@ -8,23 +8,23 @@ import com.intellij.psi.PsiType;
  */
 public class ExtractCommandMethodArgumentVisitor extends JavaRecursiveElementVisitor {
 
-    private CommandHandler commandHandler;
+    private EventPublisher eventPublisher;
 
     @Override
     public void visitMethodCallExpression(PsiMethodCallExpression expression) {
         PsiType[] expressionTypes = expression.getArgumentList().getExpressionTypes();
         String referenceName = expression.getMethodExpression().getReferenceName();
         if ("apply".equals(referenceName)) {
-            commandHandler = new CommandHandler(expressionTypes);
+            eventPublisher = new EventPublisher(expressionTypes, expression);
         }
         super.visitMethodCallExpression(expression);
     }
 
     public boolean hasCommandHandler() {
-        return commandHandler != null;
+        return eventPublisher != null;
     }
 
-    public CommandHandler getCommandHandler() {
-        return commandHandler;
+    public EventPublisher getEventPublisher() {
+        return eventPublisher;
     }
 }

@@ -25,6 +25,10 @@ public class EventHandler {
         return annotationOrMethodArguments;
     }
 
+    public PsiElement getPsiElement() {
+        return annotation;
+    }
+
     private PsiType[] getMethodArguments(PsiMethod method) {
         PsiParameterList list = method.getParameterList();
         PsiType[] argument = new PsiType[list.getParametersCount()];
@@ -77,5 +81,4 @@ public class EventHandler {
     private static boolean hasChildren(PsiAnnotationMemberValue eventType) {
         return eventType.getChildren().length > 0 && eventType.getFirstChild().getChildren().length > 0;
     }
-
 }

@@ -16,9 +16,7 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class shows an icon in the gutter when an Axon annotation is found. The icon can be used to navigate to all
@@ -30,7 +28,7 @@ public class AxonGutterAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (element instanceof PsiAnnotation && CommandHandler.AXONFRAMEWORK_COMMANDHANDLING_ANNOTATION.equals(((PsiAnnotation) element).getQualifiedName())) {
+        if (element instanceof PsiAnnotation && EventPublisher.AXONFRAMEWORK_COMMANDHANDLING_ANNOTATION.equals(((PsiAnnotation) element).getQualifiedName())) {
             PsiElement elementsUnderAnnotation = element.getParent().getParent();
 
             for (PsiElement elementUnderAnnotation : elementsUnderAnnotation.getChildren()) {
@@ -49,12 +47,24 @@ public class AxonGutterAnnotator implements Annotator {
                 GlobalSearchScope.allScope(project),
                 axonEventHandlerProcessor,
                 true);
-        Collection<PsiElement> psiAnnotations = axonEventHandlerProcessor.getTargetLocations();
-        createGutterIcon(psiElement, holder, psiAnnotations);
+        Collection<PsiElement> psiAnnotations = axonEventHandlerProcessor.getEventTargets();
+        createGutterIconToEventHandlers(psiElement, holder, psiAnnotations);
     }
 
-    private static void createGutterIcon(PsiElement psiElement, AnnotationHolder holder,
-                                         Collection<PsiElement> targets) {
+    private static void createGutterIconToCommandHandlers(PsiElement psiElement, AnnotationHolder holder, Collection<PsiElement> targets) {
+        if (!targets.isEmpty()) {
+            final NavigationGutterIconBuilder<PsiElement> iconBuilder =
+                    NavigationGutterIconBuilder.create(AxonIcon);
+            iconBuilder.setTargets(targets)
+                    .setPopupTitle("Command Handlers")
+                    .setCellRenderer(new MethodCellRenderer(true))
+                    .setTooltipText("The list of command handlers for this event")
+                    .install(holder, psiElement);
+        }
+    }
+
+    private static void createGutterIconToEventHandlers(PsiElement psiElement, AnnotationHolder holder,
+                                                        Collection<PsiElement> targets) {
         if (!targets.isEmpty()) {
             final NavigationGutterIconBuilder<PsiElement> iconBuilder =
                     NavigationGutterIconBuilder.create(AxonIcon);
@@ -70,7 +80,8 @@ public class AxonGutterAnnotator implements Annotator {
     private static class AxonEventHandlerProcessor implements Processor<PsiFile> {
 
         private final PsiElement psiElement;
-        private Set<PsiElement> targetLocations = new HashSet<PsiElement>();
+        private Set<PsiElement> eventTargets = new HashSet<PsiElement>();
+        private HandledEventsRepository repository = new HandledEventsRepository();
 
         public AxonEventHandlerProcessor(PsiElement psiElement) {
             this.psiElement = psiElement;
@@ -87,18 +98,23 @@ public class AxonGutterAnnotator implements Annotator {
                     ExtractEventMethodArgumentVisitor eventHandlerVisitor = new ExtractEventMethodArgumentVisitor();
                     psiAnnotation.getParent().getParent().accept(eventHandlerVisitor);
 
-                    CommandHandler commandHandler = commandHandlerVisitor.getCommandHandler();
+                    EventPublisher eventPublisher = commandHandlerVisitor.getEventPublisher();
                     EventHandler eventHandler = eventHandlerVisitor.getEventHandler();
-                    if (commandHandlerVisitor.hasCommandHandler() && commandHandler.canHandleEvent(eventHandler)) {
-                        targetLocations.add(psiAnnotation.getParent().getParent());
+                    if (commandHandlerVisitor.hasCommandHandler() && eventPublisher.canPublishEvent(eventHandler)) {
+                        repository.addHandledEvent(eventPublisher, eventHandler);
+                        eventTargets.add(psiAnnotation.getParent().getParent());
                     }
                 }
             }
             return true;
         }
 
-        public Set<PsiElement> getTargetLocations() {
-            return targetLocations;
+        public Set<PsiElement> getEventTargets() {
+            return eventTargets;
+        }
+
+        public HandledEventsRepository getRepository() {
+            return repository;
         }
     }
 }
