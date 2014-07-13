@@ -52,7 +52,7 @@ public class AxonGutterAnnotator implements Annotator {
         for (EventHandler eventHandler : axonEventHandlerProcessor.getHandlerRepository().getAllHandlers()) {
             PsiElement element = eventHandler.getPsiElement();
             if (element.getContainingFile().isEquivalentTo(psiElement.getContainingFile())) {
-                createGutterIconToCommandPublishers(element, holder, axonEventHandlerProcessor.getPublisherRepository().getPublisherPsiElementsFor(eventHandler.getType()));
+                createGutterIconToEventPublishers(element, holder, axonEventHandlerProcessor.getPublisherRepository().getPublisherPsiElementsFor(eventHandler.getType()));
             }
         }
     }
@@ -66,7 +66,7 @@ public class AxonGutterAnnotator implements Annotator {
         return elementsToAnnotate;
     }
 
-    private static void createGutterIconToCommandPublishers(PsiElement psiElement, AnnotationHolder holder, Collection<PsiElement> targets) {
+    private static void createGutterIconToEventPublishers(PsiElement psiElement, AnnotationHolder holder, Collection<PsiElement> targets) {
         if (!targets.isEmpty()) {
             final NavigationGutterIconBuilder<PsiElement> iconBuilder =
                     NavigationGutterIconBuilder.create(AxonIcon);
