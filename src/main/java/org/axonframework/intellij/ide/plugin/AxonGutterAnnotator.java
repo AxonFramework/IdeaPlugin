@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiSearchHelper;
@@ -15,13 +16,17 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import org.axonframework.intellij.ide.plugin.handler.EventHandler;
 import org.axonframework.intellij.ide.plugin.handler.EventHandlerImpl;
+import org.axonframework.intellij.ide.plugin.handler.EventHandlerRepository;
+import org.axonframework.intellij.ide.plugin.handler.EventHandlerRepositoryImpl;
 import org.axonframework.intellij.ide.plugin.publisher.EventPublisher;
-import org.axonframework.intellij.ide.plugin.publisher.EventPublisherImpl;
+import org.axonframework.intellij.ide.plugin.publisher.EventPublisherRepository;
 import org.axonframework.intellij.ide.plugin.publisher.EventPublisherRepositoryImpl;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This class shows an icon in the gutter when an Axon annotation is found. The icon can be used to navigate to all
@@ -33,14 +38,8 @@ public class AxonGutterAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (element instanceof PsiAnnotation && EventPublisherImpl.AXONFRAMEWORK_COMMANDHANDLING_ANNOTATION.equals(((PsiAnnotation) element).getQualifiedName())) {
-            PsiElement elementsUnderAnnotation = element.getParent().getParent();
-
-            for (PsiElement elementUnderAnnotation : elementsUnderAnnotation.getChildren()) {
-                for (PsiElement psiElement : elementUnderAnnotation.getChildren()) {
-                    findEventHandlers(element.getProject(), psiElement, holder);
-                }
-            }
+        if (element instanceof PsiExpression && element.getText().contains("apply")) {
+            findEventHandlers(element.getProject(), element, holder);
         }
     }
 
@@ -52,15 +51,24 @@ public class AxonGutterAnnotator implements Annotator {
                 GlobalSearchScope.allScope(project),
                 axonEventHandlerProcessor,
                 true);
-        Collection<PsiElement> psiAnnotations = axonEventHandlerProcessor.getEventTargets();
-        createGutterIconToEventHandlers(psiElement, holder, psiAnnotations);
+        Collection<PsiElement> psiAnnotations = axonEventHandlerProcessor.getHandlerRepository().getAllHandlerPsiElements();
+        createGutterIconToEventHandlers(psiElement, holder, getParentsFromPsiAnnotations(psiAnnotations));
 
-        for (EventHandler eventHandler : axonEventHandlerProcessor.getRepository().getAllEventHandlers()) {
+        for (EventHandler eventHandler : axonEventHandlerProcessor.getHandlerRepository().getAllHandlers()) {
             PsiElement element = eventHandler.getPsiElement();
             if (element.getContainingFile().isEquivalentTo(psiElement.getContainingFile())) {
-                createGutterIconToCommandPublishers(element, holder, axonEventHandlerProcessor.getRepository().getPublisherPsiElementsFor(eventHandler.getType()));
+                createGutterIconToCommandPublishers(element, holder, axonEventHandlerProcessor.getPublisherRepository().getPublisherPsiElementsFor(eventHandler.getType()));
             }
         }
+    }
+
+    private static Set<PsiElement> getParentsFromPsiAnnotations(Collection<PsiElement> psiAnnotations) {
+        Set<PsiElement> elementsToAnnotate = new HashSet<PsiElement>();
+        for (PsiElement target : psiAnnotations) {
+            PsiElement elementToAnnotate = target.getParent().getParent();
+            elementsToAnnotate.add(elementToAnnotate);
+        }
+        return elementsToAnnotate;
     }
 
     private static void createGutterIconToCommandPublishers(PsiElement psiElement, AnnotationHolder holder, Collection<PsiElement> targets) {
@@ -92,8 +100,8 @@ public class AxonGutterAnnotator implements Annotator {
     private static class AxonEventHandlerProcessor implements Processor<PsiFile> {
 
         private final PsiElement psiElement;
-        private Set<PsiElement> eventTargets = new HashSet<PsiElement>();
-        private EventPublisherRepositoryImpl repository = new EventPublisherRepositoryImpl();
+        private EventPublisherRepository publisherRepository = new EventPublisherRepositoryImpl();
+        private EventHandlerRepository handlerRepository = new EventHandlerRepositoryImpl();
 
         public AxonEventHandlerProcessor(PsiElement psiElement) {
             this.psiElement = psiElement;
@@ -113,22 +121,20 @@ public class AxonGutterAnnotator implements Annotator {
                     EventPublisher eventPublisher = commandHandlerVisitor.getEventPublisher();
                     EventHandler eventHandler = eventHandlerVisitor.getEventHandler();
                     if (commandHandlerVisitor.hasEventPublisher() && eventPublisher.canPublishType(eventHandler.getType())) {
-                        repository.addHandledEvent(eventPublisher, eventHandler);
-                        repository.addPublisherForType(eventHandler.getType(), eventPublisher);
-
-                        eventTargets.add(psiAnnotation.getParent().getParent());
+                        handlerRepository.addHandlerForType(eventHandler.getType(), eventHandler);
+                        publisherRepository.addPublisherForType(eventHandler.getType(), eventPublisher);
                     }
                 }
             }
             return true;
         }
 
-        public Set<PsiElement> getEventTargets() {
-            return eventTargets;
+        public EventPublisherRepository getPublisherRepository() {
+            return publisherRepository;
         }
 
-        public EventPublisherRepositoryImpl getRepository() {
-            return repository;
+        public EventHandlerRepository getHandlerRepository() {
+            return handlerRepository;
         }
     }
 }
