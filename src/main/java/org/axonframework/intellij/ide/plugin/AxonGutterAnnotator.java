@@ -6,21 +6,16 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiExpression;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiSearchHelper;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
-import org.axonframework.intellij.ide.plugin.handler.EventHandler;
-import org.axonframework.intellij.ide.plugin.handler.EventHandlerImpl;
-import org.axonframework.intellij.ide.plugin.handler.EventHandlerRepository;
-import org.axonframework.intellij.ide.plugin.handler.EventHandlerRepositoryImpl;
+import org.axonframework.intellij.ide.plugin.handler.*;
 import org.axonframework.intellij.ide.plugin.publisher.EventPublisher;
 import org.axonframework.intellij.ide.plugin.publisher.EventPublisherRepository;
 import org.axonframework.intellij.ide.plugin.publisher.EventPublisherRepositoryImpl;
+import org.axonframework.intellij.ide.plugin.publisher.ExtractEventPublisherMethodArgumentVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -113,16 +108,17 @@ public class AxonGutterAnnotator implements Annotator {
                     PsiAnnotation.class);
             for (PsiAnnotation psiAnnotation : parameterList) {
                 if (EventHandlerImpl.isEventHandlerAnnotation(psiAnnotation)) {
-                    ExtractCommandMethodArgumentVisitor commandHandlerVisitor = new ExtractCommandMethodArgumentVisitor();
-                    psiElement.accept(commandHandlerVisitor);
-                    ExtractEventMethodArgumentVisitor eventHandlerVisitor = new ExtractEventMethodArgumentVisitor();
+                    ExtractEventPublisherMethodArgumentVisitor eventPublisherVisitor = new ExtractEventPublisherMethodArgumentVisitor();
+                    psiElement.accept(eventPublisherVisitor);
+                    ExtractEventHandlerArgumentVisitor eventHandlerVisitor = new ExtractEventHandlerArgumentVisitor();
                     psiAnnotation.getParent().getParent().accept(eventHandlerVisitor);
 
-                    EventPublisher eventPublisher = commandHandlerVisitor.getEventPublisher();
+                    EventPublisher eventPublisher = eventPublisherVisitor.getEventPublisher();
                     EventHandler eventHandler = eventHandlerVisitor.getEventHandler();
-                    if (commandHandlerVisitor.hasEventPublisher() && eventPublisher.canPublishType(eventHandler.getType())) {
-                        handlerRepository.addHandlerForType(eventHandler.getType(), eventHandler);
-                        publisherRepository.addPublisherForType(eventHandler.getType(), eventPublisher);
+                    PsiType type = eventHandler.getType();
+                    if (eventPublisherVisitor.hasEventPublisher() && eventPublisher.canPublishType(type)) {
+                        handlerRepository.addHandlerForType(type, eventHandler);
+                        publisherRepository.addPublisherForType(type, eventPublisher);
                     }
                 }
             }

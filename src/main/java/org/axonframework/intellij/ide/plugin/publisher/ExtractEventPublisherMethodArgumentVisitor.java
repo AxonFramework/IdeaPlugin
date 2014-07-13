@@ -1,14 +1,12 @@
-package org.axonframework.intellij.ide.plugin;
+package org.axonframework.intellij.ide.plugin.publisher;
 
 import com.intellij.psi.JavaRecursiveElementVisitor;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiType;
-import org.axonframework.intellij.ide.plugin.publisher.EventPublisher;
-import org.axonframework.intellij.ide.plugin.publisher.EventPublisherImpl;
 
 /**
  */
-public class ExtractCommandMethodArgumentVisitor extends JavaRecursiveElementVisitor {
+public class ExtractEventPublisherMethodArgumentVisitor extends JavaRecursiveElementVisitor {
 
     private EventPublisher eventPublisher;
 

@@ -1,12 +1,11 @@
-package org.axonframework.intellij.ide.plugin;
+package org.axonframework.intellij.ide.plugin.handler;
 
-import com.intellij.psi.*;
-import org.axonframework.intellij.ide.plugin.handler.EventHandler;
-import org.axonframework.intellij.ide.plugin.handler.EventHandlerImpl;
+import com.intellij.psi.JavaRecursiveElementVisitor;
+import com.intellij.psi.PsiMethod;
 
 /**
  */
-public class ExtractEventMethodArgumentVisitor extends JavaRecursiveElementVisitor {
+public class ExtractEventHandlerArgumentVisitor extends JavaRecursiveElementVisitor {
 
     private EventHandlerImpl eventHandler;
 
