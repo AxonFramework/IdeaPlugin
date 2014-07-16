@@ -2,7 +2,7 @@ package org.axonframework.intellij.ide.plugin.handler;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 
 import java.util.Collection;
@@ -24,11 +24,11 @@ public class EventHandlerRepositoryImpl implements EventHandlerRepository {
     }
 
     @Override
-    public Set<PsiElement> getAllHandlerPsiElements() {
+    public Set<PsiMethod> getAllHandlerPsiElements() {
         Collection<EventHandler> handlers = handlersThatCanHandleType.values();
-        Set<PsiElement> psiElements = new HashSet<PsiElement>();
+        Set<PsiMethod> psiElements = new HashSet<PsiMethod>();
         for (EventHandler handler : handlers) {
-            psiElements.add(handler.getPsiElement());
+            psiElements.add(handler.getPsiMethod());
         }
 
         return psiElements;

@@ -1,6 +1,13 @@
 package org.axonframework.intellij.ide.plugin.handler;
 
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiAnnotationMemberValue;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiParameterList;
+import com.intellij.psi.PsiType;
 
 public class EventHandlerImpl implements EventHandler {
 
@@ -8,21 +15,21 @@ public class EventHandlerImpl implements EventHandler {
     public static final String EVENT_HANDLER_ARGUMENT = "eventType";
 
     private final PsiType[] annotationOrMethodArguments;
-    private final PsiAnnotation annotation;
+    private final PsiMethod method;
 
 
     private EventHandlerImpl(PsiAnnotation annotation, PsiMethod method) {
-        this.annotation = annotation;
+        this.method = method;
         this.annotationOrMethodArguments = getMethodArguments(method);
     }
 
-    private EventHandlerImpl(PsiAnnotation annotation, PsiAnnotationMemberValue eventType) {
-        this.annotation = annotation;
+    private EventHandlerImpl(PsiAnnotation annotation, PsiAnnotationMemberValue eventType, PsiMethod method) {
+        this.method = method;
         this.annotationOrMethodArguments = getAnnotationArguments(eventType);
     }
 
     @Override
-    public PsiType getType() {
+    public PsiType getHandledType() {
         if (annotationOrMethodArguments == null || annotationOrMethodArguments.length == 0) {
             return null;
         }
@@ -30,8 +37,13 @@ public class EventHandlerImpl implements EventHandler {
     }
 
     @Override
-    public PsiElement getPsiElement() {
-        return annotation;
+    public PsiElement getElementForAnnotation() {
+        return method.getNameIdentifier();
+    }
+
+    @Override
+    public PsiMethod getPsiMethod() {
+        return method;
     }
 
     private PsiType[] getMethodArguments(PsiMethod method) {
@@ -73,7 +85,7 @@ public class EventHandlerImpl implements EventHandler {
 
         PsiAnnotationMemberValue eventType = annotation.findAttributeValue(EventHandlerImpl.EVENT_HANDLER_ARGUMENT);
         if (annotationHasEventTypeArgument(eventType) && hasChildren(eventType)) {
-            return new EventHandlerImpl(annotation, eventType);
+            return new EventHandlerImpl(annotation, eventType, method);
         }
         return new EventHandlerImpl(annotation, method);
     }
@@ -90,7 +102,7 @@ public class EventHandlerImpl implements EventHandler {
     @Override
     public String toString() {
         return "EventHandler{" +
-                "annotation=" + annotation +
+                "method=" + method +
                 '}';
     }
 }

@@ -1,6 +1,6 @@
 package org.axonframework.intellij.ide.plugin.handler;
 
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 
 import java.util.Collection;
@@ -12,5 +12,5 @@ public interface EventHandlerRepository {
 
     Collection<EventHandler> getAllHandlers();
 
-    Set<PsiElement> getAllHandlerPsiElements();
+    Set<PsiMethod> getAllHandlerPsiElements();
 }
