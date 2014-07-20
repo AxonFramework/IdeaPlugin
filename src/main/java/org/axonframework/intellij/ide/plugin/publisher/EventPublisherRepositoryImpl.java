@@ -32,6 +32,11 @@ public class EventPublisherRepositoryImpl implements EventPublisherRepository {
     }
 
     @Override
+    public Collection<EventPublisher> getAllPublishers() {
+        return publishersThatCanPublishType.values();
+    }
+
+    @Override
     public String toString() {
         return "EventPublisherRepositoryImpl{" +
                 "publishersThatCanPublishType=" + publishersThatCanPublishType +

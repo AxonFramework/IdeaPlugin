@@ -10,4 +10,6 @@ public interface EventPublisherRepository {
     void addPublisherForType(PsiType type, EventPublisher eventPublisher);
 
     Set<PsiElement> getPublisherPsiElementsFor(PsiType type);
+
+    java.util.Collection<EventPublisher> getAllPublishers();
 }

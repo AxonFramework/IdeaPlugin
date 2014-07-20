@@ -33,4 +33,11 @@ public class EventHandlerRepositoryImpl implements EventHandlerRepository {
 
         return psiElements;
     }
+
+    @Override
+    public String toString() {
+        return "EventHandlerRepositoryImpl{" +
+                "handlersThatCanHandleType=" + handlersThatCanHandleType +
+                '}';
+    }
 }

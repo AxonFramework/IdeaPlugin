@@ -6,8 +6,6 @@ import com.intellij.psi.impl.source.PsiImmediateClassType;
 
 public class EventPublisherImpl implements EventPublisher {
 
-    public static final String AXONFRAMEWORK_COMMANDHANDLING_ANNOTATION = "org.axonframework.commandhandling.annotation.CommandHandler";
-
     private final PsiType expressionType;
     private final PsiElement psiElement;
 
