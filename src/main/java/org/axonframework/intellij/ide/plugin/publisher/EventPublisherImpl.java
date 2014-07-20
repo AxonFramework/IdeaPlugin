@@ -33,7 +33,7 @@ public class EventPublisherImpl implements EventPublisher {
     @Override
     public PsiMethod getEnclosingMethod() {
         PsiElement parent = psiElement.getParent();
-        while (!(parent instanceof PsiMethod)) {
+        while (parent != null && !(parent instanceof PsiMethod)) {
             parent = parent.getParent();
         }
         return (PsiMethod) parent;
