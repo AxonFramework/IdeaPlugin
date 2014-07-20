@@ -4,7 +4,10 @@
     <version>0.0.5</version>
     <vendor email="intellijplugin@axonframework.org/" url="http://www.axonframework.org/">Axon Framework</vendor>
 
-    <description>This plugin helps to navigate from and to the axon framework event handlers</description>
+    <description>
+        This plugin helps to navigate from and to the axon framework event handler annotations.
+        Please report issues at http://issues.axonframework.org
+    </description>
 
     <change-notes/>
 
