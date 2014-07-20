@@ -4,31 +4,21 @@ import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.ide.util.MethodCellRenderer;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiExpression;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiSearchHelper;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
-import org.axonframework.intellij.ide.plugin.handler.EventHandler;
-import org.axonframework.intellij.ide.plugin.handler.EventHandlerImpl;
-import org.axonframework.intellij.ide.plugin.handler.EventHandlerRepository;
-import org.axonframework.intellij.ide.plugin.handler.EventHandlerRepositoryImpl;
-import org.axonframework.intellij.ide.plugin.handler.ExtractEventHandlerArgumentVisitor;
+import org.axonframework.intellij.ide.plugin.handler.*;
 import org.axonframework.intellij.ide.plugin.publisher.EventPublisher;
 import org.axonframework.intellij.ide.plugin.publisher.EventPublisherRepository;
 import org.axonframework.intellij.ide.plugin.publisher.EventPublisherRepositoryImpl;
 import org.axonframework.intellij.ide.plugin.publisher.ExtractEventPublisherMethodArgumentVisitor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import javax.swing.*;
+import java.util.Collection;
 
 /**
  * This class shows an icon in the gutter when an Axon annotation is found. The icon can be used to navigate to all
@@ -42,18 +32,17 @@ public class AxonGutterAnnotator implements Annotator {
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
         if (element instanceof PsiExpression && element.getText().contains("apply")) {
-            findEventHandlers(element.getProject(), element, holder);
+            PsiSearchHelper psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(element.getProject());
+            AxonEventHandlerProcessor axonEventHandlerProcessor = new AxonEventHandlerProcessor(element);
+            psiSearchHelper.processAllFilesWithWord("EventHandler",
+                    GlobalSearchScope.allScope(element.getProject()),
+                    axonEventHandlerProcessor,
+                    true);
+            findEventHandlers(element, holder, axonEventHandlerProcessor);
         }
     }
 
-    public static void findEventHandlers(Project project, PsiElement psiElement, AnnotationHolder holder) {
-        PsiSearchHelper psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(project);
-
-        AxonEventHandlerProcessor axonEventHandlerProcessor = new AxonEventHandlerProcessor(psiElement);
-        psiSearchHelper.processAllFilesWithWord("EventHandler",
-                                                GlobalSearchScope.allScope(project),
-                                                axonEventHandlerProcessor,
-                                                true);
+    public static void findEventHandlers(PsiElement psiElement, AnnotationHolder holder, AxonEventHandlerProcessor axonEventHandlerProcessor) {
         Collection<PsiMethod> psiMethods = axonEventHandlerProcessor.getHandlerRepository()
                                                                          .getAllHandlerPsiElements();
         createGutterIconToEventHandlers(psiElement, holder, psiMethods);
