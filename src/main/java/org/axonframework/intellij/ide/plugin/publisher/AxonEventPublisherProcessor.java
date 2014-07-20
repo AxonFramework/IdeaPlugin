@@ -34,8 +34,7 @@ public class AxonEventPublisherProcessor implements AxonEventProcessor {
 
             EventPublisher eventPublisher = eventPublisherVisitor.getEventPublisher();
             EventHandler eventHandler = eventHandlerVisitor.getEventHandler();
-            if (eventHandler != null && eventPublisher != null) {
-
+            if (eventPublisherVisitor.hasEventPublisher()) {
                 PsiType type = eventHandler.getHandledType();
                 if (eventPublisherVisitor.hasEventPublisher() && eventPublisher.canPublishType(type)) {
                     handlerRepository.addHandlerForType(type, eventHandler);

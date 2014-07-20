@@ -80,7 +80,7 @@ public class AxonGutterAnnotator implements Annotator {
         EventHandler eventHandler = createEventHandlerFrom(psiHandler);
         for (EventPublisher eventPublisher : allPublishers) {
             if (eventPublisher.canPublishType(eventHandler.getHandledType())) {
-                publishers.add(eventPublisher.getPsiElement());
+                publishers.add(eventPublisher.getEnclosingMethod());
             }
         }
         createGutterIconToEventPublishers(psiHandler, holder, publishers);

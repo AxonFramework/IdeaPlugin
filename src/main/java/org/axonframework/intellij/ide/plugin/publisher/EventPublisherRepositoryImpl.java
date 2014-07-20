@@ -17,13 +17,13 @@ public class EventPublisherRepositoryImpl implements EventPublisherRepository {
     }
 
     @Override
-    public Set<PsiElement> getPublisherPsiElementsFor(PsiType type) {
+    public List<PsiElement> getPublisherPsiElementsFor(PsiType type) {
         if (!publishersThatCanPublishType.containsKey(type)) {
-             return Collections.emptySet();
+             return Collections.emptyList();
         }
 
         Collection<EventPublisher> publishers = publishersThatCanPublishType.get(type);
-        Set<PsiElement> psiElements = new HashSet<PsiElement>();
+        List<PsiElement> psiElements = new ArrayList<PsiElement>();
         for (EventPublisher publisher : publishers) {
             psiElements.add(publisher.getPsiElement());
         }
