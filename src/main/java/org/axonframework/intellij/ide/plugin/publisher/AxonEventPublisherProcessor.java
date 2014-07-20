@@ -2,12 +2,14 @@ package org.axonframework.intellij.ide.plugin.publisher;
 
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Processor;
-import org.axonframework.intellij.ide.plugin.handler.*;
+import org.axonframework.intellij.ide.plugin.AxonEventProcessor;
+import org.axonframework.intellij.ide.plugin.handler.EventHandler;
+import org.axonframework.intellij.ide.plugin.handler.EventHandlerRepository;
+import org.axonframework.intellij.ide.plugin.handler.ExtractEventHandlerArgumentVisitor;
 
 import java.util.Collection;
 
-public class AxonEventPublisherProcessor implements Processor<PsiFile> {
+public class AxonEventPublisherProcessor implements AxonEventProcessor {
 
     private final PsiElement psiElement;
     private EventPublisherRepository publisherRepository;
@@ -32,7 +34,6 @@ public class AxonEventPublisherProcessor implements Processor<PsiFile> {
 
             EventPublisher eventPublisher = eventPublisherVisitor.getEventPublisher();
             EventHandler eventHandler = eventHandlerVisitor.getEventHandler();
-            System.out.println("handler: " + eventHandler + " publisher: " + eventPublisher);
             if (eventHandler != null && eventPublisher != null) {
 
                 PsiType type = eventHandler.getHandledType();
@@ -52,6 +53,4 @@ public class AxonEventPublisherProcessor implements Processor<PsiFile> {
     public EventHandlerRepository getHandlerRepository() {
         return handlerRepository;
     }
-
-
 }
