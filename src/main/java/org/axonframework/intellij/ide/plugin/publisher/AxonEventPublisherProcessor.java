@@ -1,6 +1,10 @@
 package org.axonframework.intellij.ide.plugin.publisher;
 
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiMethodCallExpression;
+import com.intellij.psi.PsiType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.axonframework.intellij.ide.plugin.AxonEventProcessor;
 import org.axonframework.intellij.ide.plugin.handler.EventHandler;
@@ -34,7 +38,7 @@ public class AxonEventPublisherProcessor implements AxonEventProcessor {
 
             EventPublisher eventPublisher = eventPublisherVisitor.getEventPublisher();
             EventHandler eventHandler = eventHandlerVisitor.getEventHandler();
-            if (eventPublisherVisitor.hasEventPublisher()) {
+            if (eventHandler != null && eventPublisherVisitor.hasEventPublisher()) {
                 PsiType type = eventHandler.getHandledType();
                 if (eventPublisherVisitor.hasEventPublisher() && eventPublisher.canPublishType(type)) {
                     handlerRepository.addHandlerForType(type, eventHandler);
