@@ -75,3 +75,6 @@ pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.next
 release.properties
+
+### IntelliJ plugin ###
+META-INF/plugin.xml

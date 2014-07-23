@@ -31,8 +31,8 @@ import javax.swing.*;
  */
 public class AxonGutterAnnotator implements Annotator {
 
-    public static final Icon AxonIconIn = IconLoader.getIcon("/icons/axon_into.png"); // 10x14
-    public static final Icon AxonIconOut = IconLoader.getIcon("/icons/axon_publish.png"); // 10x14
+    public static final Icon AxonIconIn = IconLoader.getIcon("/icons/axon_into.png"); // 16x16
+    public static final Icon AxonIconOut = IconLoader.getIcon("/icons/axon_publish.png"); // 16x16
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
