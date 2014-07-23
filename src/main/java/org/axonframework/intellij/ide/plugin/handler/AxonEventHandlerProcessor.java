@@ -18,7 +18,8 @@ public class AxonEventHandlerProcessor implements AxonEventProcessor {
     private EventPublisherRepository publisherRepository;
     private EventHandlerRepository handlerRepository;
 
-    public AxonEventHandlerProcessor(PsiElement psiElement, EventPublisherRepository eventPublisherRepository, EventHandlerRepository eventHandlerRepository) {
+    public AxonEventHandlerProcessor(PsiElement psiElement, EventPublisherRepository eventPublisherRepository,
+                                     EventHandlerRepository eventHandlerRepository) {
         this.psiElement = psiElement;
         this.publisherRepository = eventPublisherRepository;
         this.handlerRepository = eventHandlerRepository;
@@ -27,7 +28,7 @@ public class AxonEventHandlerProcessor implements AxonEventProcessor {
     @Override
     public boolean process(PsiFile psiFile) {
         Collection<PsiAnnotation> parameterList = PsiTreeUtil.findChildrenOfType(psiFile.getNode().getPsi(),
-                PsiAnnotation.class);
+                                                                                 PsiAnnotation.class);
         ExtractEventPublisherMethodArgumentVisitor eventPublisherVisitor = new ExtractEventPublisherMethodArgumentVisitor();
         psiElement.accept(eventPublisherVisitor);
 
@@ -38,10 +39,12 @@ public class AxonEventHandlerProcessor implements AxonEventProcessor {
 
                 EventPublisher eventPublisher = eventPublisherVisitor.getEventPublisher();
                 EventHandler eventHandler = eventHandlerVisitor.getEventHandler();
-                PsiType type = eventHandler.getHandledType();
-                if (eventPublisherVisitor.hasEventPublisher() && eventPublisher.canPublishType(type)) {
-                    handlerRepository.addHandlerForType(type, eventHandler);
-                    publisherRepository.addPublisherForType(type, eventPublisher);
+                if (eventHandler != null) {
+                    PsiType type = eventHandler.getHandledType();
+                    if (eventPublisherVisitor.hasEventPublisher() && eventPublisher.canPublishType(type)) {
+                        handlerRepository.addHandlerForType(type, eventHandler);
+                        publisherRepository.addPublisherForType(type, eventPublisher);
+                    }
                 }
             }
         }
@@ -57,6 +60,4 @@ public class AxonEventHandlerProcessor implements AxonEventProcessor {
     public EventHandlerRepository getHandlerRepository() {
         return handlerRepository;
     }
-
-
 }

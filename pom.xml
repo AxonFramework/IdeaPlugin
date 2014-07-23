@@ -71,6 +71,9 @@
                             <resources>
                                 <resource>
                                     <directory>src/main/resources/</directory>
+                                    <includes>
+                                        <include>**/plugin.xml</include>
+                                    </includes>
                                     <filtering>true</filtering>
                                 </resource>
                             </resources>
