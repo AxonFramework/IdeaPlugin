@@ -18,6 +18,7 @@
         <file>
             <source>META-INF/plugin.xml</source>
             <outputDirectory>/META-INF</outputDirectory>
+            <filtered>true</filtered>
         </file>
     </files>
 </assembly>
