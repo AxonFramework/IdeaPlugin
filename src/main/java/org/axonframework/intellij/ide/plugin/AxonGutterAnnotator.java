@@ -5,24 +5,21 @@ import com.intellij.ide.util.MethodCellRenderer;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.psi.PsiAnnotation;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.PsiSearchHelper;
-import org.axonframework.intellij.ide.plugin.handler.AxonEventHandlerProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.axonframework.intellij.ide.plugin.handler.EventHandler;
-import org.axonframework.intellij.ide.plugin.handler.EventHandlerImpl;
-import org.axonframework.intellij.ide.plugin.handler.EventHandlerRepositoryImpl;
-import org.axonframework.intellij.ide.plugin.handler.ExtractEventHandlerArgumentVisitor;
-import org.axonframework.intellij.ide.plugin.publisher.AxonEventPublisherProcessor;
+import org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager;
 import org.axonframework.intellij.ide.plugin.publisher.EventPublisher;
-import org.axonframework.intellij.ide.plugin.publisher.EventPublisherRepositoryImpl;
+import org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.*;
 
 /**
@@ -36,93 +33,109 @@ public class AxonGutterAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+        final PublisherProviderManager publisherManager = PublisherProviderManager.getInstance(element.getProject());
+        final HandlerProviderManager handlerManager = HandlerProviderManager.getInstance(element.getProject());
+        final EventPublisher publisher = publisherManager.resolveEventPublisher(element);
+        final EventHandler handler = handlerManager.resolveEventHandler(element);
+        if (publisher != null) {
+            createGutterIconForPublisher(element, holder, new NotNullLazyValue<Collection<? extends PsiElement>>() {
+                @NotNull
+                @Override
+                protected Collection<? extends PsiElement> compute() {
+                    Set<EventHandler> handlers = handlerManager.getRepository()
+                                                               .findHandlers(publisher.getPublishedType());
+                    Collection<PsiElement> destinations = new HashSet<PsiElement>();
+                    for (EventHandler eventHandler : handlers) {
+                        destinations.add(eventHandler.getElementForAnnotation());
+                    }
+                    return destinations;
+                }
+            });
+        }
 
-        if (isPublishing(element)) {
-            // TODO: The repositories should be implemented as Project level components, which build up their state once
-            // (see http://confluence.jetbrains.com/display/IDEADEV/IntelliJ+IDEA+Plugin+Structure#IntelliJIDEAPluginStructure-ProjectLevelComponents)
-            AxonEventProcessor axonEventHandlerProcessor = new AxonEventHandlerProcessor(element,
-                                                                                         new EventPublisherRepositoryImpl(),
-                                                                                         new EventHandlerRepositoryImpl());
-
-            PsiSearchHelper psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(element.getProject());
-            psiSearchHelper.processAllFilesWithWord("EventHandler",
-                                                    GlobalSearchScope.allScope(element.getProject()),
-                                                    axonEventHandlerProcessor,
-                                                    true);
-
-            findEventHandlers(element, holder, axonEventHandlerProcessor);
-        } else if (isHandling(element)) {
-            // TODO: Implement repositories as Project level components
-            AxonEventProcessor axonEventPublisherProcessor = new AxonEventPublisherProcessor(element,
-                                                                                             new EventPublisherRepositoryImpl(),
-                                                                                             new EventHandlerRepositoryImpl());
-
-            PsiSearchHelper psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(element.getProject());
-            psiSearchHelper.processAllFilesWithWord("apply",
-                                                    GlobalSearchScope.allScope(element.getProject()),
-                                                    axonEventPublisherProcessor,
-                                                    true);
-
-            findEventPublishers(element, holder, axonEventPublisherProcessor);
+        if (handler != null) {
+            createGutterIconForHandler(element, holder, new NotNullLazyValue<Collection<? extends PsiElement>>() {
+                @NotNull
+                @Override
+                protected Collection<? extends PsiElement> compute() {
+                    Collection<EventPublisher> publishers = publisherManager.getRepository()
+                                                                            .getPublishersFor(handler.getHandledType());
+                    Collection<PsiElement> publishLocations = new ArrayList<PsiElement>();
+                    for (EventPublisher eventPublisher : publishers) {
+                        publishLocations.add(eventPublisher.getPsiElement());
+                    }
+                    return publishLocations;
+                }
+            });
         }
     }
 
-    private boolean isHandling(PsiElement element) {
-        return element instanceof PsiAnnotation && EventHandlerImpl.isEventHandlerAnnotation((PsiAnnotation) element);
+    private static void createGutterIconForHandler(PsiElement psiElement, AnnotationHolder holder,
+                                                   NotNullLazyValue<Collection<? extends PsiElement>> targetResolver) {
+        NavigationGutterIconBuilder.create(AxonIconIn)
+                                   .setEmptyPopupText("No publishers found for this event")
+                                   .setTargets(targetResolver)
+                                   .setPopupTitle("Publishers")
+                                   .setCellRenderer(new ContainingMethodCellRenderer())
+                                   .setTooltipText("Navigate to the publishers of this event")
+                                   .install(holder, psiElement);
     }
 
-    private boolean isPublishing(PsiElement element) {
-        return element instanceof PsiExpression && element.getText().contains("apply");
+    private static void createGutterIconForPublisher(PsiElement psiElement, AnnotationHolder holder,
+                                                     NotNullLazyValue<Collection<? extends PsiElement>> targetResolver) {
+        NavigationGutterIconBuilder.create(AxonIconOut)
+                                   .setEmptyPopupText("No handlers found for this event")
+                                   .setTargets(targetResolver)
+                                   .setPopupTitle("Event Handlers")
+                                   .setCellRenderer(new ContainingMethodCellRenderer())
+                                   .setTooltipText("Navigate to the handlers for this event")
+                                   .install(holder, psiElement);
     }
 
-    public static void findEventHandlers(PsiElement psiElement, AnnotationHolder holder,
-                                         AxonEventProcessor axonEventHandlerProcessor) {
-        Collection<PsiMethod> psiMethods = axonEventHandlerProcessor.getHandlerRepository()
-                                                                    .getAllHandlerPsiElements();
-        createGutterIconToEventHandlers(psiElement, holder, psiMethods);
-    }
+    private static class ContainingMethodCellRenderer
+            extends com.intellij.ide.util.PsiElementListCellRenderer<PsiElement> {
 
-    private static void findEventPublishers(PsiElement psiHandler, AnnotationHolder holder,
-                                            AxonEventProcessor axonEventHandlerProcessor) {
-        Collection<EventPublisher> allPublishers = axonEventHandlerProcessor.getPublisherRepository()
-                                                                            .getAllPublishers();
-        Collection<PsiElement> publishers = new ArrayList<PsiElement>();
-        EventHandler eventHandler = createEventHandlerFrom(psiHandler);
-        for (EventPublisher eventPublisher : allPublishers) {
-            if (eventPublisher.canPublishType(eventHandler.getHandledType())) {
-                publishers.add(eventPublisher.getEnclosingMethod());
+        private final IconMethodCellRenderer delegate;
+
+        private ContainingMethodCellRenderer() {
+            this.delegate = new IconMethodCellRenderer();
+        }
+
+        @Override
+        public String getElementText(PsiElement psiElement) {
+            return delegate.getElementText(enclosingMethodOf(psiElement));
+        }
+
+        @Nullable
+        @Override
+        protected String getContainerText(PsiElement psiElement, String name) {
+            return delegate.getContainerText(enclosingMethodOf(psiElement), name);
+        }
+
+        private PsiMethod enclosingMethodOf(PsiElement psiElement) {
+            return (PsiMethod) PsiTreeUtil.findFirstParent(psiElement, new IsMethodCondition());
+        }
+
+        @Override
+        protected int getIconFlags() {
+            return delegate.getIconFlags();
+        }
+
+        @Override
+        protected Icon getIcon(PsiElement element) {
+            return delegate.getIcon(enclosingMethodOf(element));
+        }
+
+        private static class IconMethodCellRenderer extends MethodCellRenderer {
+
+            public IconMethodCellRenderer() {
+                super(true);
             }
-        }
-        createGutterIconToEventPublishers(psiHandler, holder, publishers);
-    }
 
-    private static EventHandler createEventHandlerFrom(PsiElement psiHandler) {
-        ExtractEventHandlerArgumentVisitor eventHandlerVisitor = new ExtractEventHandlerArgumentVisitor();
-        psiHandler.getParent().getParent().accept(eventHandlerVisitor);
-        return eventHandlerVisitor.getEventHandler();
-    }
-
-    private static void createGutterIconToEventPublishers(PsiElement psiElement, AnnotationHolder holder,
-                                                          Collection<PsiElement> targets) {
-        if (!targets.isEmpty()) {
-            NavigationGutterIconBuilder.create(AxonIconIn)
-                                       .setTargets(targets)
-                                       .setPopupTitle("Publishers")
-                                       .setCellRenderer(new MethodCellRenderer(true))
-                                       .setTooltipText("Navigate to the publishers of this event")
-                                       .install(holder, psiElement);
-        }
-    }
-
-    private static void createGutterIconToEventHandlers(PsiElement psiElement, AnnotationHolder holder,
-                                                        Collection<? extends PsiElement> targets) {
-        if (!targets.isEmpty()) {
-            NavigationGutterIconBuilder.create(AxonIconOut)
-                                       .setTargets(targets)
-                                       .setPopupTitle("Event Handlers")
-                                       .setCellRenderer(new MethodCellRenderer(true))
-                                       .setTooltipText("Navigate to the handlers for this event")
-                                       .install(holder, psiElement);
+            @Override
+            public Icon getIcon(PsiElement element) {
+                return super.getIcon(element);
+            }
         }
     }
 }

@@ -7,22 +7,27 @@ import com.intellij.psi.impl.source.PsiImmediateClassType;
 
 public class EventPublisherImpl implements EventPublisher {
 
-    private final PsiType expressionType;
+    private final PsiType publishedType;
     private final PsiElement psiElement;
 
-    public EventPublisherImpl(PsiType expressionType, PsiElement psiElement) {
-        this.expressionType = expressionType;
+    public EventPublisherImpl(PsiType publishedType, PsiElement psiElement) {
+        this.publishedType = publishedType;
         this.psiElement = psiElement;
     }
 
     @Override
     public boolean canPublishType(PsiType eventType) {
         return eventType != null
-                && !(expressionType == null)
-                && (eventType.isAssignableFrom(expressionType)
+                && !(publishedType == null)
+                && (eventType.isAssignableFrom(publishedType)
                 || eventType instanceof PsiImmediateClassType
-                && ((PsiImmediateClassType) eventType).getParameters()[0].isAssignableFrom(expressionType));
+                && ((PsiImmediateClassType) eventType).getParameters()[0].isAssignableFrom(publishedType));
 
+    }
+
+    @Override
+    public PsiType getPublishedType() {
+        return publishedType;
     }
 
     @Override
@@ -37,6 +42,30 @@ public class EventPublisherImpl implements EventPublisher {
             parent = parent.getParent();
         }
         return (PsiMethod) parent;
+    }
+
+    @Override
+    public boolean isValid() {
+        return psiElement.isValid() && publishedType.isValid();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        EventPublisherImpl that = (EventPublisherImpl) o;
+
+        return psiElement.equals(that.psiElement);
+    }
+
+    @Override
+    public int hashCode() {
+        return psiElement.hashCode();
     }
 
     @Override

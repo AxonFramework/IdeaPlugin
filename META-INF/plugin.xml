@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>org.axonframework.intellij.axonplugin</id>
     <name>Axon Framework Plugin</name>
-    <version>0.0.7-SNAPSHOT</version>
+    <version>0.0.8-SNAPSHOT</version>
     <vendor email="intellijplugin@axonframework.org" url="http://www.axonframework.org/">Axon Framework</vendor>
 
     <description>
@@ -9,7 +9,24 @@
         Please report issues at http://issues.axonframework.org
     </description>
 
-    <change-notes/>
+    <change-notes><![CDATA[
+        Version 0.0.8<br />
+        -------------<br />
+        <ul>
+           <li>Fixed several issues</li>
+           <li>Improved performance</li>
+           <li>Added support for all event handlers annotation types
+           <ul>
+               <li>@EventHandler</li>
+               <li>@EventSourcingHandler</li>
+               <li>@SagaEventHandler</li>
+           </ul>
+           </li>
+           <li>Event handler methods (and parameters used to defined the event type) are not marked as unused if a
+           publishers for the declared event is available.</li>
+        </ul>
+        ]]>
+    </change-notes>
 
     <idea-version since-build="129.1359"/>
 
@@ -17,7 +34,25 @@
 
     <project-components/>
 
+    <extensionPoints>
+        <extensionPoint name="publisherProvider"
+                        interface="org.axonframework.intellij.ide.plugin.publisher.EventPublisherProvider"/>
+        <extensionPoint name="handlerProvider"
+                        interface="org.axonframework.intellij.ide.plugin.handler.EventHandlerProvider"/>
+    </extensionPoints>
+
     <extensions defaultExtensionNs="com.intellij">
         <annotator language="JAVA" implementationClass="org.axonframework.intellij.ide.plugin.AxonGutterAnnotator"/>
+        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager"
+                        serviceInterface="org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager"/>
+        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager"
+                        serviceInterface="org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager"/>
+        <implicitUsageProvider implementation="org.axonframework.intellij.ide.plugin.handler.HandlerUsageProvider"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="org.axonframework.intellij.axonplugin">
+        <publisherProvider
+                implementation="org.axonframework.intellij.ide.plugin.publisher.DefaultEventPublisherProvider"/>
+        <handlerProvider implementation="org.axonframework.intellij.ide.plugin.handler.DefaultEventHandlerProvider"/>
     </extensions>
 </idea-plugin>

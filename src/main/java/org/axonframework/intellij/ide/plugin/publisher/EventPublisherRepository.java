@@ -1,16 +1,11 @@
 package org.axonframework.intellij.ide.plugin.publisher;
 
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 public interface EventPublisherRepository {
 
-    void addPublisherForType(PsiType type, EventPublisher eventPublisher);
+    Set<EventPublisher> getPublishersFor(PsiType type);
 
-    List<PsiElement> getPublisherPsiElementsFor(PsiType type);
-
-    Collection<EventPublisher> getAllPublishers();
 }

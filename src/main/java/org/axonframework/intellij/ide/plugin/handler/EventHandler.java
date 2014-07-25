@@ -26,4 +26,8 @@ public interface EventHandler {
      * @return the reference to the Method, to which icons in other locations should refer
      */
     PsiMethod getPsiMethod();
+
+    boolean canHandle(PsiType eventType);
+
+    boolean isValid();
 }

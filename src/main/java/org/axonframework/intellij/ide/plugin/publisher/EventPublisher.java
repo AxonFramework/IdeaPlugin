@@ -8,7 +8,11 @@ public interface EventPublisher {
 
     boolean canPublishType(PsiType eventType);
 
+    PsiType getPublishedType();
+
     PsiElement getPsiElement();
 
     PsiMethod getEnclosingMethod();
+
+    boolean isValid();
 }
