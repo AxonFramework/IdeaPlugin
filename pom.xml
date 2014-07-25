@@ -12,7 +12,7 @@
 
     <scm>
         <connection>scm:git:git@github.com/AxonFramework/IdeaPlugin.git</connection>
-        <developerConnection>scm:git:git@github.com/AxonFramework/</developerConnection>
+        <developerConnection>scm:git:git@github.com/AxonFramework/IdeaPlugin.git</developerConnection>
         <url>https://github.com/AxonFramework/IdeaPlugin.git</url>
     </scm>
     <build>
