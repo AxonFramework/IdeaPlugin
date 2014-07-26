@@ -5,30 +5,33 @@
     <vendor email="intellijplugin@axonframework.org" url="http://www.axonframework.org/">Axon Framework</vendor>
 
     <description>
-        This plugin helps to navigate from and to the axon framework event handler annotations.
+        This plugin helps to navigate from and to the axon framework event handler annotations.<br/>
         Please report issues at http://issues.axonframework.org
     </description>
 
     <change-notes><![CDATA[
         Version 0.1.0<br />
         -------------<br />
-        <li>Fixed NPE</li>
-        <li>Fixed ConcurrentModificatioinException</li>
-        <li>Restructured code</li>
+        <ul>
+            <li>Fixed NPE</li>
+            <li>Fixed ConcurrentModificationException</li>
+            <li>Restructured code</li>
+        </ul>
+        <br />
         <br />
         Version 0.0.8<br />
         -------------<br />
         <ul>
-           <li>Fixed NPE</li>
-           <li>Fixed ConcurrentModificatioinException</li>
-           <li>Added support for all event handlers annotation types
-           <ul>
-               <li>@EventHandler</li>
-               <li>@EventSourcingHandler</li>
-               <li>@SagaEventHandler</li>
-           </ul>
-           </li>
-           <li>Event handler methods (and parameters used to defined the event type) are not marked as unused if a
+            <li>Fixed NPE</li>
+            <li>Fixed ConcurrentModificationException</li>
+            <li>Added support for all event handlers annotation types:
+            <ul>
+                <li>@EventHandler</li>
+                <li>@EventSourcingHandler</li>
+                <li>@SagaEventHandler</li>
+            </ul>
+            </li>
+            <li>Event handler methods (and parameters used to defined the event type) are not marked as unused if a
            publishers for the declared event is available.</li>
         </ul>
         ]]>
