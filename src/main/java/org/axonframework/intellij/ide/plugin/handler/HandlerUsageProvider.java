@@ -6,9 +6,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiParameter;
 import org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager;
 
-/**
- * @author Allard Buijze
- */
 public class HandlerUsageProvider implements ImplicitUsageProvider {
 
     @Override

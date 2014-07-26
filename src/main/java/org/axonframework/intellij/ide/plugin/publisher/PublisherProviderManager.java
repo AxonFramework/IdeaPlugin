@@ -7,12 +7,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 
-/**
- * @author Allard Buijze
- */
 public class PublisherProviderManager {
 
-    private final EventPublisherRepositoryImpl repository;
+    private final EventPublisherRepository repository;
     private final Project project;
     private boolean initialized;
     private EventPublisherProvider[] eventPublisherProviders;
@@ -25,7 +22,7 @@ public class PublisherProviderManager {
 
     public PublisherProviderManager(Project project) {
         this.project = project;
-        repository = new EventPublisherRepositoryImpl();
+        repository = new DefaultEventPublisherRepository();
     }
 
     private synchronized void ensureInitialized() {

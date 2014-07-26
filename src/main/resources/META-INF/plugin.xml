@@ -10,11 +10,17 @@
     </description>
 
     <change-notes><![CDATA[
+        Version 0.1.0<br />
+        -------------<br />
+        <li>Fixed NPE</li>
+        <li>Fixed ConcurrentModificatioinException</li>
+        <li>Restructured code</li>
+        <br />
         Version 0.0.8<br />
         -------------<br />
         <ul>
-           <li>Fixed several issues</li>
-           <li>Improved performance</li>
+           <li>Fixed NPE</li>
+           <li>Fixed ConcurrentModificatioinException</li>
            <li>Added support for all event handlers annotation types
            <ul>
                <li>@EventHandler</li>
@@ -42,7 +48,7 @@
     </extensionPoints>
 
     <extensions defaultExtensionNs="com.intellij">
-        <annotator language="JAVA" implementationClass="org.axonframework.intellij.ide.plugin.AxonGutterAnnotator"/>
+        <annotator language="JAVA" implementationClass="org.axonframework.intellij.ide.plugin.annotator.AxonGutterAnnotator"/>
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager"
                         serviceInterface="org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager"/>
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager"

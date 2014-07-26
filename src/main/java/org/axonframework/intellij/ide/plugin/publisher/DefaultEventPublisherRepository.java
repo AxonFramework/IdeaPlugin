@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class EventPublisherRepositoryImpl implements EventPublisherRepository {
+class DefaultEventPublisherRepository implements EventPublisherRepository {
 
     private final ConcurrentMap<PsiElement, EventPublisher> publishers = new ConcurrentHashMap<PsiElement, EventPublisher>();
 
@@ -34,7 +34,4 @@ public class EventPublisherRepositoryImpl implements EventPublisherRepository {
         return foundPublishers;
     }
 
-    public EventPublisher getPublisher(PsiElement psiElement) {
-        return publishers.get(psiElement);
-    }
 }

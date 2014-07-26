@@ -7,11 +7,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 
-/**
- * @author Allard Buijze
- */
 public class HandlerProviderManager {
-    private final EventHandlerRepositoryImpl repository;
+    private final EventHandlerRepository repository;
     private final Project project;
     private boolean initialized;
     private EventHandlerProvider[] eventHandlerProviders;
@@ -23,7 +20,7 @@ public class HandlerProviderManager {
 
     public HandlerProviderManager(Project project) {
         this.project = project;
-        repository = new EventHandlerRepositoryImpl();
+        repository = new DefaultEventHandlerRepository();
     }
 
     private synchronized void ensureInitialized() {

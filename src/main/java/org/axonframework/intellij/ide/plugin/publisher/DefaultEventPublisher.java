@@ -1,16 +1,15 @@
 package org.axonframework.intellij.ide.plugin.publisher;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.impl.source.PsiImmediateClassType;
 
-public class EventPublisherImpl implements EventPublisher {
+class DefaultEventPublisher implements EventPublisher {
 
     private final PsiType publishedType;
     private final PsiElement psiElement;
 
-    public EventPublisherImpl(PsiType publishedType, PsiElement psiElement) {
+    public DefaultEventPublisher(PsiType publishedType, PsiElement psiElement) {
         this.publishedType = publishedType;
         this.psiElement = psiElement;
     }
@@ -36,15 +35,6 @@ public class EventPublisherImpl implements EventPublisher {
     }
 
     @Override
-    public PsiMethod getEnclosingMethod() {
-        PsiElement parent = psiElement.getParent();
-        while (parent != null && !(parent instanceof PsiMethod)) {
-            parent = parent.getParent();
-        }
-        return (PsiMethod) parent;
-    }
-
-    @Override
     public boolean isValid() {
         return psiElement.isValid() && publishedType.isValid();
     }
@@ -58,7 +48,7 @@ public class EventPublisherImpl implements EventPublisher {
             return false;
         }
 
-        EventPublisherImpl that = (EventPublisherImpl) o;
+        DefaultEventPublisher that = (DefaultEventPublisher) o;
 
         return psiElement.equals(that.psiElement);
     }

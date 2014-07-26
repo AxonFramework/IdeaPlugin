@@ -6,6 +6,7 @@ import java.util.Set;
 
 public interface EventPublisherRepository {
 
-    Set<EventPublisher> getPublishersFor(PsiType type);
+    void registerPublisher(EventPublisher eventPublisher);
 
+    Set<EventPublisher> getPublishersFor(PsiType type);
 }

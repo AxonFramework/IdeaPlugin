@@ -2,30 +2,21 @@ package org.axonframework.intellij.ide.plugin.publisher;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiMethodCallExpression;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.Query;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * @author Allard Buijze
- */
-public class DefaultEventPublisherProvider implements EventPublisherProvider {
+class DefaultEventPublisherProvider implements EventPublisherProvider {
 
-    private List<PsiMethod> methods = new ArrayList<PsiMethod>();
+    private List<PsiMethod> methods = new CopyOnWriteArrayList<PsiMethod>();
 
     @Override
     public void scanPublishers(Project project, GlobalSearchScope scope, final Registrar registrar) {
@@ -54,7 +45,7 @@ public class DefaultEventPublisherProvider implements EventPublisherProvider {
                                                                                      .getReference().resolve();
                             if (referencedMethod != null) {
                                 if (expressionTypes.length > 0) {
-                                    registrar.registerPublisher(new EventPublisherImpl(expressionTypes[0], methodCall));
+                                    registrar.registerPublisher(new DefaultEventPublisher(expressionTypes[0], methodCall));
                                 }
                             }
                         }
@@ -84,7 +75,7 @@ public class DefaultEventPublisherProvider implements EventPublisherProvider {
             for (PsiMethod method : methods) {
                 if (expression.getMethodExpression().getReference() != null
                         && expression.getMethodExpression().isReferenceTo(method)) {
-                    return new EventPublisherImpl(expressionTypes[0], element);
+                    return new DefaultEventPublisher(expressionTypes[0], element);
                 }
             }
         }

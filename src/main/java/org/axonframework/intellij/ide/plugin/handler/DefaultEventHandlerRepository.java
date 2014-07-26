@@ -1,6 +1,5 @@
 package org.axonframework.intellij.ide.plugin.handler;
 
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 
@@ -11,7 +10,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class EventHandlerRepositoryImpl implements EventHandlerRepository {
+class DefaultEventHandlerRepository implements EventHandlerRepository {
 
     private ConcurrentMap<PsiMethod, EventHandler> handlers = new ConcurrentHashMap<PsiMethod, EventHandler>();
 
@@ -33,9 +32,5 @@ public class EventHandlerRepositoryImpl implements EventHandlerRepository {
             }
         }
         return found;
-    }
-
-    public EventHandler getHandler(PsiElement psiElement) {
-        return handlers.get(psiElement);
     }
 }

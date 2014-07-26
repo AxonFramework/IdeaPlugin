@@ -12,12 +12,8 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.Query;
-import org.axonframework.intellij.ide.plugin.IsMethodCondition;
 
-/**
- * @author Allard Buijze
- */
-public class DefaultEventHandlerProvider implements EventHandlerProvider {
+class DefaultEventHandlerProvider implements EventHandlerProvider {
 
     private static final String[] annotationTypes = new String[]{
             "org.axonframework.eventhandling.annotation.EventHandler",
@@ -41,7 +37,7 @@ public class DefaultEventHandlerProvider implements EventHandlerProvider {
                             // this doesn't say the method is annotated
                             final PsiAnnotation annotation = locateAnnotation(method);
                             if (annotation != null) {
-                                EventHandler handler = EventHandlerImpl.createEventHandler(method, annotation);
+                                EventHandler handler = DefaultEventHandler.createEventHandler(method, annotation);
                                 if (handler != null) {
                                     registrar.registerHandler(handler);
                                 }
@@ -59,7 +55,7 @@ public class DefaultEventHandlerProvider implements EventHandlerProvider {
         if (element instanceof PsiMethod) {
             final PsiAnnotation annotation = locateAnnotation((PsiMethod) element);
             if (annotation != null) {
-                return EventHandlerImpl.createEventHandler((PsiMethod) element, annotation);
+                return DefaultEventHandler.createEventHandler((PsiMethod) element, annotation);
             }
         }
         return null;

@@ -4,9 +4,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 
-/**
- * @author Allard Buijze
- */
 public interface EventHandlerProvider {
 
     void scanHandlers(Project project, GlobalSearchScope scope, Registrar registrar);

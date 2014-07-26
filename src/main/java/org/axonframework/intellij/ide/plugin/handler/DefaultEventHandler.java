@@ -11,7 +11,7 @@ import com.intellij.psi.PsiParameterList;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.impl.source.PsiImmediateClassType;
 
-public class EventHandlerImpl implements EventHandler {
+class DefaultEventHandler implements EventHandler {
 
     public static final String EVENT_HANDLER_ARGUMENT = "eventType";
     public static final String AlTERNATIVE_EVENT_HANDLER_ARGUMENT = "payloadType";
@@ -20,12 +20,12 @@ public class EventHandlerImpl implements EventHandler {
     private final PsiMethod method;
 
 
-    private EventHandlerImpl(PsiAnnotation annotation, PsiMethod method) {
+    private DefaultEventHandler(PsiMethod method) {
         this.method = method;
         this.annotationOrMethodArguments = getMethodArguments(method);
     }
 
-    private EventHandlerImpl(PsiAnnotation annotation, PsiAnnotationMemberValue eventType, PsiMethod method) {
+    private DefaultEventHandler(PsiAnnotationMemberValue eventType, PsiMethod method) {
         this.method = method;
         this.annotationOrMethodArguments = getAnnotationArguments(eventType);
     }
@@ -62,7 +62,7 @@ public class EventHandlerImpl implements EventHandler {
 
     @Override
     public boolean isValid() {
-        return method.isValid() && getHandledType().isValid();
+        return !(method == null || getHandledType() == null) && method.isValid() && getHandledType().isValid();
     }
 
     private PsiType[] getMethodArguments(PsiMethod method) {
@@ -88,20 +88,20 @@ public class EventHandlerImpl implements EventHandler {
         return new PsiType[]{};
     }
 
-    public static EventHandlerImpl createEventHandler(PsiMethod method, PsiAnnotation annotation) {
-        PsiAnnotationMemberValue eventType = annotation.findAttributeValue(EventHandlerImpl.EVENT_HANDLER_ARGUMENT);
+    public static EventHandler createEventHandler(PsiMethod method, PsiAnnotation annotation) {
+        PsiAnnotationMemberValue eventType = annotation.findAttributeValue(DefaultEventHandler.EVENT_HANDLER_ARGUMENT);
         if (eventType == null) {
             eventType = annotation.findAttributeValue(AlTERNATIVE_EVENT_HANDLER_ARGUMENT);
         }
         if (annotationHasEventTypeArgument(eventType) && hasChildren(eventType)) {
-            return new EventHandlerImpl(annotation, eventType, method);
+            return new DefaultEventHandler(eventType, method);
         }
-        return new EventHandlerImpl(annotation, method);
+        return new DefaultEventHandler(method);
     }
 
     private static boolean annotationHasEventTypeArgument(PsiAnnotationMemberValue eventType) {
-        return eventType instanceof PsiExpression &&
-                !((PsiExpression) eventType).getType().getCanonicalText().equals("java.lang.Class<java.lang.Void>");
+        PsiType type = ((PsiExpression) eventType).getType();
+        return type != null && !type.getCanonicalText().equals("java.lang.Class<java.lang.Void>");
     }
 
     private static boolean hasChildren(PsiAnnotationMemberValue eventType) {
