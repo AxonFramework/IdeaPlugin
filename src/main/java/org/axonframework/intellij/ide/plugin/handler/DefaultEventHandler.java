@@ -100,6 +100,10 @@ class DefaultEventHandler implements EventHandler {
     }
 
     private static boolean annotationHasEventTypeArgument(PsiAnnotationMemberValue eventType) {
+        if (eventType == null) {
+            return false;
+        }
+
         PsiType type = ((PsiExpression) eventType).getType();
         return type != null && !type.getCanonicalText().equals("java.lang.Class<java.lang.Void>");
     }
