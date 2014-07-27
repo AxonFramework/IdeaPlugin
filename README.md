@@ -20,4 +20,6 @@ From the command line: mvn clean install
 mvn clean release:prepare release:perform -Dmaven.javadoc.skip -Dgoals=install
 
 ### Usage
+Download and install the plugin manually from the [IntelliJ Plugin Website](http://plugins.jetbrains.com/plugin/7506) or use the Plugin Repository Browser in your IDE.
 
+After installation the plugin will automatically annotate the [Axon Framework](http://www.axonframework.org/) annotations it recognizes. You can click on the icons on the left of the sourcecode to navigate to and from the annotations.
