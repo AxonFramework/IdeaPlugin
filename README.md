@@ -3,7 +3,7 @@ Axon Framework IntelliJ Plugin
 
 This plugin will help you navigate and visualize the [Axon Framework](http://www.axonframework.org/) annotations.
 
-If you have any issues using the plugin, please let us know by [filing a new issue](http://issues.axonframework.org/), send us an [e-mail](intellijplugin@axonframework.org) or even sending a pull request.
+If you have any issues using the plugin, please let us know by [filing a new issue](http://issues.axonframework.org/), send us an [e-mail](mailto:intellijplugin@axonframework.org) or even sending a pull request.
 
 
 ### Build from source
