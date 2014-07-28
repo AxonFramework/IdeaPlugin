@@ -44,12 +44,10 @@ public class PublisherProviderManager {
     }
 
     public EventPublisherRepository getRepository() {
-        ensureInitialized();
         return repository;
     }
 
     public EventPublisher resolveEventPublisher(PsiElement psiElement) {
-        ensureInitialized();
         for (EventPublisherProvider eventPublisherProvider : eventPublisherProviders) {
             EventPublisher publisher = eventPublisherProvider.resolve(psiElement);
             if (publisher != null) {

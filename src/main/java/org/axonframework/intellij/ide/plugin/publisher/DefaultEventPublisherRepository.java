@@ -1,32 +1,32 @@
 package org.axonframework.intellij.ide.plugin.publisher;
 
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 class DefaultEventPublisherRepository implements EventPublisherRepository {
 
-    private final ConcurrentMap<PsiElement, EventPublisher> publishers = new ConcurrentHashMap<PsiElement, EventPublisher>();
+    private final List<EventPublisher> publishers = new CopyOnWriteArrayList<EventPublisher>();
 
     public void registerPublisher(EventPublisher eventPublisher) {
-        publishers.put(eventPublisher.getPsiElement(), eventPublisher);
-        for (Map.Entry<PsiElement, EventPublisher> entry : publishers.entrySet()) {
-            if (!entry.getValue().isValid()) {
-                publishers.remove(entry.getKey());
+        publishers.add(eventPublisher);
+        List<EventPublisher> invalidated = new ArrayList<EventPublisher>();
+        for (EventPublisher entry : publishers) {
+            if (!entry.isValid()) {
+                invalidated.add(entry);
             }
         }
+        publishers.remove(invalidated);
     }
 
     @Override
     public Set<EventPublisher> getPublishersFor(PsiType type) {
         Set<EventPublisher> foundPublishers = new HashSet<EventPublisher>();
-        for (EventPublisher publisher : new ArrayList<EventPublisher>(publishers.values())) {
+        for (EventPublisher publisher : publishers) {
             if (publisher.isValid() && publisher.canPublishType(type)) {
                 foundPublishers.add(publisher);
             }

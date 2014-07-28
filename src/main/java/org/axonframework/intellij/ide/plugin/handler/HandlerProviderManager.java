@@ -14,9 +14,10 @@ public class HandlerProviderManager {
     private EventHandlerProvider[] eventHandlerProviders;
 
     public static HandlerProviderManager getInstance(Project project) {
-        return ServiceManager.getService(project, HandlerProviderManager.class);
+        final HandlerProviderManager manager = ServiceManager.getService(project, HandlerProviderManager.class);
+        manager.ensureInitialized();
+        return manager;
     }
-
 
     public HandlerProviderManager(Project project) {
         this.project = project;
@@ -42,12 +43,10 @@ public class HandlerProviderManager {
     }
 
     public EventHandlerRepository getRepository() {
-        ensureInitialized();
         return repository;
     }
 
     public EventHandler resolveEventHandler(PsiElement psiElement) {
-        ensureInitialized();
         for (EventHandlerProvider eventHandlerProvider : eventHandlerProviders) {
             EventHandler handler = eventHandlerProvider.resolve(psiElement);
             if (handler != null) {

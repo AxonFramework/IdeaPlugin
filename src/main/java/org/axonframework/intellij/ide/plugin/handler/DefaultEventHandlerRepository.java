@@ -1,32 +1,32 @@
 package org.axonframework.intellij.ide.plugin.handler;
 
-import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 class DefaultEventHandlerRepository implements EventHandlerRepository {
 
-    private ConcurrentMap<PsiMethod, EventHandler> handlers = new ConcurrentHashMap<PsiMethod, EventHandler>();
+    private final List<EventHandler> handlers = new CopyOnWriteArrayList<EventHandler>();
 
     public void registerHandler(EventHandler eventHandler) {
-        handlers.put(eventHandler.getPsiMethod(), eventHandler);
-        for (Map.Entry<PsiMethod, EventHandler> entry : handlers.entrySet()) {
-            if (!entry.getValue().isValid()) {
-                handlers.remove(entry.getKey());
+        handlers.add(eventHandler);
+        List<EventHandler> invalidated = new ArrayList<EventHandler>();
+        for (EventHandler entry : handlers) {
+            if (!entry.isValid()) {
+                invalidated.add(entry);
             }
         }
+        handlers.removeAll(invalidated);
     }
 
     @Override
     public Set<EventHandler> findHandlers(PsiType eventType) {
         Set<EventHandler> found = new HashSet<EventHandler>();
-        for (EventHandler eventHandler : new ArrayList<EventHandler>(handlers.values())) {
+        for (EventHandler eventHandler : handlers) {
             if (eventHandler.isValid() && eventHandler.canHandle(eventType)) {
                 found.add(eventHandler);
             }

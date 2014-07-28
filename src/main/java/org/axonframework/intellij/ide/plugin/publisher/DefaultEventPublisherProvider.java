@@ -2,7 +2,13 @@ package org.axonframework.intellij.ide.plugin.publisher;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
-import com.intellij.psi.*;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiMethodCallExpression;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiType;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -24,6 +30,8 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
                                    "org.axonframework.eventsourcing.AbstractEventSourcedAggregateRoot", "apply"));
         methods.addAll(findMethods(project, GlobalSearchScope.allScope(project),
                                    "org.axonframework.domain.AbstractAggregateRoot", "registerEvent"));
+        methods.addAll(findMethods(project, GlobalSearchScope.allScope(project),
+                                   "org.axonframework.eventsourcing.AbstractEventSourcedEntity", "apply"));
 
         for (PsiMethod method : methods) {
             Query<PsiReference> invocations = ReferencesSearch.search(method, scope);

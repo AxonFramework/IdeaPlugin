@@ -10,6 +10,14 @@
     </description>
 
     <change-notes><![CDATA[
+        Version 0.1.1<br />
+        -------------<br />
+        <ul>
+            <li>Added support for Events from AbstractAnnotatedEntity</li>
+            <li>Fixed some issues where the plugin would not always show all handlers/publishers</li>
+        </ul>
+        <br />
+        <br />
         Version 0.1.0<br />
         -------------<br />
         <ul>
