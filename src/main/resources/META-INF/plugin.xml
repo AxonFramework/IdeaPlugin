@@ -10,6 +10,13 @@
     </description>
 
     <change-notes><![CDATA[
+        Version 0.2.0<br />
+        -------------<br />
+        <ul>
+            <li>Added Create Event Handler Quickfix</li>
+        </ul>
+        <br />
+        <br />
         Version 0.1.1<br />
         -------------<br />
         <ul>
