@@ -15,16 +15,11 @@ import com.intellij.util.Query;
 
 class DefaultEventHandlerProvider implements EventHandlerProvider {
 
-    private static final String[] annotationTypes = new String[]{
-            "org.axonframework.eventhandling.annotation.EventHandler",
-            "org.axonframework.eventsourcing.annotation.EventSourcingHandler",
-            "org.axonframework.saga.annotation.SagaEventHandler"};
-
     @Override
     public void scanHandlers(Project project, GlobalSearchScope scope, final Registrar registrar) {
-        for (String annotationType : annotationTypes) {
+        for (AnnotationTypes annotationType : AnnotationTypes.values()) {
             PsiClass eventHandlerAnnotation = JavaPsiFacade.getInstance(project)
-                                                           .findClass(annotationType,
+                                                           .findClass(annotationType.getFullyQualifiedName(),
                                                                       GlobalSearchScope.allScope(project));
             if (eventHandlerAnnotation != null) {
                 Query<PsiReference> annotationUsages = ReferencesSearch.search(eventHandlerAnnotation, scope);
@@ -62,8 +57,8 @@ class DefaultEventHandlerProvider implements EventHandlerProvider {
     }
 
     private PsiAnnotation locateAnnotation(PsiMethod element) {
-        for (String annotationType : annotationTypes) {
-            PsiAnnotation annotation = element.getModifierList().findAnnotation(annotationType);
+        for (AnnotationTypes annotationType : AnnotationTypes.values()) {
+            PsiAnnotation annotation = element.getModifierList().findAnnotation(annotationType.getFullyQualifiedName());
             if (annotation != null) {
                 return annotation;
             }
