@@ -26,8 +26,8 @@ import java.util.Set;
  */
 public class AxonGutterAnnotator implements Annotator {
 
-    public static final Icon AxonIconIn = IconLoader.getIcon("/icons/axon_into.png"); // 16x16
-    public static final Icon AxonIconOut = IconLoader.getIcon("/icons/axon_publish.png"); // 16x16
+    private static final Icon AxonIconIn = IconLoader.getIcon("/icons/axon_into.png"); // 16x16
+    private static final Icon AxonIconOut = IconLoader.getIcon("/icons/axon_publish.png"); // 16x16
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
@@ -50,9 +50,7 @@ public class AxonGutterAnnotator implements Annotator {
             };
             Annotation gutterIconForPublisher = createGutterIconForPublisher(element, holder, targetResolver);
             if (targetResolver.getValue().isEmpty()) {
-                gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), AnnotationTypes.EVENT_HANDLER));
-                gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), AnnotationTypes.EVENT_SOURCING_HANDLER));
-                gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), AnnotationTypes.SAGA_EVENT_HANDLER));
+                addCreateEventHandlerQuickFixes(publisher, gutterIconForPublisher);
             }
         }
 
@@ -71,6 +69,12 @@ public class AxonGutterAnnotator implements Annotator {
                 }
             });
         }
+    }
+
+    private void addCreateEventHandlerQuickFixes(EventPublisher publisher, Annotation gutterIconForPublisher) {
+        gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), AnnotationTypes.EVENT_HANDLER));
+        gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), AnnotationTypes.EVENT_SOURCING_HANDLER));
+        gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), AnnotationTypes.SAGA_EVENT_HANDLER));
     }
 
     private static Annotation createGutterIconForHandler(PsiElement psiElement, AnnotationHolder holder,

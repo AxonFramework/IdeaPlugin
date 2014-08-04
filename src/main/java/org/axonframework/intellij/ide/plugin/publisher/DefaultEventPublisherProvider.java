@@ -22,7 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 class DefaultEventPublisherProvider implements EventPublisherProvider {
 
-    private List<PsiMethod> methods = new CopyOnWriteArrayList<PsiMethod>();
+    private final List<PsiMethod> methods = new CopyOnWriteArrayList<PsiMethod>();
 
     @Override
     public void scanPublishers(Project project, GlobalSearchScope scope, final Registrar registrar) {

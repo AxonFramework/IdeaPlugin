@@ -13,8 +13,8 @@ import com.intellij.psi.impl.source.PsiImmediateClassType;
 
 class DefaultEventHandler implements EventHandler {
 
-    public static final String EVENT_HANDLER_ARGUMENT = "eventType";
-    public static final String AlTERNATIVE_EVENT_HANDLER_ARGUMENT = "payloadType";
+    private static final String EVENT_HANDLER_ARGUMENT = "eventType";
+    private static final String AlTERNATIVE_EVENT_HANDLER_ARGUMENT = "payloadType";
 
     private final PsiType[] annotationOrMethodArguments;
     private final PsiMethod method;
@@ -43,11 +43,6 @@ class DefaultEventHandler implements EventHandler {
     @Override
     public PsiElement getElementForAnnotation() {
         return method.getNameIdentifier();
-    }
-
-    @Override
-    public PsiMethod getPsiMethod() {
-        return method;
     }
 
     @Override

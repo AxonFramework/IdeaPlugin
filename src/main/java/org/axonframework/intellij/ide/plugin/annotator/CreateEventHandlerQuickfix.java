@@ -17,8 +17,8 @@ import java.util.Collection;
 
 class CreateEventHandlerQuickfix extends IntentionAndQuickFixAction {
 
-    private PsiType type;
-    private AnnotationTypes eventHandler;
+    private final PsiType type;
+    private final AnnotationTypes eventHandler;
 
     public CreateEventHandlerQuickfix(PsiType type, AnnotationTypes eventHandler) {
         this.type = type;

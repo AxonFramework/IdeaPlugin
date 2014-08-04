@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiParameter;
 import org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager;
 
-public class HandlerUsageProvider implements ImplicitUsageProvider {
+class HandlerUsageProvider implements ImplicitUsageProvider {
 
     @Override
     public boolean isImplicitUsage(PsiElement element) {

@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 
-public interface EventHandlerProvider {
+interface EventHandlerProvider {
 
     void scanHandlers(Project project, GlobalSearchScope scope, Registrar registrar);
 
