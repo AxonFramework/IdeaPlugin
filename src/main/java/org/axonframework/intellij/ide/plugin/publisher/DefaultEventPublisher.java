@@ -36,7 +36,7 @@ class DefaultEventPublisher implements EventPublisher {
 
     @Override
     public boolean isValid() {
-        return psiElement.isValid() && publishedType.isValid();
+        return psiElement != null && publishedType != null && psiElement.isValid() && publishedType.isValid();
     }
 
     @Override
