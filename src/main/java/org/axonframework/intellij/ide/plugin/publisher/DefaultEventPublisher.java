@@ -17,7 +17,8 @@ class DefaultEventPublisher implements EventPublisher {
     @Override
     public boolean canPublishType(PsiType eventType) {
         return eventType != null
-                && !(publishedType == null)
+                && publishedType != null
+                && eventType.isValid()
                 && (eventType.isAssignableFrom(publishedType)
                 || eventType instanceof PsiImmediateClassType
                 && ((PsiImmediateClassType) eventType).getParameters()[0].isAssignableFrom(publishedType));

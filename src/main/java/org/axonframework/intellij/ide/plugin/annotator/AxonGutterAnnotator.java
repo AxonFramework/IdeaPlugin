@@ -33,7 +33,7 @@ public class AxonGutterAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull final PsiElement element, @NotNull AnnotationHolder holder) {
-        if (! (element instanceof PsiMethodCallExpression || element instanceof PsiMethod) || !element.isValid()) {
+        if (! (element instanceof PsiMethodCallExpression || element instanceof PsiMethod)) {
             return;
         }
 
