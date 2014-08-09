@@ -49,7 +49,7 @@ public class HandlerProviderManager {
     public EventHandler resolveEventHandler(PsiElement psiElement) {
         for (EventHandlerProvider eventHandlerProvider : eventHandlerProviders) {
             EventHandler handler = eventHandlerProvider.resolve(psiElement);
-            if (handler != null) {
+            if (handler != null && psiElement.isValid()) {
                 repository.registerHandler(handler);
                 return handler;
             }

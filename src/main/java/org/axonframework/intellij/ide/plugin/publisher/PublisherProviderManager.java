@@ -50,7 +50,7 @@ public class PublisherProviderManager {
     public EventPublisher resolveEventPublisher(PsiElement psiElement) {
         for (EventPublisherProvider eventPublisherProvider : eventPublisherProviders) {
             EventPublisher publisher = eventPublisherProvider.resolve(psiElement);
-            if (publisher != null) {
+            if (publisher != null && psiElement.isValid()) {
                 repository.registerPublisher(publisher);
                 return publisher;
             }

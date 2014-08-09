@@ -7,6 +7,8 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiMethodCallExpression;
 import org.axonframework.intellij.ide.plugin.handler.AnnotationTypes;
 import org.axonframework.intellij.ide.plugin.handler.EventHandler;
 import org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager;
@@ -30,7 +32,11 @@ public class AxonGutterAnnotator implements Annotator {
     private static final Icon AxonIconOut = IconLoader.getIcon("/icons/axon_publish.png"); // 16x16
 
     @Override
-    public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+    public void annotate(@NotNull final PsiElement element, @NotNull AnnotationHolder holder) {
+        if (! (element instanceof PsiMethodCallExpression || element instanceof PsiMethod) || !element.isValid()) {
+            return;
+        }
+
         final PublisherProviderManager publisherManager = PublisherProviderManager.getInstance(element.getProject());
         final HandlerProviderManager handlerManager = HandlerProviderManager.getInstance(element.getProject());
         final EventPublisher publisher = publisherManager.resolveEventPublisher(element);
@@ -43,7 +49,10 @@ public class AxonGutterAnnotator implements Annotator {
                     Set<EventHandler> handlers = handlerManager.getRepository().findHandlers(publisher.getPublishedType());
                     Collection<PsiElement> destinations = new HashSet<PsiElement>();
                     for (EventHandler eventHandler : handlers) {
-                        destinations.add(eventHandler.getElementForAnnotation());
+                        PsiElement elementForAnnotation = eventHandler.getElementForAnnotation();
+                        if (elementForAnnotation.isValid()) {
+                            destinations.add(elementForAnnotation);
+                        }
                     }
                     return destinations;
                 }
@@ -63,7 +72,10 @@ public class AxonGutterAnnotator implements Annotator {
                             .getPublishersFor(handler.getHandledType());
                     Collection<PsiElement> publishLocations = new ArrayList<PsiElement>();
                     for (EventPublisher eventPublisher : publishers) {
-                        publishLocations.add(eventPublisher.getPsiElement());
+                        PsiElement psiElement = eventPublisher.getPsiElement();
+                        if (psiElement.isValid()) {
+                            publishLocations.add(psiElement);
+                        }
                     }
                     return publishLocations;
                 }
