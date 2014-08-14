@@ -11,7 +11,6 @@ import com.intellij.util.Query;
 import com.intellij.util.containers.ConcurrentMultiMap;
 import com.intellij.util.containers.MultiMap;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,7 +18,7 @@ import static java.util.Arrays.asList;
 
 class DefaultEventPublisherProvider implements EventPublisherProvider {
 
-    private MultiMap<Project, PsiMethod> publisherMethodsPerProject = new ConcurrentMultiMap<Project, PsiMethod>();
+    private final MultiMap<Project, PsiMethod> publisherMethodsPerProject = new ConcurrentMultiMap<Project, PsiMethod>();
 
     @Override
     public void scanPublishers(Project project, GlobalSearchScope scope, final Registrar registrar) {
@@ -48,7 +47,7 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
                         PsiType[] expressionTypes = methodCall.getArgumentList().getExpressionTypes();
                         if (methodCall.getMethodExpression().getReference() != null) {
                             final PsiMethod referencedMethod = (PsiMethod) methodCall.getMethodExpression()
-                                                                                     .getReference().resolve();
+                                    .getReference().resolve();
                             if (referencedMethod != null) {
                                 if (expressionTypes.length > 0) {
                                     registrar.registerPublisher(new DefaultEventPublisher(expressionTypes[0], methodCall));
@@ -72,9 +71,7 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
 
     private List<PsiMethod> findMethods(Project project, GlobalSearchScope allScope, String className,
                                         String methodName) {
-        PsiClass aggregateClass = JavaPsiFacade.getInstance(project).findClass(
-                className,
-                allScope);
+        PsiClass aggregateClass = JavaPsiFacade.getInstance(project).findClass(className, allScope);
         if (aggregateClass != null) {
             return asList(aggregateClass.findMethodsByName(methodName, true));
         }
@@ -83,11 +80,10 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
 
     @Override
     public EventPublisher resolve(PsiElement element) {
-        Collection<PsiMethod> methods = publisherMethodsPerProject.get(element.getProject());
         if (element instanceof PsiMethodCallExpression) {
             PsiMethodCallExpression expression = (PsiMethodCallExpression) element;
             PsiType[] expressionTypes = expression.getArgumentList().getExpressionTypes();
-            for (PsiMethod method : methods) {
+            for (PsiMethod method : publisherMethodsPerProject.get(element.getProject())) {
                 if (expression.getMethodExpression().getReference() != null
                         && expression.getMethodExpression().isReferenceTo(method)) {
                     return new DefaultEventPublisher(expressionTypes[0], element);
