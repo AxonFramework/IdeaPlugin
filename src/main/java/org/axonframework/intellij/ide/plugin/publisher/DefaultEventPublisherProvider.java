@@ -18,14 +18,19 @@ import com.intellij.util.Query;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 class DefaultEventPublisherProvider implements EventPublisherProvider {
 
-    private final List<PsiMethod> methods = new CopyOnWriteArrayList<PsiMethod>();
+    private final Map<Project, List<PsiMethod>> publisherMethodsPerProject = new ConcurrentHashMap<Project, List<PsiMethod>>();
 
     @Override
     public void scanPublishers(Project project, GlobalSearchScope scope, final Registrar registrar) {
+        cleanClosedProjects();
+        final CopyOnWriteArrayList<PsiMethod> methods = new CopyOnWriteArrayList<PsiMethod>();
+        publisherMethodsPerProject.put(project, methods);
         methods.addAll(findMethods(project, GlobalSearchScope.allScope(project),
                                    "org.axonframework.eventsourcing.AbstractEventSourcedAggregateRoot", "apply"));
         methods.addAll(findMethods(project, GlobalSearchScope.allScope(project),
@@ -64,6 +69,14 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
         }
     }
 
+    private void cleanClosedProjects() {
+        for (Project project : publisherMethodsPerProject.keySet()) {
+            if (!project.isOpen()) {
+                publisherMethodsPerProject.remove(project);
+            }
+        }
+    }
+
     private List<PsiMethod> findMethods(Project project, GlobalSearchScope allScope, String className,
                                         String methodName) {
         PsiClass aggregateClass = JavaPsiFacade.getInstance(project).findClass(
@@ -77,6 +90,7 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
 
     @Override
     public EventPublisher resolve(PsiElement element) {
+        List<PsiMethod> methods = publisherMethodsPerProject.get(element.getProject());
         if (element instanceof PsiMethodCallExpression) {
             PsiMethodCallExpression expression = (PsiMethodCallExpression) element;
             PsiType[] expressionTypes = expression.getArgumentList().getExpressionTypes();
