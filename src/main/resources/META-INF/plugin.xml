@@ -10,6 +10,21 @@
     </description>
 
     <change-notes><![CDATA[
+        Version 0.2.2<br />
+        -------------<br />
+        <ul>
+            <li>Bugfix: IDEAPLUGIN-9 / Issue when switching projects with Axon plugin #3 </li>
+        </ul>
+        <br />
+        <br />
+        Version 0.2.1<br />
+        -------------<br />
+        <ul>
+            <li>Bugfix: IDEAPLUGIN-10 </li>
+            <li>Small performance improvement </li>
+        </ul>
+        <br />
+        <br />
         Version 0.2.0<br />
         -------------<br />
         <ul>
