@@ -19,7 +19,18 @@ public interface EventHandler {
      */
     PsiElement getElementForAnnotation();
 
+    /**
+     * Returns true if this EventHandler can handle an event of type eventType.
+     *
+     * @param eventType the type of the
+     * @return true if eventType can be handled
+     */
     boolean canHandle(PsiType eventType);
 
+    /**
+     * True if the eventHandler can still be accessed on disk.
+     *
+     * @return true if the eventHandler can still be accessed on disk
+     */
     boolean isValid();
 }
