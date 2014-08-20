@@ -19,8 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * This class shows an icon in the gutter when an Axon annotation is found. The icon can be used to navigate to all
@@ -28,7 +28,7 @@ import java.util.Set;
  */
 public class AxonGutterAnnotator implements Annotator {
 
-    private static final Icon AxonIconIn = IconLoader.getIcon("/icons/axon_into.png"); // 16x16
+    static final Icon AxonIconIn = IconLoader.getIcon("/icons/axon_into.png"); // 16x16
     private static final Icon AxonIconOut = IconLoader.getIcon("/icons/axon_publish.png"); // 16x16
 
     @Override
@@ -47,11 +47,11 @@ public class AxonGutterAnnotator implements Annotator {
                 @Override
                 protected Collection<? extends PsiElement> compute() {
                     Set<EventHandler> handlers = handlerManager.getRepository().findHandlers(publisher.getPublishedType());
-                    Collection<PsiElement> destinations = new HashSet<PsiElement>();
+                    Set<PsiEventHandlerWrapper> destinations = new TreeSet<PsiEventHandlerWrapper>();
                     for (EventHandler eventHandler : handlers) {
                         PsiElement elementForAnnotation = eventHandler.getElementForAnnotation();
                         if (elementForAnnotation.isValid()) {
-                            destinations.add(elementForAnnotation);
+                            destinations.add(new PsiEventHandlerWrapper(elementForAnnotation, eventHandler));
                         }
                     }
                     return destinations;

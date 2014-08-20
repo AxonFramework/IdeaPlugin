@@ -1,7 +1,9 @@
 package org.axonframework.intellij.ide.plugin.handler;
 
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
+import org.jetbrains.annotations.Nullable;
 
 public interface EventHandler {
 
@@ -33,4 +35,17 @@ public interface EventHandler {
      * @return true if the eventHandler can still be accessed on disk
      */
     boolean isValid();
+
+    /**
+     * @return true if eventHandler method is declared on a subclass of AggregateRoot or AbstractEntity
+     */
+    boolean isInternalEvent();
+
+    /**
+     * The event container class if the class is of type AggregateRoot or AbstractEntity.
+     *
+     * @return null or the enclosingClass
+     */
+    @Nullable
+    PsiClass getEnclosingClass();
 }

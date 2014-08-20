@@ -1,14 +1,6 @@
 package org.axonframework.intellij.ide.plugin.handler;
 
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiAnnotationMemberValue;
-import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiExpression;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiParameter;
-import com.intellij.psi.PsiParameterList;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiImmediateClassType;
 
 class DefaultEventHandler implements EventHandler {
@@ -58,6 +50,32 @@ class DefaultEventHandler implements EventHandler {
     @Override
     public boolean isValid() {
         return !(method == null || getHandledType() == null) && method.isValid() && getHandledType().isValid();
+    }
+
+    @Override
+    public boolean isInternalEvent() {
+        if (method == null) {
+            return false;
+        }
+        if (method.getContainingClass() == null) {
+            return false;
+        }
+        if (method.getContainingClass().getQualifiedName() == null) {
+            return false;
+        }
+
+        PsiClassType[] superTypes = method.getContainingClass().getSuperTypes();
+        for (PsiClassType superType : superTypes) {
+            if (superType.getCanonicalText().startsWith("org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public PsiClass getEnclosingClass() {
+        return method.getContainingClass();
     }
 
     private PsiType[] getMethodArguments(PsiMethod method) {

@@ -1,8 +1,10 @@
 package org.axonframework.intellij.ide.plugin.publisher;
 
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.impl.source.PsiImmediateClassType;
+import com.intellij.psi.search.PsiSearchHelper;
 
 class DefaultEventPublisher implements EventPublisher {
 
