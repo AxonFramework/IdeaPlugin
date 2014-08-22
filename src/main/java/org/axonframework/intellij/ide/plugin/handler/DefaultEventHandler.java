@@ -7,6 +7,8 @@ class DefaultEventHandler implements EventHandler {
 
     private static final String EVENT_HANDLER_ARGUMENT = "eventType";
     private static final String AlTERNATIVE_EVENT_HANDLER_ARGUMENT = "payloadType";
+    public static final String ABSTRACT_ANNOTATED_AGGREGATE_ROOT = "org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot";
+    public static final String ABSTRACT_ANNOTATED_ENTITY = "org.axonframework.eventsourcing.annotation.AbstractAnnotatedEntity";
 
     private final PsiType[] annotationOrMethodArguments;
     private final PsiMethod method;
@@ -66,7 +68,8 @@ class DefaultEventHandler implements EventHandler {
 
         PsiClassType[] superTypes = method.getContainingClass().getSuperTypes();
         for (PsiClassType superType : superTypes) {
-            if (superType.getCanonicalText().startsWith("org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot")) {
+            if (superType.getCanonicalText().startsWith(ABSTRACT_ANNOTATED_AGGREGATE_ROOT)
+                    || superType.getCanonicalText().startsWith(ABSTRACT_ANNOTATED_ENTITY)) {
                 return true;
             }
         }

@@ -2,6 +2,7 @@ package org.axonframework.intellij.ide.plugin.annotator;
 
 import com.intellij.ide.util.MethodCellRenderer;
 import com.intellij.ide.util.PsiElementListCellRenderer;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
@@ -14,9 +15,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-import static org.axonframework.intellij.ide.plugin.annotator.AxonGutterAnnotator.AxonIconIn;
-
 class ContainingMethodCellRenderer extends PsiElementListCellRenderer<PsiElement> {
+
+    private static final Icon AxonEventSource = IconLoader.getIcon("/icons/axon_eventsource.png");
 
     private final IconMethodCellRenderer delegate;
 
@@ -58,8 +59,9 @@ class ContainingMethodCellRenderer extends PsiElementListCellRenderer<PsiElement
 
             if (eventHandler.isInternalEvent()) {
                 PsiClass enclosingClass = eventHandler.getEnclosingClass();
-                final JLabel label = new JLabel(enclosingClass != null ? enclosingClass.getName() : "", AxonIconIn, JLabel.LEFT);
-                label.setBackground(UIUtil.getListBackground());
+                final JLabel label = new JLabel(enclosingClass != null ? enclosingClass.getName() : "", AxonEventSource, JLabel.RIGHT);
+                label.setBackground(UIUtil.getListBackground(isSelected));
+                label.setForeground(UIUtil.getListForeground(isSelected));
 
                 label.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 6));
                 add(label, BorderLayout.EAST);

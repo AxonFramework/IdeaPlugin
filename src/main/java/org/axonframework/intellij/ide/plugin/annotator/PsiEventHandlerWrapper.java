@@ -103,7 +103,7 @@ public class PsiEventHandlerWrapper implements PsiElement, Comparable<PsiEventHa
     @Nullable
     @Override
     public PsiReference findReferenceAt(int offset) {
-        return (PsiReference) elementForAnnotation.findElementAt(offset);
+        return elementForAnnotation.findReferenceAt(offset);
     }
 
     @Override
@@ -316,9 +316,7 @@ public class PsiEventHandlerWrapper implements PsiElement, Comparable<PsiEventHa
 
         PsiEventHandlerWrapper that = (PsiEventHandlerWrapper) o;
 
-        if (!elementForAnnotation.equals(that.elementForAnnotation)) return false;
-
-        return true;
+        return elementForAnnotation.equals(that.elementForAnnotation);
     }
 
     @Override
