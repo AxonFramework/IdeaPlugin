@@ -28,7 +28,7 @@ import java.util.TreeSet;
  */
 public class AxonGutterAnnotator implements Annotator {
 
-    static final Icon AxonIconIn = IconLoader.getIcon("/icons/axon_into.png"); // 16x16
+    private static final Icon AxonIconIn = IconLoader.getIcon("/icons/axon_into.png"); // 16x16
     private static final Icon AxonIconOut = IconLoader.getIcon("/icons/axon_publish.png"); // 16x16
 
     @Override

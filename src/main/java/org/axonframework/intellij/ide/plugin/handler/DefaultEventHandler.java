@@ -7,8 +7,8 @@ class DefaultEventHandler implements EventHandler {
 
     private static final String EVENT_HANDLER_ARGUMENT = "eventType";
     private static final String AlTERNATIVE_EVENT_HANDLER_ARGUMENT = "payloadType";
-    public static final String ABSTRACT_ANNOTATED_AGGREGATE_ROOT = "org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot";
-    public static final String ABSTRACT_ANNOTATED_ENTITY = "org.axonframework.eventsourcing.annotation.AbstractAnnotatedEntity";
+    private static final String ABSTRACT_ANNOTATED_AGGREGATE_ROOT = "org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot";
+    private static final String ABSTRACT_ANNOTATED_ENTITY = "org.axonframework.eventsourcing.annotation.AbstractAnnotatedEntity";
 
     private final PsiType[] annotationOrMethodArguments;
     private final PsiMethod method;

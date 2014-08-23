@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class PsiEventHandlerWrapper implements PsiElement, Comparable<PsiEventHandlerWrapper> {
+class PsiEventHandlerWrapper implements PsiElement, Comparable<PsiEventHandlerWrapper> {
     private final PsiElement elementForAnnotation;
     private final EventHandler eventHandler;
 
@@ -180,7 +180,6 @@ public class PsiEventHandlerWrapper implements PsiElement, Comparable<PsiEventHa
 
     @Override
     public void checkAdd(@NotNull PsiElement element) throws IncorrectOperationException {
-        elementForAnnotation.checkAdd(element);
     }
 
     @Override
@@ -205,7 +204,6 @@ public class PsiEventHandlerWrapper implements PsiElement, Comparable<PsiEventHa
 
     @Override
     public void checkDelete() throws IncorrectOperationException {
-        elementForAnnotation.checkDelete();
     }
 
     @Override
@@ -336,7 +334,7 @@ public class PsiEventHandlerWrapper implements PsiElement, Comparable<PsiEventHa
     @Override
     public int compareTo(@NotNull PsiEventHandlerWrapper psiEventHandlerWrapper) {
         if (psiEventHandlerWrapper.eventHandler.isInternalEvent() == this.eventHandler.isInternalEvent()) {
-            return 1;
+            return psiEventHandlerWrapper.eventHandler.toString().compareTo(this.eventHandler.toString());
         }
         return -1;
     }

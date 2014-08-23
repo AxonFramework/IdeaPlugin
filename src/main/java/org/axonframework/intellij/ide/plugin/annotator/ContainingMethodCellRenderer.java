@@ -61,12 +61,14 @@ class ContainingMethodCellRenderer extends PsiElementListCellRenderer<PsiElement
                 PsiClass enclosingClass = eventHandler.getEnclosingClass();
                 final JLabel label = new JLabel(enclosingClass != null ? enclosingClass.getName() : "", AxonEventSource, JLabel.RIGHT);
                 label.setBackground(UIUtil.getListBackground(isSelected));
-                label.setForeground(UIUtil.getListForeground(isSelected));
+                label.setForeground(UIUtil.getLabelDisabledForeground());
+                label.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+                label.setIconTextGap(4);
+                label.setFont(UIUtil.getListFont());
 
                 label.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 6));
                 add(label, BorderLayout.EAST);
             }
-
         }
 
         return listCellRendererComponent;
