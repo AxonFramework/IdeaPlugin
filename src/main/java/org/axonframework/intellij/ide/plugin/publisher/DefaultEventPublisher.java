@@ -1,8 +1,11 @@
 package org.axonframework.intellij.ide.plugin.publisher;
 
+import com.intellij.openapi.util.Condition;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.impl.source.PsiImmediateClassType;
+import com.intellij.psi.util.PsiTreeUtil;
 
 class DefaultEventPublisher implements EventPublisher {
 
@@ -41,6 +44,14 @@ class DefaultEventPublisher implements EventPublisher {
     }
 
     @Override
+    public PsiClass getEnclosingClass() {
+        if (!isValid()) {
+            return null;
+        }
+        return (PsiClass) PsiTreeUtil.findFirstParent(psiElement, new IsClassCondition());
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -64,5 +75,12 @@ class DefaultEventPublisher implements EventPublisher {
         return "EventPublisher{" +
                 "psiElement=" + psiElement +
                 '}';
+    }
+
+    private class IsClassCondition implements Condition<PsiElement> {
+        @Override
+        public boolean value(PsiElement psiElement) {
+            return psiElement instanceof PsiClass;
+        }
     }
 }

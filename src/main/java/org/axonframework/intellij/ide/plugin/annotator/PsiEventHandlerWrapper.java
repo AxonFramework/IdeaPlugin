@@ -11,6 +11,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.IncorrectOperationException;
 import org.axonframework.intellij.ide.plugin.handler.EventHandler;
+import org.axonframework.intellij.ide.plugin.publisher.EventPublisher;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,10 +21,12 @@ import javax.swing.*;
 class PsiEventHandlerWrapper implements PsiElement, Comparable<PsiEventHandlerWrapper> {
     private final PsiElement elementForAnnotation;
     private final EventHandler eventHandler;
+    private final EventPublisher publisher;
 
-    public PsiEventHandlerWrapper(PsiElement elementForAnnotation, EventHandler eventHandler) {
+    public PsiEventHandlerWrapper(PsiElement elementForAnnotation, EventHandler eventHandler, EventPublisher publisher) {
         this.eventHandler = eventHandler;
         this.elementForAnnotation = elementForAnnotation;
+        this.publisher = publisher;
     }
 
     @NotNull
@@ -307,6 +310,10 @@ class PsiEventHandlerWrapper implements PsiElement, Comparable<PsiEventHandlerWr
         return eventHandler;
     }
 
+    public EventPublisher getPublisher() {
+        return publisher;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -322,12 +329,12 @@ class PsiEventHandlerWrapper implements PsiElement, Comparable<PsiEventHandlerWr
         return elementForAnnotation.hashCode();
     }
 
-    @NonNls
     @Override
     public String toString() {
         return "PsiEventHandlerWrapper{" +
                 "elementForAnnotation=" + elementForAnnotation +
                 ", eventHandler=" + eventHandler +
+                ", publisher=" + publisher +
                 '}';
     }
 

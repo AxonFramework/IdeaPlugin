@@ -10,6 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ui.UIUtil;
 import org.axonframework.intellij.ide.plugin.handler.EventHandler;
 import org.axonframework.intellij.ide.plugin.handler.IsMethodCondition;
+import org.axonframework.intellij.ide.plugin.publisher.EventPublisher;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -56,10 +57,12 @@ class ContainingMethodCellRenderer extends PsiElementListCellRenderer<PsiElement
 
         if (value instanceof PsiEventHandlerWrapper) {
             EventHandler eventHandler = ((PsiEventHandlerWrapper) value).getEventHandler();
+            EventPublisher eventPublisher = ((PsiEventHandlerWrapper) value).getPublisher();
 
-            if (eventHandler.isInternalEvent()) {
-                PsiClass enclosingClass = eventHandler.getEnclosingClass();
-                final JLabel label = new JLabel(enclosingClass != null ? enclosingClass.getName() : "", AxonEventSource, JLabel.RIGHT);
+            PsiClass eventHandlerEnclosingClass = eventHandler.getEnclosingClass();
+            PsiClass eventPublisherEnclosingClass = eventPublisher.getEnclosingClass();
+            if (isInternalEventAndHandledInSameClass(eventHandler, eventHandlerEnclosingClass, eventPublisherEnclosingClass)) {
+                final JLabel label = new JLabel(eventHandlerEnclosingClass != null ? eventHandlerEnclosingClass.getName() : "", AxonEventSource, JLabel.RIGHT);
                 label.setBackground(UIUtil.getListBackground(isSelected));
                 label.setForeground(UIUtil.getLabelDisabledForeground());
                 label.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
@@ -72,6 +75,15 @@ class ContainingMethodCellRenderer extends PsiElementListCellRenderer<PsiElement
         }
 
         return listCellRendererComponent;
+    }
+
+    private boolean isInternalEventAndHandledInSameClass(EventHandler eventHandler,
+                                                         PsiClass eventHandlerEnclosingClass,
+                                                         PsiClass eventPublisherEnclosingClass) {
+        return eventHandler.isInternalEvent()
+                && eventHandlerEnclosingClass != null
+                && eventPublisherEnclosingClass != null
+                && eventHandlerEnclosingClass.isEquivalentTo(eventPublisherEnclosingClass);
     }
 
     private static class IconMethodCellRenderer extends MethodCellRenderer {
