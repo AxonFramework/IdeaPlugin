@@ -51,7 +51,7 @@ public class AxonGutterAnnotator implements Annotator {
                     for (EventHandler eventHandler : handlers) {
                         PsiElement elementForAnnotation = eventHandler.getElementForAnnotation();
                         if (elementForAnnotation.isValid()) {
-                            destinations.add(new PsiEventHandlerWrapper(elementForAnnotation, eventHandler, publisher));
+                            destinations.add(new PsiEventHandlerWrapper(elementForAnnotation, eventHandler));
                         }
                     }
                     return destinations;
