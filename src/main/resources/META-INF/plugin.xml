@@ -10,6 +10,20 @@
     </description>
 
     <change-notes><![CDATA[
+        Version 0.3.1<br />
+        -------------<br />
+        <ul>
+            <li>IDEAPLUGIN-6 Added visual distinction between internal, saga and other events</li>
+        </ul>
+        <br />
+        <br />
+        Version 0.3.0<br />
+        -------------<br />
+        <ul>
+            <li>IDEAPLUGIN-6 Added visual distinction between internal and external events</li>
+        </ul>
+        <br />
+        <br />
         Version 0.2.2<br />
         -------------<br />
         <ul>
