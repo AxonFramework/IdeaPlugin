@@ -2,20 +2,27 @@ package org.axonframework.intellij.ide.plugin.annotator;
 
 import com.intellij.ide.util.MethodCellRenderer;
 import com.intellij.ide.util.PsiElementListCellRenderer;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.axonframework.intellij.ide.plugin.handler.EventHandler;
+import org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager;
 import org.axonframework.intellij.ide.plugin.handler.IsMethodCondition;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-class ContainingMethodCellRenderer extends PsiElementListCellRenderer<PsiElement> {
+public class EventHandlerMethodCellRenderer extends PsiElementListCellRenderer {
+
+    private static final Icon AxonInternalEvent = IconLoader.getIcon("/icons/aggregate_24.png");
+    private static final Icon AxonSagaEvent = IconLoader.getIcon("/icons/saga_24.png");
+    private static final Icon AxonEvent = IconLoader.getIcon("/icons/bean_24.png");
 
     private final IconMethodCellRenderer delegate;
 
-    ContainingMethodCellRenderer() {
-        this.delegate = new IconMethodCellRenderer();
+    public EventHandlerMethodCellRenderer(HandlerProviderManager handlerProviderManager) {
+        this.delegate = new IconMethodCellRenderer(handlerProviderManager);
     }
 
     @Override
@@ -45,13 +52,26 @@ class ContainingMethodCellRenderer extends PsiElementListCellRenderer<PsiElement
 
     private static class IconMethodCellRenderer extends MethodCellRenderer {
 
-        public IconMethodCellRenderer() {
+        private final HandlerProviderManager handlerProviderManager;
+
+        public IconMethodCellRenderer(HandlerProviderManager handlerProviderManager) {
             super(true);
+            this.handlerProviderManager = handlerProviderManager;
         }
 
         @Override
         public Icon getIcon(PsiElement element) {
-            return super.getIcon(element);
+            EventHandler eventHandler = handlerProviderManager.resolveEventHandler(element);
+            if (eventHandler == null) {
+                return super.getIcon(element);
+            }
+            if (eventHandler.isInternalEvent()) {
+                return AxonInternalEvent;
+            }
+            if (eventHandler.isSagaEvent()) {
+                return AxonSagaEvent;
+            }
+            return AxonEvent;
         }
     }
 }

@@ -1,9 +1,7 @@
 package org.axonframework.intellij.ide.plugin.handler;
 
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
-import org.jetbrains.annotations.Nullable;
 
 public interface EventHandler {
 
@@ -41,11 +39,6 @@ public interface EventHandler {
      */
     boolean isInternalEvent();
 
-    /**
-     * The event container class if the class is of type AggregateRoot or AbstractEntity.
-     *
-     * @return null or the enclosingClass
-     */
-    @Nullable
-    PsiClass getEnclosingClass();
+    boolean isSagaEvent();
+
 }

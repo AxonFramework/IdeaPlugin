@@ -77,9 +77,19 @@ class DefaultEventHandler implements EventHandler {
     }
 
     @Override
-    public PsiClass getEnclosingClass() {
-        return method.getContainingClass();
+    public boolean isSagaEvent() {
+        PsiAnnotation[] annotations = method.getModifierList().getAnnotations();
+        if (annotations.length < 1) {
+            return false;
+        }
+        for (PsiAnnotation annotation : annotations) {
+            if (AnnotationTypes.SAGA_EVENT_HANDLER.getFullyQualifiedName().equals(annotation.getQualifiedName())) {
+                return true;
+            }
+        }
+        return false;
     }
+
 
     private PsiType[] getMethodArguments(PsiMethod method) {
         PsiParameterList list = method.getParameterList();

@@ -33,7 +33,7 @@ public class AxonGutterAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull final PsiElement element, @NotNull AnnotationHolder holder) {
-        if (! (element instanceof PsiMethodCallExpression || element instanceof PsiMethod)) {
+        if (!(element instanceof PsiMethodCallExpression || element instanceof PsiMethod)) {
             return;
         }
 
@@ -57,7 +57,7 @@ public class AxonGutterAnnotator implements Annotator {
                     return destinations;
                 }
             };
-            Annotation gutterIconForPublisher = createGutterIconForPublisher(element, holder, targetResolver);
+            Annotation gutterIconForPublisher = createGutterIconForPublisher(element, holder, targetResolver, handlerManager);
             if (targetResolver.getValue().isEmpty()) {
                 addCreateEventHandlerQuickFixes(publisher, gutterIconForPublisher);
             }
@@ -101,12 +101,12 @@ public class AxonGutterAnnotator implements Annotator {
     }
 
     private static Annotation createGutterIconForPublisher(PsiElement psiElement, AnnotationHolder holder,
-                                                           NotNullLazyValue<Collection<? extends PsiElement>> targetResolver) {
+                                                           NotNullLazyValue<Collection<? extends PsiElement>> targetResolver, HandlerProviderManager handlerManager) {
         return NavigationGutterIconBuilder.create(AxonIconOut)
                 .setEmptyPopupText("No handlers found for this event")
                 .setTargets(targetResolver)
                 .setPopupTitle("Event Handlers")
-                .setCellRenderer(new ContainingMethodCellRenderer())
+                .setCellRenderer(new EventHandlerMethodCellRenderer(handlerManager))
                 .setTooltipText("Navigate to the handlers for this event")
                 .install(holder, psiElement);
     }
