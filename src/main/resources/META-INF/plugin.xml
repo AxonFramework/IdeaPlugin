@@ -5,12 +5,14 @@
     <vendor email="intellijplugin@axonframework.org" url="http://www.axonframework.org/">Axon Framework</vendor>
 
     <description>
-        This plugin helps to navigate from and to the axon framework event handler annotations.
+        This plugin helps to navigate from and to the axon framework event handler annotations. Axon Framework helps
+        build scalable, extensible and maintainable applications by supporting developers apply the Command Query
+        Responsibility Segregation (CQRS) architectural pattern.
         Please report issues at http://issues.axonframework.org
     </description>
 
     <change-notes><![CDATA[
-        Version 0.3.1<br />
+        Version 0.3.2<br />
         -------------<br />
         <ul>
             <li>IDEAPLUGIN-6 Added visual distinction between internal, saga and other events</li>
@@ -95,7 +97,8 @@
     </extensionPoints>
 
     <extensions defaultExtensionNs="com.intellij">
-        <annotator language="JAVA" implementationClass="org.axonframework.intellij.ide.plugin.annotator.AxonGutterAnnotator"/>
+        <annotator language="JAVA"
+                   implementationClass="org.axonframework.intellij.ide.plugin.annotator.AxonGutterAnnotator"/>
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager"
                         serviceInterface="org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager"/>
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager"
