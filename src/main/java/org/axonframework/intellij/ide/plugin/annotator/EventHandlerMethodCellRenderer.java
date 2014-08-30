@@ -15,9 +15,9 @@ import javax.swing.*;
 
 public class EventHandlerMethodCellRenderer extends PsiElementListCellRenderer {
 
-    private static final Icon AxonInternalEvent = IconLoader.getIcon("/icons/aggregate_24.png");
-    private static final Icon AxonSagaEvent = IconLoader.getIcon("/icons/saga_24.png");
-    private static final Icon AxonEvent = IconLoader.getIcon("/icons/bean_24.png");
+    private static final Icon AxonInternalEvent = IconLoader.getIcon("/icons/aggregate_event.png");
+    private static final Icon AxonSagaEvent = IconLoader.getIcon("/icons/saga_event.png");
+    private static final Icon AxonEvent = IconLoader.getIcon("/icons/plain_event.png");
 
     private final IconMethodCellRenderer delegate;
 
