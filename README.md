@@ -24,4 +24,4 @@ Download and install the plugin manually from the [IntelliJ Plugin Website](http
 
 After installation the plugin will automatically annotate the [Axon Framework](http://www.axonframework.org/) annotations it recognizes. You can click on the icons on the left of the sourcecode to navigate to and from the annotations.
 
-![Axon Trader Application EventHandler Screenshot With Annotations](http://plugins.jetbrains.com/files/7506/screenshot_14623.png)
+![Axon Trader Application EventHandler Screenshot With Annotations](http://plugins.jetbrains.com/files/7506/screenshot_14689.png)
