@@ -16,11 +16,11 @@ import org.axonframework.intellij.ide.plugin.publisher.EventPublisher;
 import org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.swing.*;
 
 /**
  * This class shows an icon in the gutter when an Axon annotation is found. The icon can be used to navigate to all
@@ -64,7 +64,7 @@ public class AxonGutterAnnotator implements Annotator {
         }
 
         if (handler != null) {
-            createGutterIconForHandler(element, holder, new NotNullLazyValue<Collection<? extends PsiElement>>() {
+            createGutterIconForHandler(handler.getElementForAnnotation(), holder, new NotNullLazyValue<Collection<? extends PsiElement>>() {
                 @NotNull
                 @Override
                 protected Collection<? extends PsiElement> compute() {
