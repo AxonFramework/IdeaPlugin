@@ -3,12 +3,13 @@ package org.axonframework.intellij.ide.plugin.handler;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiImmediateClassType;
 
+import static org.axonframework.intellij.ide.plugin.handler.InternalEventTypes.ABSTRACT_ANNOTATED_AGGREGATE_ROOT;
+import static org.axonframework.intellij.ide.plugin.handler.InternalEventTypes.ABSTRACT_ANNOTATED_ENTITY;
+
 class DefaultEventHandler implements EventHandler {
 
     private static final String EVENT_HANDLER_ARGUMENT = "eventType";
     private static final String AlTERNATIVE_EVENT_HANDLER_ARGUMENT = "payloadType";
-    private static final String ABSTRACT_ANNOTATED_AGGREGATE_ROOT = "org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot";
-    private static final String ABSTRACT_ANNOTATED_ENTITY = "org.axonframework.eventsourcing.annotation.AbstractAnnotatedEntity";
 
     private final PsiType[] annotationOrMethodArguments;
     private final PsiMethod method;
@@ -29,7 +30,6 @@ class DefaultEventHandler implements EventHandler {
         if (annotationOrMethodArguments == null || annotationOrMethodArguments.length == 0) {
             return null;
         }
-
         return annotationOrMethodArguments[0];
     }
 
@@ -68,8 +68,8 @@ class DefaultEventHandler implements EventHandler {
 
         PsiClassType[] superTypes = method.getContainingClass().getSuperTypes();
         for (PsiClassType superType : superTypes) {
-            if (superType.getCanonicalText().startsWith(ABSTRACT_ANNOTATED_AGGREGATE_ROOT)
-                    || superType.getCanonicalText().startsWith(ABSTRACT_ANNOTATED_ENTITY)) {
+            if (superType.getCanonicalText().startsWith(ABSTRACT_ANNOTATED_AGGREGATE_ROOT.getFullyQualifiedName())
+                    || superType.getCanonicalText().startsWith(ABSTRACT_ANNOTATED_ENTITY.getFullyQualifiedName())) {
                 return true;
             }
         }
