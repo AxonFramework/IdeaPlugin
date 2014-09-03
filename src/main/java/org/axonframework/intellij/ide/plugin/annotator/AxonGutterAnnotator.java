@@ -7,7 +7,7 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.PsiMethodCallExpression;
 import org.axonframework.intellij.ide.plugin.handler.AnnotationTypes;
 import org.axonframework.intellij.ide.plugin.handler.EventHandler;
@@ -33,14 +33,14 @@ public class AxonGutterAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull final PsiElement element, @NotNull AnnotationHolder holder) {
-        if (!(element instanceof PsiMethodCallExpression || element instanceof PsiMethod)) {
+        if (!(element instanceof PsiMethodCallExpression || element instanceof PsiIdentifier)) {
             return;
         }
 
         final PublisherProviderManager publisherManager = PublisherProviderManager.getInstance(element.getProject());
         final HandlerProviderManager handlerManager = HandlerProviderManager.getInstance(element.getProject());
         final EventPublisher publisher = publisherManager.resolveEventPublisher(element);
-        final EventHandler handler = handlerManager.resolveEventHandler(element);
+        final EventHandler handler = handlerManager.resolveEventHandler(element.getContext());
         if (publisher != null) {
             NotNullLazyValue<Collection<? extends PsiElement>> targetResolver = new NotNullLazyValue<Collection<? extends PsiElement>>() {
                 @NotNull
