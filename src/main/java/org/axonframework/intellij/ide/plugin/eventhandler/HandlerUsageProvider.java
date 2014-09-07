@@ -1,10 +1,10 @@
-package org.axonframework.intellij.ide.plugin.handler;
+package org.axonframework.intellij.ide.plugin.eventhandler;
 
 import com.intellij.codeInsight.daemon.ImplicitUsageProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiParameter;
-import org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager;
+import org.axonframework.intellij.ide.plugin.eventpublisher.PublisherProviderManager;
 
 class HandlerUsageProvider implements ImplicitUsageProvider {
 

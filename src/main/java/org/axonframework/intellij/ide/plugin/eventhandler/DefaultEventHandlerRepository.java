@@ -1,4 +1,4 @@
-package org.axonframework.intellij.ide.plugin.handler;
+package org.axonframework.intellij.ide.plugin.eventhandler;
 
 import com.intellij.psi.PsiType;
 

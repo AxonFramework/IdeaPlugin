@@ -1,4 +1,4 @@
-package org.axonframework.intellij.ide.plugin.publisher;
+package org.axonframework.intellij.ide.plugin.eventpublisher;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;

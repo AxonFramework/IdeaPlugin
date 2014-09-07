@@ -1,0 +1,18 @@
+package org.axonframework.intellij.ide.plugin.eventhandler;
+
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.GlobalSearchScope;
+
+interface EventHandlerProvider {
+
+    void scanHandlers(Project project, GlobalSearchScope scope, Registrar registrar);
+
+    EventHandler resolve(PsiElement element);
+
+    interface Registrar {
+
+        void registerHandler(EventHandler eventHandler);
+
+    }
+}

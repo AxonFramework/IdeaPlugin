@@ -9,11 +9,11 @@ import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.PsiMethodCallExpression;
-import org.axonframework.intellij.ide.plugin.handler.AnnotationTypes;
-import org.axonframework.intellij.ide.plugin.handler.EventHandler;
-import org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager;
-import org.axonframework.intellij.ide.plugin.publisher.EventPublisher;
-import org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager;
+import org.axonframework.intellij.ide.plugin.eventhandler.EventAnnotationTypes;
+import org.axonframework.intellij.ide.plugin.eventhandler.EventHandler;
+import org.axonframework.intellij.ide.plugin.eventhandler.HandlerProviderManager;
+import org.axonframework.intellij.ide.plugin.eventpublisher.EventPublisher;
+import org.axonframework.intellij.ide.plugin.eventpublisher.PublisherProviderManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -84,9 +84,9 @@ public class AxonGutterAnnotator implements Annotator {
     }
 
     private void addCreateEventHandlerQuickFixes(EventPublisher publisher, Annotation gutterIconForPublisher) {
-        gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), AnnotationTypes.EVENT_HANDLER));
-        gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), AnnotationTypes.EVENT_SOURCING_HANDLER));
-        gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), AnnotationTypes.SAGA_EVENT_HANDLER));
+        gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), EventAnnotationTypes.EVENT_HANDLER));
+        gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), EventAnnotationTypes.EVENT_SOURCING_HANDLER));
+        gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), EventAnnotationTypes.SAGA_EVENT_HANDLER));
     }
 
     private static Annotation createGutterIconForHandler(PsiElement psiElement, AnnotationHolder holder,

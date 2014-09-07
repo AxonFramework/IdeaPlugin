@@ -9,7 +9,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.impl.source.codeStyle.ImportHelper;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.axonframework.intellij.ide.plugin.handler.AnnotationTypes;
+import org.axonframework.intellij.ide.plugin.eventhandler.EventAnnotationTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,9 +18,9 @@ import java.util.Collection;
 class CreateEventHandlerQuickfix extends IntentionAndQuickFixAction {
 
     private final PsiType type;
-    private final AnnotationTypes eventHandler;
+    private final EventAnnotationTypes eventHandler;
 
-    public CreateEventHandlerQuickfix(PsiType type, AnnotationTypes eventHandler) {
+    public CreateEventHandlerQuickfix(PsiType type, EventAnnotationTypes eventHandler) {
         this.type = type;
         this.eventHandler = eventHandler;
     }
