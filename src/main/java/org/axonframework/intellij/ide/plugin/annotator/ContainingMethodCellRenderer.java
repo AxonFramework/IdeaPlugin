@@ -5,7 +5,7 @@ import com.intellij.ide.util.PsiElementListCellRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.axonframework.intellij.ide.plugin.eventhandler.IsMethodCondition;
+import org.axonframework.intellij.ide.plugin.handler.IsMethodCondition;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;

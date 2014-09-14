@@ -1,9 +1,12 @@
-package org.axonframework.intellij.ide.plugin.commandhandler;
+package org.axonframework.intellij.ide.plugin.handler;
 
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiImmediateClassType;
 
-class DefaultCommandHandler implements org.axonframework.intellij.ide.plugin.commandhandler.CommandHandler {
+import static org.axonframework.intellij.ide.plugin.handler.InternalEventTypes.ABSTRACT_ANNOTATED_AGGREGATE_ROOT;
+import static org.axonframework.intellij.ide.plugin.handler.InternalEventTypes.ABSTRACT_ANNOTATED_ENTITY;
+
+class DefaultEventHandler implements EventHandler {
 
     private static final String EVENT_HANDLER_ARGUMENT = "eventType";
     private static final String AlTERNATIVE_EVENT_HANDLER_ARGUMENT = "payloadType";
@@ -12,12 +15,12 @@ class DefaultCommandHandler implements org.axonframework.intellij.ide.plugin.com
     private final PsiMethod method;
 
 
-    private DefaultCommandHandler(PsiMethod method) {
+    private DefaultEventHandler(PsiMethod method) {
         this.method = method;
         this.annotationOrMethodArguments = getMethodArguments(method);
     }
 
-    private DefaultCommandHandler(PsiAnnotationMemberValue eventType, PsiMethod method) {
+    private DefaultEventHandler(PsiAnnotationMemberValue eventType, PsiMethod method) {
         this.method = method;
         this.annotationOrMethodArguments = getAnnotationArguments(eventType);
     }
@@ -51,6 +54,42 @@ class DefaultCommandHandler implements org.axonframework.intellij.ide.plugin.com
         return !(method == null || getHandledType() == null) && method.isValid() && getHandledType().isValid();
     }
 
+    @Override
+    public boolean isInternalEvent() {
+        if (method == null) {
+            return false;
+        }
+        if (method.getContainingClass() == null) {
+            return false;
+        }
+        if (method.getContainingClass().getQualifiedName() == null) {
+            return false;
+        }
+
+        PsiClassType[] superTypes = method.getContainingClass().getSuperTypes();
+        for (PsiClassType superType : superTypes) {
+            if (superType.getCanonicalText().startsWith(ABSTRACT_ANNOTATED_AGGREGATE_ROOT.getFullyQualifiedName())
+                    || superType.getCanonicalText().startsWith(ABSTRACT_ANNOTATED_ENTITY.getFullyQualifiedName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isSagaEvent() {
+        PsiAnnotation[] annotations = method.getModifierList().getAnnotations();
+        if (annotations.length < 1) {
+            return false;
+        }
+        for (PsiAnnotation annotation : annotations) {
+            if (AnnotationTypes.SAGA_EVENT_HANDLER.getFullyQualifiedName().equals(annotation.getQualifiedName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private PsiType[] getMethodArguments(PsiMethod method) {
         PsiParameterList list = method.getParameterList();
@@ -75,15 +114,15 @@ class DefaultCommandHandler implements org.axonframework.intellij.ide.plugin.com
         return new PsiType[]{};
     }
 
-    public static org.axonframework.intellij.ide.plugin.commandhandler.CommandHandler createEventHandler(PsiMethod method, PsiAnnotation annotation) {
-        PsiAnnotationMemberValue eventType = annotation.findAttributeValue(DefaultCommandHandler.EVENT_HANDLER_ARGUMENT);
+    public static EventHandler createEventHandler(PsiMethod method, PsiAnnotation annotation) {
+        PsiAnnotationMemberValue eventType = annotation.findAttributeValue(DefaultEventHandler.EVENT_HANDLER_ARGUMENT);
         if (eventType == null) {
             eventType = annotation.findAttributeValue(AlTERNATIVE_EVENT_HANDLER_ARGUMENT);
         }
         if (annotationHasEventTypeArgument(eventType) && hasChildren(eventType)) {
-            return new DefaultCommandHandler(eventType, method);
+            return new DefaultEventHandler(eventType, method);
         }
-        return new DefaultCommandHandler(method);
+        return new DefaultEventHandler(method);
     }
 
     private static boolean annotationHasEventTypeArgument(PsiAnnotationMemberValue eventType) {

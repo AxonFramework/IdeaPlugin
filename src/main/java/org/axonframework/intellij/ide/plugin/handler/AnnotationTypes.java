@@ -1,6 +1,6 @@
-package org.axonframework.intellij.ide.plugin.eventhandler;
+package org.axonframework.intellij.ide.plugin.handler;
 
-public enum EventAnnotationTypes {
+public enum AnnotationTypes {
     EVENT_HANDLER("org.axonframework.eventhandling.annotation.EventHandler", "@EventHandler"),
     EVENT_SOURCING_HANDLER("org.axonframework.eventsourcing.annotation.EventSourcingHandler", "@EventSourcingHandler"),
     SAGA_EVENT_HANDLER("org.axonframework.saga.annotation.SagaEventHandler", "@SagaEventHandler", "associationProperty");
@@ -9,11 +9,11 @@ public enum EventAnnotationTypes {
     private final String annotation;
     private final String requiredProperty;
 
-    EventAnnotationTypes(String fullyQualifiedName, String annotation) {
+    AnnotationTypes(String fullyQualifiedName, String annotation) {
         this(fullyQualifiedName, annotation, null);
     }
 
-    EventAnnotationTypes(String fullyQualifiedName, String annotation, String requiredProperty) {
+    AnnotationTypes(String fullyQualifiedName, String annotation, String requiredProperty) {
         this.fullyQualifiedName = fullyQualifiedName;
         this.annotation = annotation;
         this.requiredProperty = requiredProperty;

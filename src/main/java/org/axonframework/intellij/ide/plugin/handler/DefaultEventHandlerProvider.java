@@ -1,4 +1,4 @@
-package org.axonframework.intellij.ide.plugin.eventhandler;
+package org.axonframework.intellij.ide.plugin.handler;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
@@ -17,7 +17,7 @@ class DefaultEventHandlerProvider implements EventHandlerProvider {
 
     @Override
     public void scanHandlers(Project project, GlobalSearchScope scope, final Registrar registrar) {
-        for (EventAnnotationTypes annotationType : EventAnnotationTypes.values()) {
+        for (AnnotationTypes annotationType : AnnotationTypes.values()) {
             PsiClass eventHandlerAnnotation = JavaPsiFacade.getInstance(project)
                                                            .findClass(annotationType.getFullyQualifiedName(),
                                                                       GlobalSearchScope.allScope(project));
@@ -57,7 +57,7 @@ class DefaultEventHandlerProvider implements EventHandlerProvider {
     }
 
     private PsiAnnotation locateAnnotation(PsiMethod element) {
-        for (EventAnnotationTypes annotationType : EventAnnotationTypes.values()) {
+        for (AnnotationTypes annotationType : AnnotationTypes.values()) {
             PsiAnnotation annotation = element.getModifierList().findAnnotation(annotationType.getFullyQualifiedName());
             if (annotation != null) {
                 return annotation;

@@ -1,9 +1,9 @@
-package org.axonframework.intellij.ide.plugin.commandhandler;
+package org.axonframework.intellij.ide.plugin.handler;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
 
-public interface CommandHandler {
+public interface EventHandler {
 
     /**
      * Returns the PsiType describing the type of Event handled by this handler
@@ -33,4 +33,12 @@ public interface CommandHandler {
      * @return true if the eventHandler can still be accessed on disk
      */
     boolean isValid();
+
+    /**
+     * @return true if eventHandler method is declared on a subclass of AggregateRoot or AbstractEntity
+     */
+    boolean isInternalEvent();
+
+    boolean isSagaEvent();
+
 }

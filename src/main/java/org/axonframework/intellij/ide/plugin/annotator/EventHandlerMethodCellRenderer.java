@@ -6,9 +6,9 @@ import com.intellij.openapi.util.IconLoader;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.axonframework.intellij.ide.plugin.eventhandler.EventHandler;
-import org.axonframework.intellij.ide.plugin.eventhandler.HandlerProviderManager;
-import org.axonframework.intellij.ide.plugin.eventhandler.IsMethodCondition;
+import org.axonframework.intellij.ide.plugin.handler.EventHandler;
+import org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager;
+import org.axonframework.intellij.ide.plugin.handler.IsMethodCondition;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;

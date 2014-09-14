@@ -1,4 +1,4 @@
-package org.axonframework.intellij.ide.plugin.eventhandler;
+package org.axonframework.intellij.ide.plugin.handler;
 
 public enum InternalEventTypes {
     ABSTRACT_ANNOTATED_AGGREGATE_ROOT("org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot"),

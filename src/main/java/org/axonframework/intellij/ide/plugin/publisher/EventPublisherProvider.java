@@ -1,4 +1,4 @@
-package org.axonframework.intellij.ide.plugin.eventpublisher;
+package org.axonframework.intellij.ide.plugin.publisher;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
