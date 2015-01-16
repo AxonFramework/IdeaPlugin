@@ -40,5 +40,4 @@ public interface EventHandler {
     boolean isInternalEvent();
 
     boolean isSagaEvent();
-
 }

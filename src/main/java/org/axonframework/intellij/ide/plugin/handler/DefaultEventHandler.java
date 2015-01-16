@@ -90,7 +90,6 @@ class DefaultEventHandler implements EventHandler {
         return false;
     }
 
-
     private PsiType[] getMethodArguments(PsiMethod method) {
         PsiParameterList list = method.getParameterList();
         PsiType[] argument = new PsiType[list.getParametersCount()];

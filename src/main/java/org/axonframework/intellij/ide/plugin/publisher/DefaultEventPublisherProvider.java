@@ -4,6 +4,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.searches.AllClassesSearch;
+import com.intellij.psi.search.searches.MethodReferencesSearch;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
@@ -59,6 +61,29 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
                 }
             });
         }
+
+        Query<PsiClass> search = AllClassesSearch.search(scope, project);
+        search.forEach(new Processor<PsiClass>() {
+            @Override
+            public boolean process(final PsiClass psiClass) {
+                PsiMethod[] constructors = psiClass.getConstructors();
+                for (PsiMethod constructor : constructors) {
+//                    System.out.println("Constructor: " + constructor);
+                    Query<PsiReference> psiReferences = MethodReferencesSearch.search(constructor);
+                    psiReferences.forEach(new Processor<PsiReference>() {
+                        @Override
+                        public boolean process(PsiReference psiReference) {
+//                            System.out.println("Constructor invocations: " + psiReference.getElement());
+                            registrar.registerPublisher(new CommandEventPublisher(psiClass, psiReference.getElement()));
+                            return true;
+                        }
+                    });
+
+
+                }
+                return true;
+            }
+        });
     }
 
     private void cleanClosedProjects() {

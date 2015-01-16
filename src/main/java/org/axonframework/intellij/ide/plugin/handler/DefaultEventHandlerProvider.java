@@ -1,12 +1,7 @@
 package org.axonframework.intellij.ide.plugin.handler;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -17,22 +12,27 @@ class DefaultEventHandlerProvider implements EventHandlerProvider {
 
     @Override
     public void scanHandlers(Project project, GlobalSearchScope scope, final Registrar registrar) {
-        for (AnnotationTypes annotationType : AnnotationTypes.values()) {
+        for (final AnnotationTypes annotationType : AnnotationTypes.values()) {
             PsiClass eventHandlerAnnotation = JavaPsiFacade.getInstance(project)
-                                                           .findClass(annotationType.getFullyQualifiedName(),
-                                                                      GlobalSearchScope.allScope(project));
+                    .findClass(annotationType.getFullyQualifiedName(),
+                            GlobalSearchScope.allScope(project));
             if (eventHandlerAnnotation != null) {
                 Query<PsiReference> annotationUsages = ReferencesSearch.search(eventHandlerAnnotation, scope);
                 annotationUsages.forEachAsync(new Processor<PsiReference>() {
                     @Override
                     public boolean process(PsiReference psiReference) {
                         PsiMethod method = (PsiMethod) PsiTreeUtil.findFirstParent(psiReference.getElement(),
-                                                                                   new IsMethodCondition());
+                                new IsMethodCondition());
                         if (method != null) {
                             // this doesn't say the method is annotated
                             final PsiAnnotation annotation = locateAnnotation(method);
                             if (annotation != null) {
-                                EventHandler handler = DefaultEventHandler.createEventHandler(method, annotation);
+                                EventHandler handler;
+                                if (annotationType.isCommand()) {
+                                    handler = CommandEventHandler.createEventHandler(method);
+                                } else {
+                                    handler = DefaultEventHandler.createEventHandler(method, annotation);
+                                }
                                 if (handler != null) {
                                     registrar.registerHandler(handler);
                                 }
