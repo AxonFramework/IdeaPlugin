@@ -50,10 +50,8 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
                         if (methodCall.getMethodExpression().getReference() != null) {
                             final PsiMethod referencedMethod = (PsiMethod) methodCall.getMethodExpression()
                                     .getReference().resolve();
-                            if (referencedMethod != null) {
-                                if (expressionTypes.length > 0) {
-                                    registrar.registerPublisher(new DefaultEventPublisher(expressionTypes[0], methodCall));
-                                }
+                            if (referencedMethod != null && expressionTypes.length > 0) {
+                                registrar.registerPublisher(new DefaultEventPublisher(expressionTypes[0], methodCall));
                             }
                         }
                     }
@@ -62,8 +60,8 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
             });
         }
 
-        Query<PsiClass> search = AllClassesSearch.search(scope, project);
-        search.forEach(new Processor<PsiClass>() {
+        Query<PsiClass> allClasses = AllClassesSearch.search(scope, project);
+        allClasses.forEach(new Processor<PsiClass>() {
             @Override
             public boolean process(final PsiClass psiClass) {
                 PsiMethod[] constructors = psiClass.getConstructors();
@@ -76,8 +74,6 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
                             return true;
                         }
                     });
-
-
                 }
                 return true;
             }
