@@ -42,11 +42,17 @@ class DefaultEventHandler implements EventHandler {
     @Override
     public boolean canHandle(PsiType eventType) {
         PsiType handledType = getHandledType();
-        return eventType != null
-                && !(handledType == null)
-                && (handledType.isAssignableFrom(eventType)
-                || ((eventType instanceof PsiImmediateClassType)
-                && handledType.isAssignableFrom(((PsiImmediateClassType) eventType).getParameters()[0])));
+
+        if (eventType == null || handledType == null) {
+            return false;
+        }
+        return handledType.isAssignableFrom(eventType) || isAssignableFromFirstParameter(eventType, handledType);
+    }
+
+    private boolean isAssignableFromFirstParameter(PsiType eventType, PsiType handledType) {
+        return (eventType instanceof PsiImmediateClassType)
+                && ((PsiImmediateClassType) eventType).getParameters().length > 0
+                && handledType.isAssignableFrom(((PsiImmediateClassType) eventType).getParameters()[0]);
     }
 
     @Override
