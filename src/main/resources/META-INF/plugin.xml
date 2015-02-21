@@ -15,6 +15,13 @@
         Version 0.3.2<br />
         -------------<br />
         <ul>
+            <li>FIXED IDEAPLUGIN-13 / IDEAPLUGIN-14 Plugin crashes all the time </li>
+        </ul>
+        <br />
+        <br />
+        Version 0.3.2<br />
+        -------------<br />
+        <ul>
             <li>IDEAPLUGIN-6 Added visual distinction between internal, saga and other events</li>
         </ul>
         <br />
