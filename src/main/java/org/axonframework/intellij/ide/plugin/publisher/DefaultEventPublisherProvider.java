@@ -4,8 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.searches.AllClassesSearch;
-import com.intellij.psi.search.searches.MethodReferencesSearch;
+import com.intellij.psi.search.searches.AnnotationTargetsSearch;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
@@ -23,7 +22,7 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
     private final MultiMap<Project, PsiMethod> publisherMethodsPerProject = new ConcurrentMultiMap<Project, PsiMethod>();
 
     @Override
-    public void scanPublishers(Project project, GlobalSearchScope scope, final Registrar registrar) {
+    public void scanPublishers(final Project project, GlobalSearchScope scope, final Registrar registrar) {
         cleanClosedProjects();
         publisherMethodsPerProject.putValues(project, findMethods(project, GlobalSearchScope.allScope(project),
                 "org.axonframework.eventsourcing.AbstractEventSourcedAggregateRoot", "apply"));
@@ -60,24 +59,29 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
             });
         }
 
-        Query<PsiClass> allClasses = AllClassesSearch.search(scope, project);
-        allClasses.forEach(new Processor<PsiClass>() {
-            @Override
-            public boolean process(final PsiClass psiClass) {
-                PsiMethod[] constructors = psiClass.getConstructors();
-                for (PsiMethod constructor : constructors) {
-                    Query<PsiReference> psiReferences = MethodReferencesSearch.search(constructor);
-                    psiReferences.forEach(new Processor<PsiReference>() {
-                        @Override
-                        public boolean process(PsiReference psiReference) {
-                            registrar.registerPublisher(new CommandEventPublisher(psiClass, psiReference.getElement()));
-                            return true;
+        PsiClass commandHandlerAnnotation = JavaPsiFacade.getInstance(project).findClass("org.axonframework.commandhandling.annotation.CommandHandler", scope);
+        if (commandHandlerAnnotation != null) {
+            Query<PsiModifierListOwner> methodsWithCommandHandler = AnnotationTargetsSearch.search(commandHandlerAnnotation, scope);
+
+            methodsWithCommandHandler.forEach(new Processor<PsiModifierListOwner>() {
+                @Override
+                public boolean process(final PsiModifierListOwner modifierListOwner) {
+                    if (modifierListOwner instanceof PsiMethod) {
+                        PsiMethod method = (PsiMethod) modifierListOwner;
+                        PsiParameterList parameterList = method.getParameterList();
+                        if (parameterList.getChildren().length > 0) {
+                            PsiElement firstParameter = parameterList.getFirstChild();
+                            if (firstParameter instanceof PsiClass) {
+                                registrar.registerPublisher(new CommandEventPublisher((PsiClass) firstParameter, modifierListOwner));
+                                return true;
+                            }
                         }
-                    });
+                    }
+                    return true;
                 }
-                return true;
-            }
-        });
+            });
+        }
+
     }
 
     private void cleanClosedProjects() {
