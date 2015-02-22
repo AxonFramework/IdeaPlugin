@@ -16,11 +16,11 @@ import org.axonframework.intellij.ide.plugin.publisher.EventPublisher;
 import org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.swing.*;
 
 /**
  * This class shows an icon in the gutter when an Axon annotation is found. The icon can be used to navigate to all
@@ -96,7 +96,7 @@ public class AxonGutterAnnotator implements Annotator {
                 .setTargets(targetResolver)
                 .setPopupTitle("Publishers")
                 .setCellRenderer(new ContainingMethodCellRenderer())
-                .setTooltipText("Navigate to the publishers of this event")
+                .setTooltipText("Navigate to the publishers")
                 .install(holder, psiElement);
     }
 
@@ -107,7 +107,7 @@ public class AxonGutterAnnotator implements Annotator {
                 .setTargets(targetResolver)
                 .setPopupTitle("Event Handlers")
                 .setCellRenderer(new EventHandlerMethodCellRenderer(handlerManager))
-                .setTooltipText("Navigate to the handlers for this event")
+                .setTooltipText("Navigate to the handlers")
                 .install(holder, psiElement);
     }
 

@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.searches.AnnotationTargetsSearch;
+import com.intellij.psi.search.searches.MethodReferencesSearch;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
@@ -31,6 +31,77 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
         publisherMethodsPerProject.putValues(project, findMethods(project, GlobalSearchScope.allScope(project),
                 "org.axonframework.eventsourcing.AbstractEventSourcedEntity", "apply"));
 
+        scanEventPublishers(scope, registrar);
+        scanCommandPublishers(project, scope, registrar);
+    }
+
+    private void scanCommandPublishers(final Project project, GlobalSearchScope scope, final Registrar registrar) {
+        PsiClass commandHandlerAnnotation = findCommandHandlersAnnotation(project);
+        if (commandHandlerAnnotation != null) {
+            Query<PsiReference> annotationUsages = ReferencesSearch.search(commandHandlerAnnotation, scope);
+            annotationUsages.forEachAsync(new Processor<PsiReference>() {
+                @Override
+                public boolean process(PsiReference psiReference) {
+                    PsiMethod method = (PsiMethod) PsiTreeUtil.findFirstParent(psiReference.getElement(),
+                            new IsMethodWithParameterCondition());
+                    if (methodHasParameter(method)) {
+                        PsiAnnotation methodAnnotation = method.getModifierList().findAnnotation("org.axonframework.commandhandling.annotation.CommandHandler");
+                        PsiParameter firstCommandHandlerArgument = method.getParameterList().getParameters()[0];
+                        if (methodIsAnnotatedAsCommandHandler(methodAnnotation)) {
+                            PsiTypeElement firstCommandHandlerArgumentType = firstCommandHandlerArgument.getTypeElement();
+                            if (methodArgumentIsTyped(firstCommandHandlerArgumentType)) {
+                                findAndRegisterAllConstructors(firstCommandHandlerArgumentType);
+                            }
+                        }
+                    }
+                    return true;
+                }
+
+                private boolean methodArgumentIsTyped(PsiTypeElement firstCommandHandlerArgumentType) {
+                    return firstCommandHandlerArgumentType != null;
+                }
+
+                private boolean methodIsAnnotatedAsCommandHandler(PsiAnnotation methodCommandHandlerAnnotation) {
+                    return methodCommandHandlerAnnotation != null;
+                }
+
+                private void findAndRegisterAllConstructors(PsiTypeElement firstCommandHandlerArgumentType) {
+                    final PsiType type = firstCommandHandlerArgumentType.getType();
+                    PsiClass parameterClass = JavaPsiFacade.getInstance(project)
+                            .findClass(type.getCanonicalText(), GlobalSearchScope.allScope(project));
+                    if (parameterClass != null) {
+                        PsiMethod[] constructors = parameterClass.getConstructors();
+                        registerAllConstructorInvocations(type, constructors);
+                    }
+                }
+
+                private void registerAllConstructorInvocations(final PsiType type, PsiMethod[] constructors) {
+                    for (PsiMethod constructor : constructors) {
+                        Query<PsiReference> constructorCalls = MethodReferencesSearch.search(constructor);
+                        constructorCalls.forEachAsync(new Processor<PsiReference>() {
+                            @Override
+                            public boolean process(PsiReference psiReference) {
+                                registrar.registerPublisher(new CommandEventPublisher(type, psiReference.getElement()));
+                                return true;
+                            }
+                        });
+                    }
+                }
+
+                private boolean methodHasParameter(PsiMethod method) {
+                    return method != null;
+                }
+            });
+        }
+    }
+
+    private PsiClass findCommandHandlersAnnotation(Project project) {
+        return JavaPsiFacade.getInstance(project)
+                .findClass("org.axonframework.commandhandling.annotation.CommandHandler",
+                        GlobalSearchScope.allScope(project));
+    }
+
+    private void scanEventPublishers(GlobalSearchScope scope, final Registrar registrar) {
         for (PsiMethod method : publisherMethodsPerProject.values()) {
             Query<PsiReference> invocations = ReferencesSearch.search(method, scope);
             invocations.forEachAsync(new Processor<PsiReference>() {
@@ -58,31 +129,8 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
                 }
             });
         }
-
-        PsiClass commandHandlerAnnotation = JavaPsiFacade.getInstance(project).findClass("org.axonframework.commandhandling.annotation.CommandHandler", scope);
-        if (commandHandlerAnnotation != null) {
-            Query<PsiModifierListOwner> methodsWithCommandHandler = AnnotationTargetsSearch.search(commandHandlerAnnotation, scope);
-
-            methodsWithCommandHandler.forEach(new Processor<PsiModifierListOwner>() {
-                @Override
-                public boolean process(final PsiModifierListOwner modifierListOwner) {
-                    if (modifierListOwner instanceof PsiMethod) {
-                        PsiMethod method = (PsiMethod) modifierListOwner;
-                        PsiParameterList parameterList = method.getParameterList();
-                        if (parameterList.getChildren().length > 0) {
-                            PsiElement firstParameter = parameterList.getFirstChild();
-                            if (firstParameter instanceof PsiClass) {
-                                registrar.registerPublisher(new CommandEventPublisher((PsiClass) firstParameter, modifierListOwner));
-                                return true;
-                            }
-                        }
-                    }
-                    return true;
-                }
-            });
-        }
-
     }
+
 
     private void cleanClosedProjects() {
         for (Project project : publisherMethodsPerProject.keySet()) {

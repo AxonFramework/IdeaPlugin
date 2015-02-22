@@ -5,21 +5,21 @@ import com.intellij.psi.*;
 public class CommandEventPublisher implements EventPublisher {
 
     private final PsiElement psiElement;
-    private PsiClass commandType;
+    private PsiType commandType;
 
-    public CommandEventPublisher(PsiClass psiClass, PsiElement psiElement) {
-        this.commandType = psiClass;
+    public CommandEventPublisher(PsiType psiType, PsiElement psiElement) {
+        this.commandType = psiType;
         this.psiElement = psiElement;
     }
 
     @Override
     public boolean canPublishType(PsiType eventType) {
-        return eventType.getCanonicalText().equals(commandType.getQualifiedName());
+        return eventType.isAssignableFrom(commandType);
     }
 
     @Override
     public PsiType getPublishedType() {
-        return null;
+        return commandType;
     }
 
     @Override
