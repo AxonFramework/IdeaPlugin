@@ -12,7 +12,14 @@
     </description>
 
     <change-notes><![CDATA[
-        Version 0.3.2<br />
+        Version 0.3.4<br />
+        -------------<br />
+        <ul>
+            <li>FIXED IDEAPLUGIN-4 @CommandHandler now links to the constructor of the commandhandler argument</li>
+        </ul>
+        <br />
+        <br />
+        Version 0.3.3<br />
         -------------<br />
         <ul>
             <li>FIXED IDEAPLUGIN-13 / IDEAPLUGIN-14 Plugin crashes all the time </li>
