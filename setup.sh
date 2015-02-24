@@ -1,5 +1,5 @@
 #!/bin/sh
-export IDEA="/C/Program Files (x86)/JetBrains/IntelliJ IDEA 14"
+export IDEA="/C/Program Files (x86)/JetBrains/IntelliJ IDEA 14.0"
 if [ ! -e "$IDEA" ]
 then
     export IDEA="/Applications/IntelliJ IDEA 14.app/Contents"
