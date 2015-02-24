@@ -14,7 +14,7 @@ public class CommandEventPublisher implements EventPublisher {
 
     @Override
     public boolean canPublishType(PsiType eventType) {
-        return eventType.isAssignableFrom(commandType);
+        return eventType != null && eventType.isAssignableFrom(commandType);
     }
 
     @Override

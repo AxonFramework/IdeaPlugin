@@ -80,8 +80,14 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
                             .findClass(type.getCanonicalText(), GlobalSearchScope.allScope(project));
                     if (parameterClass != null) {
                         PsiMethod[] constructors = parameterClass.getConstructors();
-                        registerAllConstructorInvocations(type, constructors);
+                        if (parameterClassHasConstructor(constructors)) {
+                            registerAllConstructorInvocations(type, constructors);
+                        }
                     }
+                }
+
+                private boolean parameterClassHasConstructor(PsiMethod[] constructors) {
+                    return constructors.length > 0;
                 }
 
                 private void registerAllConstructorInvocations(final PsiType type, PsiMethod[] constructors) {

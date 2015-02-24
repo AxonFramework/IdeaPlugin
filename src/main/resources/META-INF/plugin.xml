@@ -12,6 +12,13 @@
     </description>
 
     <change-notes><![CDATA[
+        Version 0.3.5<br />
+        -------------<br />
+        <ul>
+            <li>Several bugfixes for IDEAPLUGIN-4</li>
+        </ul>
+        <br />
+        <br />
         Version 0.3.4<br />
         -------------<br />
         <ul>
