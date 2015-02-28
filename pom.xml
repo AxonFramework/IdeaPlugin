@@ -4,7 +4,7 @@
 
     <groupId>org.axonframework</groupId>
     <artifactId>axonframework.intellij.ide</artifactId>
-    <version>0.3.5</version>
+    <version>0.3.6-SNAPSHOT</version>
     <name>Axonframework IntelliJ Plugin</name>
     <description>
         This plugin integrates Axon Framework.
