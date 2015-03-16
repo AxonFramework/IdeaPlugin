@@ -1,5 +1,6 @@
 package org.axonframework.intellij.ide.plugin.publisher;
 
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.JavaPsiFacade;
@@ -118,7 +119,7 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
 
     private void scanEventPublishers(GlobalSearchScope scope, final Registrar registrar) {
         for (PsiMethod method : publisherMethodsPerProject.values()) {
-            Query<PsiReference> invocations = ReferencesSearch.search(method, scope);
+            Query<PsiReference> invocations = ReferencesSearch.search(method, GlobalSearchScope.getScopeRestrictedByFileTypes(scope, JavaFileType.INSTANCE));
             invocations.forEachAsync(new Processor<PsiReference>() {
                 @Override
                 public boolean process(PsiReference psiReference) {
