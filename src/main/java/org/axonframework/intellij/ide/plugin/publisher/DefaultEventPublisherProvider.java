@@ -37,8 +37,11 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
         cleanClosedProjects();
         Set<PsiMethod> psiMethods = publisherMethodsPerProject.get(project);
         if (psiMethods == null) {
-            psiMethods = new HashSet<PsiMethod>();
-            publisherMethodsPerProject.put(project, psiMethods);
+            final Set<PsiMethod> newHashSet = new HashSet<PsiMethod>();
+            psiMethods = publisherMethodsPerProject.putIfAbsent(project, newHashSet);
+            if (psiMethods == null) {
+                psiMethods = newHashSet;
+            }
         }
         psiMethods.addAll(findMethods(project, GlobalSearchScope.allScope(project),
                 "org.axonframework.eventsourcing.AbstractEventSourcedAggregateRoot", "apply"));
