@@ -1,5 +1,6 @@
 package org.axonframework.intellij.ide.plugin.publisher;
 
+import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.JavaPsiFacade;
@@ -40,14 +41,17 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
         publisherMethodsPerProject.putValues(project, findMethods(project, GlobalSearchScope.allScope(project),
                 "org.axonframework.eventsourcing.AbstractEventSourcedEntity", "apply"));
 
-        scanEventPublishers(scope, registrar);
-        scanCommandPublishers(project, scope, registrar);
+        GlobalSearchScope scopeNarrowedToJavaSourceFiles =
+                GlobalSearchScope.getScopeRestrictedByFileTypes(scope, StdFileTypes.JAVA);
+        scanEventPublishers(scopeNarrowedToJavaSourceFiles, registrar);
+        scanCommandPublishers(project, scopeNarrowedToJavaSourceFiles, registrar);
     }
 
     private void scanCommandPublishers(final Project project, GlobalSearchScope scope, final Registrar registrar) {
         PsiClass commandHandlerAnnotation = findCommandHandlersAnnotation(project);
         if (commandHandlerAnnotation != null) {
-            Query<PsiReference> annotationUsages = ReferencesSearch.search(commandHandlerAnnotation, scope);
+            Query<PsiReference> annotationUsages =
+                    ReferencesSearch.search(commandHandlerAnnotation, scope);
             annotationUsages.forEachAsync(new Processor<PsiReference>() {
                 @Override
                 public boolean process(PsiReference psiReference) {
@@ -117,8 +121,9 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
     }
 
     private void scanEventPublishers(GlobalSearchScope scope, final Registrar registrar) {
-        for (PsiMethod method : publisherMethodsPerProject.values()) {
-            Query<PsiReference> invocations = ReferencesSearch.search(method, scope);
+        for (final PsiMethod method : publisherMethodsPerProject.values()) {
+            Query<PsiReference> invocations =
+                    MethodReferencesSearch.search(method, scope, false);
             invocations.forEachAsync(new Processor<PsiReference>() {
                 @Override
                 public boolean process(PsiReference psiReference) {
