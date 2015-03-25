@@ -40,30 +40,26 @@ public class AxonGutterAnnotator implements Annotator {
         if (element instanceof PsiClass) {
             tryAnnotateEventClass(holder, (PsiClass) element, publisherManager, handlerManager);
             tryAnnotateCommandClass(holder, (PsiClass) element, handlerManager);
-        }
-
-        if (!(element instanceof PsiMethodCallExpression || element instanceof PsiIdentifier)) {
-            return;
-        }
-
-        final EventPublisher publisher = publisherManager.resolveEventPublisher(element);
-        final EventHandler handler = handlerManager.resolveEventHandler(element.getContext());
-        if (publisher != null) {
-            NotNullLazyValue<Collection<? extends PsiElement>> targetResolver =
-                    createNotNullLazyValueForHandlers(handlerManager.getRepository().findHandlers(publisher.getPublishedType()));
-            Annotation gutterIconForPublisher = createGutterIconForEventHandlers(element, holder, targetResolver, handlerManager);
-            if (targetResolver.getValue().isEmpty()) {
-                addCreateEventHandlerQuickFixes(publisher, gutterIconForPublisher);
+        } else if ((element instanceof PsiMethodCallExpression || element instanceof PsiIdentifier)) {
+            final EventPublisher publisher = publisherManager.resolveEventPublisher(element);
+            final EventHandler handler = handlerManager.resolveEventHandler(element.getContext());
+            if (publisher != null) {
+                NotNullLazyValue<Collection<? extends PsiElement>> targetResolver =
+                        createNotNullLazyValueForHandlers(handlerManager.getRepository().findHandlers(publisher.getPublishedType()));
+                Annotation gutterIconForPublisher = createGutterIconForEventHandlers(element, holder, targetResolver, handlerManager);
+                if (targetResolver.getValue().isEmpty()) {
+                    addCreateEventHandlerQuickFixes(publisher, gutterIconForPublisher);
+                }
             }
-        }
 
-        if (handler != null) {
-            Collection<EventPublisher> publishers = publisherManager.getRepository()
-                    .getPublishersFor(handler.getHandledType());
-            createGutterIconForEventPublishers(
-                    handler.getElementForAnnotation(),
-                    holder,
-                    createNotNullLazyValueForPublishers(publishers));
+            if (handler != null) {
+                Collection<EventPublisher> publishers = publisherManager.getRepository()
+                        .getPublishersFor(handler.getHandledType());
+                createGutterIconForEventPublishers(
+                        handler.getElementForAnnotation(),
+                        holder,
+                        createNotNullLazyValueForPublishers(publishers));
+            }
         }
     }
 
