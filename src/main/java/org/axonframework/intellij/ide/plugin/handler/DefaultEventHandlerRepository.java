@@ -33,4 +33,26 @@ class DefaultEventHandlerRepository implements EventHandlerRepository {
         }
         return found;
     }
+
+    @Override
+    public Set<EventHandler> findEventHandlers(PsiType eventType) {
+        Set<EventHandler> found = new HashSet<EventHandler>();
+        for (EventHandler eventHandler : findHandlers(eventType)) {
+            if (!(eventHandler instanceof CommandEventHandler)) {
+                found.add(eventHandler);
+            }
+        }
+        return found;
+    }
+
+    @Override
+    public Set<EventHandler> findCommandHandlers(PsiType eventType) {
+        Set<EventHandler> found = new HashSet<EventHandler>();
+        for (EventHandler eventHandler : findHandlers(eventType)) {
+            if (eventHandler instanceof CommandEventHandler) {
+                found.add(eventHandler);
+            }
+        }
+        return found;
+    }
 }

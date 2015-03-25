@@ -32,7 +32,4 @@ public enum AnnotationTypes {
         return requiredProperty;
     }
 
-    public boolean isCommand() {
-        return this.annotation.equals("@CommandHandler");
-    }
 }

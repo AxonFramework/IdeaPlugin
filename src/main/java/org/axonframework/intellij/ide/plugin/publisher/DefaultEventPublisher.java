@@ -20,8 +20,9 @@ class DefaultEventPublisher implements EventPublisher {
                 && publishedType != null
                 && eventType.isValid()
                 && (eventType.isAssignableFrom(publishedType)
-                || eventType instanceof PsiImmediateClassType
-                && ((PsiImmediateClassType) eventType).getParameters()[0].isAssignableFrom(publishedType));
+                || (eventType instanceof PsiImmediateClassType
+                    && ((PsiImmediateClassType) eventType).getParameterCount() > 0
+                    && ((PsiImmediateClassType) eventType).getParameters()[0].isAssignableFrom(publishedType)));
 
     }
 
