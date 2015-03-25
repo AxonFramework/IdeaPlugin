@@ -12,6 +12,13 @@
     </description>
 
     <change-notes><![CDATA[
+        Version 0.3.6<br />
+        -------------<br />
+        <ul>
+            <li>Performance improvements thanks to Pawel Badenski</li>
+        </ul>
+        <br />
+        <br />
         Version 0.3.5<br />
         -------------<br />
         <ul>

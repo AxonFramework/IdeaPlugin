@@ -1,6 +1,6 @@
 package org.axonframework.intellij.ide.plugin.publisher;
 
-import com.intellij.ide.highlighter.JavaFileType;
+import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.JavaPsiFacade;
@@ -19,36 +19,42 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.Query;
-import com.intellij.util.containers.ConcurrentMultiMap;
-import com.intellij.util.containers.MultiMap;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Arrays.asList;
 
 class DefaultEventPublisherProvider implements EventPublisherProvider {
 
-    private final MultiMap<Project, PsiMethod> publisherMethodsPerProject = new ConcurrentMultiMap<Project, PsiMethod>();
+    private final Map<Project, Set<PsiMethod>> publisherMethodsPerProject = new ConcurrentHashMap<Project, Set<PsiMethod>>();
 
     @Override
     public void scanPublishers(final Project project, GlobalSearchScope scope, final Registrar registrar) {
         cleanClosedProjects();
-        publisherMethodsPerProject.putValues(project, findMethods(project, GlobalSearchScope.allScope(project),
+        publisherMethodsPerProject.putIfAbsent(project, new HashSet<PsiMethod>());
+        Set<PsiMethod> psiMethods = publisherMethodsPerProject.get(project);
+        psiMethods.addAll(findMethods(project, GlobalSearchScope.allScope(project),
                 "org.axonframework.eventsourcing.AbstractEventSourcedAggregateRoot", "apply"));
-        publisherMethodsPerProject.putValues(project, findMethods(project, GlobalSearchScope.allScope(project),
+        psiMethods.addAll(findMethods(project, GlobalSearchScope.allScope(project),
                 "org.axonframework.domain.AbstractAggregateRoot", "registerEvent"));
-        publisherMethodsPerProject.putValues(project, findMethods(project, GlobalSearchScope.allScope(project),
+        psiMethods.addAll(findMethods(project, GlobalSearchScope.allScope(project),
                 "org.axonframework.eventsourcing.AbstractEventSourcedEntity", "apply"));
 
-        scanEventPublishers(scope, registrar);
-        scanCommandPublishers(project, scope, registrar);
+        GlobalSearchScope scopeNarrowedToJavaSourceFiles =
+                GlobalSearchScope.getScopeRestrictedByFileTypes(scope, StdFileTypes.JAVA);
+        scanEventPublishers(project, scopeNarrowedToJavaSourceFiles, registrar);
+        scanCommandPublishers(project, scopeNarrowedToJavaSourceFiles, registrar);
     }
 
     private void scanCommandPublishers(final Project project, GlobalSearchScope scope, final Registrar registrar) {
         PsiClass commandHandlerAnnotation = findCommandHandlersAnnotation(project);
         if (commandHandlerAnnotation != null) {
-            Query<PsiReference> annotationUsages = ReferencesSearch.search(commandHandlerAnnotation, scope);
+            Query<PsiReference> annotationUsages =
+                    ReferencesSearch.search(commandHandlerAnnotation, scope);
             annotationUsages.forEachAsync(new Processor<PsiReference>() {
                 @Override
                 public boolean process(PsiReference psiReference) {
@@ -117,9 +123,10 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
                         GlobalSearchScope.allScope(project));
     }
 
-    private void scanEventPublishers(GlobalSearchScope scope, final Registrar registrar) {
-        for (PsiMethod method : publisherMethodsPerProject.values()) {
-            Query<PsiReference> invocations = ReferencesSearch.search(method, GlobalSearchScope.getScopeRestrictedByFileTypes(scope, JavaFileType.INSTANCE));
+    private void scanEventPublishers(Project project, GlobalSearchScope scope, final Registrar registrar) {
+        for (final PsiMethod method : publisherMethodsPerProject.get(project)) {
+            Query<PsiReference> invocations =
+                    MethodReferencesSearch.search(method, scope, false);
             invocations.forEachAsync(new Processor<PsiReference>() {
                 @Override
                 public boolean process(PsiReference psiReference) {
@@ -156,13 +163,13 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
         }
     }
 
-    private List<PsiMethod> findMethods(Project project, GlobalSearchScope allScope, String className,
-                                        String methodName) {
+    private Set<PsiMethod> findMethods(Project project, GlobalSearchScope allScope, String className,
+                                       String methodName) {
         PsiClass aggregateClass = JavaPsiFacade.getInstance(project).findClass(className, allScope);
         if (aggregateClass != null) {
-            return asList(aggregateClass.findMethodsByName(methodName, true));
+            return new HashSet<PsiMethod>(asList(aggregateClass.findMethodsByName(methodName, true)));
         }
-        return Collections.emptyList();
+        return Collections.emptySet();
     }
 
     @Override
