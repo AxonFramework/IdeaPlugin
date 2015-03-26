@@ -15,7 +15,7 @@
         Version 0.3.6<br />
         -------------<br />
         <ul>
-            <li>Performance improvements thanks to Pawel Badenski</li>
+            <li>Performance improvements and navigation from event classes and command classes to handlers (thanks to Pawel Badenski)</li>
         </ul>
         <br />
         <br />
