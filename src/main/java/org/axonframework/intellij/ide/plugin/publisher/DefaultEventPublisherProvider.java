@@ -3,16 +3,7 @@ package org.axonframework.intellij.ide.plugin.publisher;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiMethodCallExpression;
-import com.intellij.psi.PsiParameter;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiType;
-import com.intellij.psi.PsiTypeElement;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.MethodReferencesSearch;
 import com.intellij.psi.search.searches.ReferencesSearch;
@@ -22,7 +13,6 @@ import com.intellij.util.Query;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,7 +20,7 @@ import static java.util.Arrays.asList;
 
 class DefaultEventPublisherProvider implements EventPublisherProvider {
 
-    private final Map<Project, Set<PsiMethod>> publisherMethodsPerProject = new ConcurrentHashMap<Project, Set<PsiMethod>>();
+    private final ConcurrentHashMap<Project, Set<PsiMethod>> publisherMethodsPerProject = new ConcurrentHashMap<Project, Set<PsiMethod>>();
 
     @Override
     public void scanPublishers(final Project project, GlobalSearchScope scope, final Registrar registrar) {
