@@ -52,7 +52,7 @@ class DefaultEventHandlerProvider implements EventHandlerProvider {
     }
 
     private EventHandler createHandlerBasedOnAnnotation(PsiMethod method, PsiAnnotation annotation) {
-        if (annotation.getText().equals(AnnotationTypes.COMMAND_EVENT_HANDLER.getAnnotation())) {
+        if (AnnotationTypes.COMMAND_EVENT_HANDLER.getFullyQualifiedName().equals(annotation.getQualifiedName())) {
             return CommandEventHandler.createEventHandler(method);
         } else {
             return DefaultEventHandler.createEventHandler(method, annotation);
