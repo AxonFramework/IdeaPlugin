@@ -9,4 +9,8 @@ public interface EventHandlerRepository {
     void registerHandler(EventHandler eventHandler);
 
     Set<EventHandler> findHandlers(PsiType eventType);
+
+    Set<EventHandler> findEventHandlers(PsiType eventType);
+
+    Set<EventHandler> findCommandHandlers(PsiType eventType);
 }

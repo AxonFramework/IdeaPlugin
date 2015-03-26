@@ -6,9 +6,11 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.PsiMethodCallExpression;
+import com.intellij.psi.util.PsiTypesUtil;
 import org.axonframework.intellij.ide.plugin.handler.AnnotationTypes;
 import org.axonframework.intellij.ide.plugin.handler.EventHandler;
 import org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager;
@@ -33,53 +35,96 @@ public class AxonGutterAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull final PsiElement element, @NotNull AnnotationHolder holder) {
-        if (!(element instanceof PsiMethodCallExpression || element instanceof PsiIdentifier)) {
-            return;
-        }
-
         final PublisherProviderManager publisherManager = PublisherProviderManager.getInstance(element.getProject());
         final HandlerProviderManager handlerManager = HandlerProviderManager.getInstance(element.getProject());
-        final EventPublisher publisher = publisherManager.resolveEventPublisher(element);
-        final EventHandler handler = handlerManager.resolveEventHandler(element.getContext());
-        if (publisher != null) {
-            NotNullLazyValue<Collection<? extends PsiElement>> targetResolver = new NotNullLazyValue<Collection<? extends PsiElement>>() {
-                @NotNull
-                @Override
-                protected Collection<? extends PsiElement> compute() {
-                    Set<EventHandler> handlers = handlerManager.getRepository().findHandlers(publisher.getPublishedType());
-                    Set<PsiEventHandlerWrapper> destinations = new TreeSet<PsiEventHandlerWrapper>();
-                    for (EventHandler eventHandler : handlers) {
-                        PsiElement elementForAnnotation = eventHandler.getElementForAnnotation();
-                        if (elementForAnnotation.isValid()) {
-                            destinations.add(new PsiEventHandlerWrapper(elementForAnnotation, eventHandler));
-                        }
-                    }
-                    return destinations;
+        if (element instanceof PsiClass) {
+            tryAnnotateEventClass(holder, (PsiClass) element, publisherManager, handlerManager);
+            tryAnnotateCommandClass(holder, (PsiClass) element, handlerManager);
+        } else if ((element instanceof PsiMethodCallExpression || element instanceof PsiIdentifier)) {
+            final EventPublisher publisher = publisherManager.resolveEventPublisher(element);
+            final EventHandler handler = handlerManager.resolveEventHandler(element.getContext());
+            if (publisher != null) {
+                NotNullLazyValue<Collection<? extends PsiElement>> targetResolver =
+                        createNotNullLazyValueForHandlers(handlerManager.getRepository().findHandlers(publisher.getPublishedType()));
+                Annotation gutterIconForPublisher = createGutterIconForEventHandlers(element, holder, targetResolver, handlerManager);
+                if (targetResolver.getValue().isEmpty()) {
+                    addCreateEventHandlerQuickFixes(publisher, gutterIconForPublisher);
                 }
-            };
-            Annotation gutterIconForPublisher = createGutterIconForPublisher(element, holder, targetResolver, handlerManager);
-            if (targetResolver.getValue().isEmpty()) {
-                addCreateEventHandlerQuickFixes(publisher, gutterIconForPublisher);
+            }
+
+            if (handler != null) {
+                Collection<EventPublisher> publishers = publisherManager.getRepository()
+                        .getPublishersFor(handler.getHandledType());
+                createGutterIconForEventPublishers(
+                        handler.getElementForAnnotation(),
+                        holder,
+                        createNotNullLazyValueForPublishers(publishers));
             }
         }
+    }
 
-        if (handler != null) {
-            createGutterIconForHandler(handler.getElementForAnnotation(), holder, new NotNullLazyValue<Collection<? extends PsiElement>>() {
-                @NotNull
-                @Override
-                protected Collection<? extends PsiElement> compute() {
-                    Collection<EventPublisher> publishers = publisherManager.getRepository()
-                            .getPublishersFor(handler.getHandledType());
-                    Collection<PsiElement> publishLocations = new ArrayList<PsiElement>();
-                    for (EventPublisher eventPublisher : publishers) {
-                        PsiElement psiElement = eventPublisher.getPsiElement();
-                        if (psiElement.isValid()) {
-                            publishLocations.add(psiElement);
-                        }
+    private NotNullLazyValue<Collection<? extends PsiElement>> createNotNullLazyValueForPublishers(final Collection<EventPublisher> publishers) {
+        return new NotNullLazyValue<Collection<? extends PsiElement>>() {
+            @NotNull
+            @Override
+            protected Collection<? extends PsiElement> compute() {
+                Collection<PsiElement> publishLocations = new ArrayList<PsiElement>();
+                for (EventPublisher eventPublisher : publishers) {
+                    PsiElement psiElement = eventPublisher.getPsiElement();
+                    if (psiElement.isValid()) {
+                        publishLocations.add(psiElement);
                     }
-                    return publishLocations;
                 }
-            });
+                return publishLocations;
+            }
+        };
+    }
+
+    private NotNullLazyValue<Collection<? extends PsiElement>> createNotNullLazyValueForHandlers(final Set<EventHandler> handlers) {
+        return new NotNullLazyValue<Collection<? extends PsiElement>>() {
+            @NotNull
+            @Override
+            protected Collection<? extends PsiElement> compute() {
+                Set<PsiEventHandlerWrapper> destinations = new TreeSet<PsiEventHandlerWrapper>();
+                for (EventHandler eventHandler : handlers) {
+                    PsiElement elementForAnnotation = eventHandler.getElementForAnnotation();
+                    if (elementForAnnotation.isValid()) {
+                        destinations.add(new PsiEventHandlerWrapper(elementForAnnotation, eventHandler));
+                    }
+                }
+                return destinations;
+            }
+        };
+    }
+
+    private void tryAnnotateCommandClass(AnnotationHolder holder, PsiClass classElement, HandlerProviderManager handlerManager) {
+        Set<EventHandler> handlers =
+                handlerManager.getRepository().findCommandHandlers(PsiTypesUtil.getClassType(classElement));
+        if (!handlers.isEmpty()) {
+            createGutterIconForCommandHandlers(
+                    classElement.getNameIdentifier(),
+                    holder,
+                    createNotNullLazyValueForHandlers(handlers));
+        }
+    }
+
+    private void tryAnnotateEventClass(AnnotationHolder holder, PsiClass classElement,
+                                       PublisherProviderManager publisherManager, HandlerProviderManager handlerManager) {
+        Set<EventPublisher> publishers = publisherManager.getRepository().getPublishersFor(PsiTypesUtil.getClassType(classElement));
+        if (!publishers.isEmpty()) {
+            createGutterIconForEventPublishers(
+                    classElement.getNameIdentifier(),
+                    holder,
+                    createNotNullLazyValueForPublishers(publishers));
+        }
+        Set<EventHandler> handlers =
+                handlerManager.getRepository().findEventHandlers(PsiTypesUtil.getClassType(classElement));
+        if (!handlers.isEmpty()) {
+            createGutterIconForEventHandlers(
+                    classElement.getNameIdentifier(),
+                    holder,
+                    createNotNullLazyValueForHandlers(handlers),
+                    handlerManager);
         }
     }
 
@@ -89,8 +134,8 @@ public class AxonGutterAnnotator implements Annotator {
         gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), AnnotationTypes.SAGA_EVENT_HANDLER));
     }
 
-    private static Annotation createGutterIconForHandler(PsiElement psiElement, AnnotationHolder holder,
-                                                         NotNullLazyValue<Collection<? extends PsiElement>> targetResolver) {
+    private static Annotation createGutterIconForEventPublishers(PsiElement psiElement, AnnotationHolder holder,
+                                                                 NotNullLazyValue<Collection<? extends PsiElement>> targetResolver) {
         return NavigationGutterIconBuilder.create(AxonIconIn)
                 .setEmptyPopupText("No publishers found for this event")
                 .setTargets(targetResolver)
@@ -100,8 +145,20 @@ public class AxonGutterAnnotator implements Annotator {
                 .install(holder, psiElement);
     }
 
-    private static Annotation createGutterIconForPublisher(PsiElement psiElement, AnnotationHolder holder,
-                                                           NotNullLazyValue<Collection<? extends PsiElement>> targetResolver, HandlerProviderManager handlerManager) {
+    private static Annotation createGutterIconForCommandHandlers(PsiElement psiElement, AnnotationHolder holder,
+                                                                 NotNullLazyValue<Collection<? extends PsiElement>> targetResolver) {
+        return NavigationGutterIconBuilder.create(AxonIconIn)
+                .setEmptyPopupText("No handlers found for this command")
+                .setTargets(targetResolver)
+                .setPopupTitle("Command handlers")
+                .setCellRenderer(new ContainingMethodCellRenderer())
+                .setTooltipText("Navigate to the handlers")
+                .install(holder, psiElement);
+    }
+
+    private static Annotation createGutterIconForEventHandlers(PsiElement psiElement, AnnotationHolder holder,
+                                                               NotNullLazyValue<Collection<? extends PsiElement>> targetResolver,
+                                                               HandlerProviderManager handlerManager) {
         return NavigationGutterIconBuilder.create(AxonIconOut)
                 .setEmptyPopupText("No handlers found for this event")
                 .setTargets(targetResolver)
