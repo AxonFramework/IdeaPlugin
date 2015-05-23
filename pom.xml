@@ -4,7 +4,7 @@
 
     <groupId>org.axonframework</groupId>
     <artifactId>axonframework.intellij.ide</artifactId>
-    <version>0.3.6</version>
+    <version>0.3.7-SNAPSHOT</version>
     <name>Axonframework IntelliJ Plugin</name>
     <description>
         This plugin integrates Axon Framework.
@@ -14,7 +14,8 @@
         <connection>scm:git:git@github.com/AxonFramework/IdeaPlugin.git</connection>
         <developerConnection>scm:git:git@github.com/AxonFramework/IdeaPlugin.git</developerConnection>
         <url>https://github.com/AxonFramework/IdeaPlugin.git</url>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <resources>
