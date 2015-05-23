@@ -4,7 +4,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.impl.source.PsiImmediateClassType;
 
-class DefaultEventPublisher implements EventPublisher {
+class DefaultEventPublisher implements Publisher {
 
     private final PsiType publishedType;
     private final PsiElement psiElement;

@@ -14,7 +14,7 @@ import com.intellij.psi.util.PsiTypesUtil;
 import org.axonframework.intellij.ide.plugin.handler.AnnotationTypes;
 import org.axonframework.intellij.ide.plugin.handler.Handler;
 import org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager;
-import org.axonframework.intellij.ide.plugin.publisher.EventPublisher;
+import org.axonframework.intellij.ide.plugin.publisher.Publisher;
 import org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +41,7 @@ public class AxonGutterAnnotator implements Annotator {
             tryAnnotateEventClass(holder, (PsiClass) element, publisherManager, handlerManager);
             tryAnnotateCommandClass(holder, (PsiClass) element, handlerManager);
         } else if ((element instanceof PsiMethodCallExpression || element instanceof PsiIdentifier)) {
-            final EventPublisher publisher = publisherManager.resolveEventPublisher(element);
+            final Publisher publisher = publisherManager.resolveEventPublisher(element);
             final Handler handler = handlerManager.resolveEventHandler(element.getContext());
             if (publisher != null) {
                 NotNullLazyValue<Collection<? extends PsiElement>> targetResolver =
@@ -53,7 +53,7 @@ public class AxonGutterAnnotator implements Annotator {
             }
 
             if (handler != null) {
-                Collection<EventPublisher> publishers = publisherManager.getRepository()
+                Collection<Publisher> publishers = publisherManager.getRepository()
                         .getPublishersFor(handler.getHandledType());
                 createGutterIconForEventPublishers(
                         handler.getElementForAnnotation(),
@@ -63,13 +63,13 @@ public class AxonGutterAnnotator implements Annotator {
         }
     }
 
-    private NotNullLazyValue<Collection<? extends PsiElement>> createNotNullLazyValueForPublishers(final Collection<EventPublisher> publishers) {
+    private NotNullLazyValue<Collection<? extends PsiElement>> createNotNullLazyValueForPublishers(final Collection<Publisher> publishers) {
         return new NotNullLazyValue<Collection<? extends PsiElement>>() {
             @NotNull
             @Override
             protected Collection<? extends PsiElement> compute() {
                 Collection<PsiElement> publishLocations = new ArrayList<PsiElement>();
-                for (EventPublisher eventPublisher : publishers) {
+                for (Publisher eventPublisher : publishers) {
                     PsiElement psiElement = eventPublisher.getPsiElement();
                     if (psiElement.isValid()) {
                         publishLocations.add(psiElement);
@@ -110,7 +110,7 @@ public class AxonGutterAnnotator implements Annotator {
 
     private void tryAnnotateEventClass(AnnotationHolder holder, PsiClass classElement,
                                        PublisherProviderManager publisherManager, HandlerProviderManager handlerManager) {
-        Set<EventPublisher> publishers = publisherManager.getRepository().getPublishersFor(PsiTypesUtil.getClassType(classElement));
+        Set<Publisher> publishers = publisherManager.getRepository().getPublishersFor(PsiTypesUtil.getClassType(classElement));
         if (!publishers.isEmpty()) {
             createGutterIconForEventPublishers(
                     classElement.getNameIdentifier(),
@@ -128,7 +128,7 @@ public class AxonGutterAnnotator implements Annotator {
         }
     }
 
-    private void addCreateEventHandlerQuickFixes(EventPublisher publisher, Annotation gutterIconForPublisher) {
+    private void addCreateEventHandlerQuickFixes(Publisher publisher, Annotation gutterIconForPublisher) {
         gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), AnnotationTypes.EVENT_HANDLER));
         gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), AnnotationTypes.EVENT_SOURCING_HANDLER));
         gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), AnnotationTypes.SAGA_EVENT_HANDLER));

@@ -2,7 +2,7 @@ package org.axonframework.intellij.ide.plugin.publisher;
 
 import com.intellij.psi.*;
 
-public class CommandEventPublisher implements EventPublisher {
+public class CommandEventPublisher implements Publisher {
 
     private final PsiElement psiElement;
     private PsiType commandType;

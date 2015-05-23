@@ -9,10 +9,10 @@ import com.intellij.psi.search.GlobalSearchScope;
 
 public class PublisherProviderManager {
 
-    private final EventPublisherRepository repository;
+    private final PublisherRepository repository;
     private final Project project;
     private boolean initialized;
-    private EventPublisherProvider[] eventPublisherProviders;
+    private PublisherProvider[] eventPublisherProviders;
 
     public static PublisherProviderManager getInstance(Project project) {
         final PublisherProviderManager manager = ServiceManager.getService(project, PublisherProviderManager.class);
@@ -28,13 +28,13 @@ public class PublisherProviderManager {
     private synchronized void ensureInitialized() {
         if (!initialized) {
             eventPublisherProviders = Extensions.getExtensions(ExtensionPointName
-                                                                       .<EventPublisherProvider>create(
+                                                                       .<PublisherProvider>create(
                                                                                "org.axonframework.intellij.axonplugin.publisherProvider"));
-            for (EventPublisherProvider provider : eventPublisherProviders) {
+            for (PublisherProvider provider : eventPublisherProviders) {
                 provider.scanPublishers(project, GlobalSearchScope.projectScope(project),
-                                        new EventPublisherProvider.Registrar() {
+                                        new PublisherProvider.Registrar() {
                                             @Override
-                                            public void registerPublisher(EventPublisher eventPublisher) {
+                                            public void registerPublisher(Publisher eventPublisher) {
                                                 repository.registerPublisher(eventPublisher);
                                             }
                                         });
@@ -43,13 +43,13 @@ public class PublisherProviderManager {
         }
     }
 
-    public EventPublisherRepository getRepository() {
+    public PublisherRepository getRepository() {
         return repository;
     }
 
-    public EventPublisher resolveEventPublisher(PsiElement psiElement) {
-        for (EventPublisherProvider eventPublisherProvider : eventPublisherProviders) {
-            EventPublisher publisher = eventPublisherProvider.resolve(psiElement);
+    public Publisher resolveEventPublisher(PsiElement psiElement) {
+        for (PublisherProvider eventPublisherProvider : eventPublisherProviders) {
+            Publisher publisher = eventPublisherProvider.resolve(psiElement);
             if (publisher != null && psiElement.isValid()) {
                 repository.registerPublisher(publisher);
                 return publisher;

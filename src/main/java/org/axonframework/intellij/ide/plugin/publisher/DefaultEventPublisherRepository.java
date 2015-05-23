@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-class DefaultEventPublisherRepository implements EventPublisherRepository {
+class DefaultEventPublisherRepository implements PublisherRepository {
 
-    private final List<EventPublisher> publishers = new CopyOnWriteArrayList<EventPublisher>();
+    private final List<Publisher> publishers = new CopyOnWriteArrayList<Publisher>();
 
-    public void registerPublisher(EventPublisher eventPublisher) {
+    public void registerPublisher(Publisher eventPublisher) {
         publishers.add(eventPublisher);
-        List<EventPublisher> invalidated = new ArrayList<EventPublisher>();
-        for (EventPublisher entry : publishers) {
+        List<Publisher> invalidated = new ArrayList<Publisher>();
+        for (Publisher entry : publishers) {
             if (!entry.isValid()) {
                 invalidated.add(entry);
             }
@@ -24,9 +24,9 @@ class DefaultEventPublisherRepository implements EventPublisherRepository {
     }
 
     @Override
-    public Set<EventPublisher> getPublishersFor(PsiType type) {
-        Set<EventPublisher> foundPublishers = new HashSet<EventPublisher>();
-        for (EventPublisher publisher : publishers) {
+    public Set<Publisher> getPublishersFor(PsiType type) {
+        Set<Publisher> foundPublishers = new HashSet<Publisher>();
+        for (Publisher publisher : publishers) {
             if (publisher.isValid() && publisher.canPublishType(type)) {
                 foundPublishers.add(publisher);
             }

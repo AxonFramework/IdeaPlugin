@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Arrays.asList;
 
-class DefaultEventPublisherProvider implements EventPublisherProvider {
+class DefaultEventPublisherProvider implements PublisherProvider {
 
     private final ConcurrentHashMap<Project, Set<PsiMethod>> publisherMethodsPerProject = new ConcurrentHashMap<Project, Set<PsiMethod>>();
 
@@ -163,7 +163,7 @@ class DefaultEventPublisherProvider implements EventPublisherProvider {
     }
 
     @Override
-    public EventPublisher resolve(PsiElement element) {
+    public Publisher resolve(PsiElement element) {
         if (element instanceof PsiMethodCallExpression) {
             PsiMethodCallExpression expression = (PsiMethodCallExpression) element;
             PsiType[] expressionTypes = expression.getArgumentList().getExpressionTypes();
