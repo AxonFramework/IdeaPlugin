@@ -16,7 +16,7 @@ class HandlerUsageProvider implements ImplicitUsageProvider {
     }
 
     private boolean isHandlerMethod(PsiElement element, Project project) {
-        EventHandler handler = HandlerProviderManager.getInstance(project)
+        Handler handler = HandlerProviderManager.getInstance(project)
                                                      .resolveEventHandler(element);
         return handler != null
                 && !PublisherProviderManager.getInstance(project)
@@ -27,7 +27,7 @@ class HandlerUsageProvider implements ImplicitUsageProvider {
     private boolean isEventParameter(PsiElement element, Project project) {
         if (element instanceof PsiParameter) {
             PsiElement method = ((PsiParameter) element).getDeclarationScope();
-            EventHandler handler = HandlerProviderManager.getInstance(project)
+            Handler handler = HandlerProviderManager.getInstance(project)
                                                          .resolveEventHandler(method);
             if (handler != null && ((PsiParameter) element).getType().equals(handler.getHandledType())) {
                 return true;

@@ -6,7 +6,7 @@ import com.intellij.psi.impl.source.PsiImmediateClassType;
 import static org.axonframework.intellij.ide.plugin.handler.InternalEventTypes.ABSTRACT_ANNOTATED_AGGREGATE_ROOT;
 import static org.axonframework.intellij.ide.plugin.handler.InternalEventTypes.ABSTRACT_ANNOTATED_ENTITY;
 
-class DefaultEventHandler implements EventHandler {
+class DefaultEventHandler implements Handler {
 
     private static final String EVENT_HANDLER_ARGUMENT = "eventType";
     private static final String AlTERNATIVE_EVENT_HANDLER_ARGUMENT = "payloadType";
@@ -119,7 +119,7 @@ class DefaultEventHandler implements EventHandler {
         return new PsiType[]{};
     }
 
-    public static EventHandler createEventHandler(PsiMethod method, PsiAnnotation annotation) {
+    public static Handler createEventHandler(PsiMethod method, PsiAnnotation annotation) {
         PsiAnnotationMemberValue eventType = annotation.findAttributeValue(DefaultEventHandler.EVENT_HANDLER_ARGUMENT);
         if (eventType == null) {
             eventType = annotation.findAttributeValue(AlTERNATIVE_EVENT_HANDLER_ARGUMENT);

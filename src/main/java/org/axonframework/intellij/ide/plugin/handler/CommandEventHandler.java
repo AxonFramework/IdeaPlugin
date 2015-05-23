@@ -2,7 +2,7 @@ package org.axonframework.intellij.ide.plugin.handler;
 
 import com.intellij.psi.*;
 
-public class CommandEventHandler implements EventHandler {
+public class CommandEventHandler implements Handler {
 
     private final PsiType commandType;
     private final PsiMethod method;
@@ -42,7 +42,7 @@ public class CommandEventHandler implements EventHandler {
         return false;
     }
 
-    public static EventHandler createEventHandler(PsiMethod method) {
+    public static Handler createEventHandler(PsiMethod method) {
         PsiType[] methodArguments = getMethodArguments(method);
         return new CommandEventHandler(methodArguments[0], method);
     }
