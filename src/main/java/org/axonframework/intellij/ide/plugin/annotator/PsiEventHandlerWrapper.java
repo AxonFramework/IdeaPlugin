@@ -10,7 +10,7 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.IncorrectOperationException;
-import org.axonframework.intellij.ide.plugin.handler.EventHandler;
+import org.axonframework.intellij.ide.plugin.handler.Handler;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,9 +19,9 @@ import javax.swing.*;
 
 class PsiEventHandlerWrapper implements PsiElement, Comparable<PsiEventHandlerWrapper> {
     private final PsiElement elementForAnnotation;
-    private final EventHandler eventHandler;
+    private final Handler eventHandler;
 
-    public PsiEventHandlerWrapper(PsiElement elementForAnnotation, EventHandler eventHandler) {
+    public PsiEventHandlerWrapper(PsiElement elementForAnnotation, Handler eventHandler) {
         this.eventHandler = eventHandler;
         this.elementForAnnotation = elementForAnnotation;
     }
@@ -303,7 +303,7 @@ class PsiEventHandlerWrapper implements PsiElement, Comparable<PsiEventHandlerWr
         elementForAnnotation.putUserData(key, value);
     }
 
-    public EventHandler getEventHandler() {
+    public Handler getEventHandler() {
         return eventHandler;
     }
 

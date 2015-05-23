@@ -12,7 +12,7 @@ import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.util.PsiTypesUtil;
 import org.axonframework.intellij.ide.plugin.handler.AnnotationTypes;
-import org.axonframework.intellij.ide.plugin.handler.EventHandler;
+import org.axonframework.intellij.ide.plugin.handler.Handler;
 import org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager;
 import org.axonframework.intellij.ide.plugin.publisher.EventPublisher;
 import org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager;
@@ -42,7 +42,7 @@ public class AxonGutterAnnotator implements Annotator {
             tryAnnotateCommandClass(holder, (PsiClass) element, handlerManager);
         } else if ((element instanceof PsiMethodCallExpression || element instanceof PsiIdentifier)) {
             final EventPublisher publisher = publisherManager.resolveEventPublisher(element);
-            final EventHandler handler = handlerManager.resolveEventHandler(element.getContext());
+            final Handler handler = handlerManager.resolveEventHandler(element.getContext());
             if (publisher != null) {
                 NotNullLazyValue<Collection<? extends PsiElement>> targetResolver =
                         createNotNullLazyValueForHandlers(handlerManager.getRepository().findHandlers(publisher.getPublishedType()));
@@ -80,13 +80,13 @@ public class AxonGutterAnnotator implements Annotator {
         };
     }
 
-    private NotNullLazyValue<Collection<? extends PsiElement>> createNotNullLazyValueForHandlers(final Set<EventHandler> handlers) {
+    private NotNullLazyValue<Collection<? extends PsiElement>> createNotNullLazyValueForHandlers(final Set<Handler> handlers) {
         return new NotNullLazyValue<Collection<? extends PsiElement>>() {
             @NotNull
             @Override
             protected Collection<? extends PsiElement> compute() {
                 Set<PsiEventHandlerWrapper> destinations = new TreeSet<PsiEventHandlerWrapper>();
-                for (EventHandler eventHandler : handlers) {
+                for (Handler eventHandler : handlers) {
                     PsiElement elementForAnnotation = eventHandler.getElementForAnnotation();
                     if (elementForAnnotation.isValid()) {
                         destinations.add(new PsiEventHandlerWrapper(elementForAnnotation, eventHandler));
@@ -98,7 +98,7 @@ public class AxonGutterAnnotator implements Annotator {
     }
 
     private void tryAnnotateCommandClass(AnnotationHolder holder, PsiClass classElement, HandlerProviderManager handlerManager) {
-        Set<EventHandler> handlers =
+        Set<Handler> handlers =
                 handlerManager.getRepository().findCommandHandlers(PsiTypesUtil.getClassType(classElement));
         if (!handlers.isEmpty()) {
             createGutterIconForCommandHandlers(
@@ -117,7 +117,7 @@ public class AxonGutterAnnotator implements Annotator {
                     holder,
                     createNotNullLazyValueForPublishers(publishers));
         }
-        Set<EventHandler> handlers =
+        Set<Handler> handlers =
                 handlerManager.getRepository().findEventHandlers(PsiTypesUtil.getClassType(classElement));
         if (!handlers.isEmpty()) {
             createGutterIconForEventHandlers(

@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 
 public class HandlerProviderManager {
-    private final EventHandlerRepository repository;
+    private final HandlerRepository repository;
     private final Project project;
     private boolean initialized;
-    private EventHandlerProvider[] eventHandlerProviders;
+    private HandlerProvider[] eventHandlerProviders;
 
     public static HandlerProviderManager getInstance(Project project) {
         final HandlerProviderManager manager = ServiceManager.getService(project, HandlerProviderManager.class);
@@ -27,13 +27,13 @@ public class HandlerProviderManager {
     private synchronized void ensureInitialized() {
         if (!initialized) {
             eventHandlerProviders = Extensions.getExtensions(ExtensionPointName
-                                                                       .<EventHandlerProvider>create(
+                                                                       .<HandlerProvider>create(
                                                                                "org.axonframework.intellij.axonplugin.handlerProvider"));
-            for (EventHandlerProvider provider : eventHandlerProviders) {
+            for (HandlerProvider provider : eventHandlerProviders) {
                 provider.scanHandlers(project, GlobalSearchScope.projectScope(project),
-                                      new EventHandlerProvider.Registrar() {
+                                      new HandlerProvider.Registrar() {
                     @Override
-                    public void registerHandler(EventHandler eventHandler) {
+                    public void registerHandler(Handler eventHandler) {
                         repository.registerHandler(eventHandler);
                     }
                 });
@@ -42,13 +42,13 @@ public class HandlerProviderManager {
         }
     }
 
-    public EventHandlerRepository getRepository() {
+    public HandlerRepository getRepository() {
         return repository;
     }
 
-    public EventHandler resolveEventHandler(PsiElement psiElement) {
-        for (EventHandlerProvider eventHandlerProvider : eventHandlerProviders) {
-            EventHandler handler = eventHandlerProvider.resolve(psiElement);
+    public Handler resolveEventHandler(PsiElement psiElement) {
+        for (HandlerProvider eventHandlerProvider : eventHandlerProviders) {
+            Handler handler = eventHandlerProvider.resolve(psiElement);
             if (handler != null && psiElement.isValid()) {
                 repository.registerHandler(handler);
                 return handler;

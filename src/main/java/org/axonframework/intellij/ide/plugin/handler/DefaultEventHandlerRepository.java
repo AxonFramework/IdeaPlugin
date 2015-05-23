@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-class DefaultEventHandlerRepository implements EventHandlerRepository {
+class DefaultEventHandlerRepository implements HandlerRepository {
 
-    private final List<EventHandler> handlers = new CopyOnWriteArrayList<EventHandler>();
+    private final List<Handler> handlers = new CopyOnWriteArrayList<Handler>();
 
-    public void registerHandler(EventHandler eventHandler) {
+    public void registerHandler(Handler eventHandler) {
         handlers.add(eventHandler);
-        List<EventHandler> invalidated = new ArrayList<EventHandler>();
-        for (EventHandler entry : handlers) {
+        List<Handler> invalidated = new ArrayList<Handler>();
+        for (Handler entry : handlers) {
             if (!entry.isValid()) {
                 invalidated.add(entry);
             }
@@ -24,9 +24,9 @@ class DefaultEventHandlerRepository implements EventHandlerRepository {
     }
 
     @Override
-    public Set<EventHandler> findHandlers(PsiType eventType) {
-        Set<EventHandler> found = new HashSet<EventHandler>();
-        for (EventHandler eventHandler : handlers) {
+    public Set<Handler> findHandlers(PsiType eventType) {
+        Set<Handler> found = new HashSet<Handler>();
+        for (Handler eventHandler : handlers) {
             if (eventHandler.isValid() && eventHandler.canHandle(eventType)) {
                 found.add(eventHandler);
             }
@@ -35,9 +35,9 @@ class DefaultEventHandlerRepository implements EventHandlerRepository {
     }
 
     @Override
-    public Set<EventHandler> findEventHandlers(PsiType eventType) {
-        Set<EventHandler> found = new HashSet<EventHandler>();
-        for (EventHandler eventHandler : findHandlers(eventType)) {
+    public Set<Handler> findEventHandlers(PsiType eventType) {
+        Set<Handler> found = new HashSet<Handler>();
+        for (Handler eventHandler : findHandlers(eventType)) {
             if (!(eventHandler instanceof CommandEventHandler)) {
                 found.add(eventHandler);
             }
@@ -46,9 +46,9 @@ class DefaultEventHandlerRepository implements EventHandlerRepository {
     }
 
     @Override
-    public Set<EventHandler> findCommandHandlers(PsiType eventType) {
-        Set<EventHandler> found = new HashSet<EventHandler>();
-        for (EventHandler eventHandler : findHandlers(eventType)) {
+    public Set<Handler> findCommandHandlers(PsiType eventType) {
+        Set<Handler> found = new HashSet<Handler>();
+        for (Handler eventHandler : findHandlers(eventType)) {
             if (eventHandler instanceof CommandEventHandler) {
                 found.add(eventHandler);
             }

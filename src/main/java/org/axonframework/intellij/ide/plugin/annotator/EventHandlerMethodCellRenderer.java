@@ -6,7 +6,7 @@ import com.intellij.openapi.util.IconLoader;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.axonframework.intellij.ide.plugin.handler.EventHandler;
+import org.axonframework.intellij.ide.plugin.handler.Handler;
 import org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager;
 import org.axonframework.intellij.ide.plugin.handler.IsMethodCondition;
 import org.jetbrains.annotations.Nullable;
@@ -61,7 +61,7 @@ public class EventHandlerMethodCellRenderer extends PsiElementListCellRenderer {
 
         @Override
         public Icon getIcon(PsiElement element) {
-            EventHandler eventHandler = handlerProviderManager.resolveEventHandler(element);
+            Handler eventHandler = handlerProviderManager.resolveEventHandler(element);
             if (eventHandler == null) {
                 return super.getIcon(element);
             }
