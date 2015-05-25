@@ -12,6 +12,13 @@
     </description>
 
     <change-notes><![CDATA[
+        Version 0.3.7<br />
+        -------------<br />
+        <ul>
+            <li>FIXED IDEAPLUGIN-5 Command Publisher now links to @CommandHandler</li>
+        </ul>
+        <br />
+        <br />
         Version 0.3.6<br />
         -------------<br />
         <ul>
