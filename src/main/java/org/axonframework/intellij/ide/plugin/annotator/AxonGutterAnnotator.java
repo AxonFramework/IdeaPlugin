@@ -1,5 +1,20 @@
 package org.axonframework.intellij.ide.plugin.annotator;
 
+import javax.swing.Icon;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.axonframework.intellij.ide.plugin.handler.AnnotationTypes;
+import org.axonframework.intellij.ide.plugin.handler.Handler;
+import org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager;
+import org.axonframework.intellij.ide.plugin.publisher.Publisher;
+import org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager;
+import org.jetbrains.annotations.NotNull;
+
+
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
@@ -10,19 +25,8 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.PsiMethodCallExpression;
+import com.intellij.psi.PsiNewExpression;
 import com.intellij.psi.util.PsiTypesUtil;
-import org.axonframework.intellij.ide.plugin.handler.AnnotationTypes;
-import org.axonframework.intellij.ide.plugin.handler.Handler;
-import org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager;
-import org.axonframework.intellij.ide.plugin.publisher.Publisher;
-import org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * This class shows an icon in the gutter when an Axon annotation is found. The icon can be used to navigate to all
@@ -40,7 +44,7 @@ public class AxonGutterAnnotator implements Annotator {
         if (element instanceof PsiClass) {
             tryAnnotateEventClass(holder, (PsiClass) element, publisherManager, handlerManager);
             tryAnnotateCommandClass(holder, (PsiClass) element, handlerManager);
-        } else if ((element instanceof PsiMethodCallExpression || element instanceof PsiIdentifier)) {
+        } else if ((element instanceof PsiMethodCallExpression || element instanceof PsiNewExpression || element instanceof PsiIdentifier)) {
             final Publisher publisher = publisherManager.resolveEventPublisher(element);
             final Handler handler = handlerManager.resolveEventHandler(element.getContext());
             if (publisher != null) {
@@ -55,7 +59,7 @@ public class AxonGutterAnnotator implements Annotator {
             if (handler != null) {
                 Collection<Publisher> publishers = publisherManager.getRepository()
                         .getPublishersFor(handler.getHandledType());
-                createGutterIconForEventPublishers(
+                createGutterIconForPublishers(
                         handler.getElementForAnnotation(),
                         holder,
                         createNotNullLazyValueForPublishers(publishers));
@@ -112,7 +116,7 @@ public class AxonGutterAnnotator implements Annotator {
                                        PublisherProviderManager publisherManager, HandlerProviderManager handlerManager) {
         Set<Publisher> publishers = publisherManager.getRepository().getPublishersFor(PsiTypesUtil.getClassType(classElement));
         if (!publishers.isEmpty()) {
-            createGutterIconForEventPublishers(
+            createGutterIconForPublishers(
                     classElement.getNameIdentifier(),
                     holder,
                     createNotNullLazyValueForPublishers(publishers));
@@ -134,8 +138,8 @@ public class AxonGutterAnnotator implements Annotator {
         gutterIconForPublisher.registerFix(new CreateEventHandlerQuickfix(publisher.getPublishedType(), AnnotationTypes.SAGA_EVENT_HANDLER));
     }
 
-    private static Annotation createGutterIconForEventPublishers(PsiElement psiElement, AnnotationHolder holder,
-                                                                 NotNullLazyValue<Collection<? extends PsiElement>> targetResolver) {
+    private static Annotation createGutterIconForPublishers(PsiElement psiElement, AnnotationHolder holder,
+                                                            NotNullLazyValue<Collection<? extends PsiElement>> targetResolver) {
         return NavigationGutterIconBuilder.create(AxonIconIn)
                 .setEmptyPopupText("No publishers found for this event")
                 .setTargets(targetResolver)

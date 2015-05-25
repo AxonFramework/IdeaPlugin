@@ -1,9 +1,29 @@
 package org.axonframework.intellij.ide.plugin.publisher;
 
+import static java.util.Arrays.asList;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.axonframework.intellij.ide.plugin.handler.AnnotationTypes;
+
+
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
-import com.intellij.psi.*;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiMethodCallExpression;
+import com.intellij.psi.PsiNewExpression;
+import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypeElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.MethodReferencesSearch;
 import com.intellij.psi.search.searches.ReferencesSearch;
@@ -11,22 +31,15 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.Query;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static java.util.Arrays.asList;
-
 class DefaultEventPublisherProvider implements PublisherProvider {
 
-    private final ConcurrentHashMap<Project, Set<PsiMethod>> publisherMethodsPerProject = new ConcurrentHashMap<Project, Set<PsiMethod>>();
+    private final ConcurrentHashMap<Project, Set<PsiElement>> publisherMethodsPerProject = new ConcurrentHashMap<Project, Set<PsiElement>>();
 
     @Override
     public void scanPublishers(final Project project, GlobalSearchScope scope, final Registrar registrar) {
         cleanClosedProjects();
-        publisherMethodsPerProject.putIfAbsent(project, new HashSet<PsiMethod>());
-        Set<PsiMethod> psiMethods = publisherMethodsPerProject.get(project);
+        publisherMethodsPerProject.putIfAbsent(project, new HashSet<PsiElement>());
+        Set<PsiElement> psiMethods = publisherMethodsPerProject.get(project);
         psiMethods.addAll(findMethods(project, GlobalSearchScope.allScope(project),
                 "org.axonframework.eventsourcing.AbstractEventSourcedAggregateRoot", "apply"));
         psiMethods.addAll(findMethods(project, GlobalSearchScope.allScope(project),
@@ -51,7 +64,7 @@ class DefaultEventPublisherProvider implements PublisherProvider {
                     PsiMethod method = (PsiMethod) PsiTreeUtil.findFirstParent(psiReference.getElement(),
                             new IsMethodWithParameterCondition());
                     if (methodHasParameter(method)) {
-                        PsiAnnotation methodAnnotation = method.getModifierList().findAnnotation("org.axonframework.commandhandling.annotation.CommandHandler");
+                        PsiAnnotation methodAnnotation = method.getModifierList().findAnnotation(AnnotationTypes.COMMAND_EVENT_HANDLER.getFullyQualifiedName());
                         PsiParameter firstCommandHandlerArgument = method.getParameterList().getParameters()[0];
                         if (methodIsAnnotatedAsCommandHandler(methodAnnotation)) {
                             PsiTypeElement firstCommandHandlerArgumentType = firstCommandHandlerArgument.getTypeElement();
@@ -73,8 +86,10 @@ class DefaultEventPublisherProvider implements PublisherProvider {
 
                 private void findAndRegisterAllConstructors(PsiTypeElement firstCommandHandlerArgumentType) {
                     final PsiType type = firstCommandHandlerArgumentType.getType();
+                    GlobalSearchScope scopeNarrowedToJavaSourceFiles =
+                            GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.allScope(project), StdFileTypes.JAVA);
                     PsiClass parameterClass = JavaPsiFacade.getInstance(project)
-                            .findClass(type.getCanonicalText(), GlobalSearchScope.allScope(project));
+                            .findClass(type.getCanonicalText(), scopeNarrowedToJavaSourceFiles);
                     if (parameterClass != null) {
                         PsiMethod[] constructors = parameterClass.getConstructors();
                         if (parameterClassHasConstructor(constructors)) {
@@ -83,28 +98,32 @@ class DefaultEventPublisherProvider implements PublisherProvider {
                     }
                 }
 
-                private boolean parameterClassHasConstructor(PsiMethod[] constructors) {
-                    return constructors.length > 0;
-                }
-
                 private void registerAllConstructorInvocations(final PsiType type, PsiMethod[] constructors) {
                     for (PsiMethod constructor : constructors) {
                         Query<PsiReference> constructorCalls = MethodReferencesSearch.search(constructor);
                         constructorCalls.forEachAsync(new Processor<PsiReference>() {
                             @Override
                             public boolean process(PsiReference psiReference) {
-                                registrar.registerPublisher(new CommandEventPublisher(type, psiReference.getElement()));
+                                CommandEventPublisher eventPublisher = new CommandEventPublisher(type, psiReference.getElement());
+                                registrar.registerPublisher(eventPublisher);
+                                Set<PsiElement> psiMethods = publisherMethodsPerProject.get(project);
+                                psiMethods.add(psiReference.getElement());
+
                                 return true;
                             }
                         });
                     }
                 }
-
-                private boolean methodHasParameter(PsiMethod method) {
-                    return method != null && method.getParameterList().getParametersCount() > 0;
-                }
             });
         }
+    }
+
+    private boolean parameterClassHasConstructor(PsiMethod[] constructors) {
+        return constructors.length > 0;
+    }
+
+    private boolean methodHasParameter(PsiMethod method) {
+        return method != null && method.getParameterList().getParametersCount() > 0;
     }
 
     private PsiClass findCommandHandlersAnnotation(Project project) {
@@ -114,9 +133,9 @@ class DefaultEventPublisherProvider implements PublisherProvider {
     }
 
     private void scanEventPublishers(Project project, GlobalSearchScope scope, final Registrar registrar) {
-        for (final PsiMethod method : publisherMethodsPerProject.get(project)) {
+        for (final PsiElement method : publisherMethodsPerProject.get(project)) {
             Query<PsiReference> invocations =
-                    MethodReferencesSearch.search(method, scope, false);
+                    MethodReferencesSearch.search((PsiMethod) method, scope, false);
             invocations.forEachAsync(new Processor<PsiReference>() {
                 @Override
                 public boolean process(PsiReference psiReference) {
@@ -166,11 +185,21 @@ class DefaultEventPublisherProvider implements PublisherProvider {
     public Publisher resolve(PsiElement element) {
         if (element instanceof PsiMethodCallExpression) {
             PsiMethodCallExpression expression = (PsiMethodCallExpression) element;
-            PsiType[] expressionTypes = expression.getArgumentList().getExpressionTypes();
-            for (PsiMethod method : publisherMethodsPerProject.get(element.getProject())) {
-                if (expression.getMethodExpression().getReference() != null
+            for (PsiElement method : publisherMethodsPerProject.get(element.getProject())) {
+                boolean hasReference = expression.getMethodExpression().getReference() != null;
+                if (hasReference
                         && expression.getMethodExpression().isReferenceTo(method)) {
+                    PsiType[] expressionTypes = expression.getArgumentList().getExpressionTypes();
                     return new DefaultEventPublisher(expressionTypes[0], element);
+                }
+            }
+        }
+        if (element instanceof PsiNewExpression) {
+            PsiNewExpression expression = (PsiNewExpression) element;
+
+            for (PsiElement classType : publisherMethodsPerProject.get(element.getProject())) {
+                if (expression.getClassReference() != null && classType.isEquivalentTo(expression.getClassReference())) {
+                    return new CommandEventPublisher(expression.getType(), element);
                 }
             }
         }
