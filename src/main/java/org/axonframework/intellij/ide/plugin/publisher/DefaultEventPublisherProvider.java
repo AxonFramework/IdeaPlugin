@@ -165,7 +165,7 @@ class DefaultEventPublisherProvider implements PublisherProvider {
 
 
     private void cleanClosedProjects() {
-        for (Project project : publisherMethodsPerProject.keySet()) {
+        for (Project project : Collections.list(publisherMethodsPerProject.keys())) {
             if (!project.isOpen()) {
                 publisherMethodsPerProject.remove(project);
             }
