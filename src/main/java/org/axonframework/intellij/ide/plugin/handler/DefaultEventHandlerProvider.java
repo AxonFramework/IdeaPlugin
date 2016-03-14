@@ -104,22 +104,27 @@ class DefaultEventHandlerProvider implements HandlerProvider {
 
         for (AnnotationTypes annotationType : AnnotationTypes.values()) {
             annotations.put(annotationType.getFullyQualifiedName(), annotationType.getAnnotation());
-
-            final PsiClass eventHandlerAnnotation = JavaPsiFacade.getInstance(project)
-                    .findClass(annotationType.getFullyQualifiedName(),
-                            GlobalSearchScope.allScope(project));
-
-            if (eventHandlerAnnotation != null) {
-                final Query<PsiClass> customEventHandlers = searchPsiClasses(eventHandlerAnnotation, projectScope(project));
-                customEventHandlers.forEach(new Processor<PsiClass>() {
-                    @Override
-                    public boolean process(final PsiClass psiClass) {
-                        annotations.put(psiClass.getQualifiedName(), psiClass.getName());
-                        return true;
-                    }
-                });
-            }
+            addCustomHandlers(annotations, project, annotationType.getFullyQualifiedName());
         }
         return annotations;
+    }
+
+    private void addCustomHandlers(final HashMap<String, String> annotations, final Project project, final String fullyQualifiedName) {
+        final PsiClass eventHandlerAnnotation = JavaPsiFacade.getInstance(project)
+                .findClass(fullyQualifiedName, GlobalSearchScope.allScope(project));
+
+        if (eventHandlerAnnotation != null) {
+            final Query<PsiClass> customEventHandlers = searchPsiClasses(eventHandlerAnnotation, projectScope(project));
+            customEventHandlers.forEach(new Processor<PsiClass>() {
+                @Override
+                public boolean process(final PsiClass psiClass) {
+                    if (psiClass.isAnnotationType()) {
+                        addCustomHandlers(annotations, project, psiClass.getQualifiedName());
+                    }
+                    annotations.put(psiClass.getQualifiedName(), psiClass.getName());
+                    return true;
+                }
+            });
+        }
     }
 }
