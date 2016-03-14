@@ -48,7 +48,7 @@ public class HandlerProviderManager {
 
     public Handler resolveEventHandler(PsiElement psiElement) {
         for (HandlerProvider eventHandlerProvider : eventHandlerProviders) {
-            Handler handler = eventHandlerProvider.resolve(psiElement);
+            Handler handler = eventHandlerProvider.resolve(psiElement, project);
             if (handler != null && psiElement.isValid()) {
                 repository.registerHandler(handler);
                 return handler;

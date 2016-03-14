@@ -8,7 +8,7 @@ interface HandlerProvider {
 
     void scanHandlers(Project project, GlobalSearchScope scope, Registrar registrar);
 
-    Handler resolve(PsiElement element);
+    Handler resolve(PsiElement element, final Project project);
 
     interface Registrar {
 
