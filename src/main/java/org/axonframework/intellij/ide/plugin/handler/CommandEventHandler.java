@@ -44,15 +44,14 @@ public class CommandEventHandler implements Handler {
 
     public static Handler createEventHandler(PsiMethod method) {
         PsiType[] methodArguments = getMethodArguments(method);
-        return new CommandEventHandler(methodArguments[0], method);
+        return methodArguments.length > 0 ? new CommandEventHandler(methodArguments[0], method) : null;
     }
 
     private static PsiType[] getMethodArguments(PsiMethod method) {
-        PsiParameterList list = method.getParameterList();
-        PsiType[] argument = new PsiType[list.getParametersCount()];
-        for (int i = 0; i < list.getParameters().length; i++) {
-            PsiParameter psiParameter = list.getParameters()[i];
-            argument[i] = psiParameter.getType();
+        PsiParameter[] listParameters = method.getParameterList().getParameters();
+        PsiType[] argument = new PsiType[listParameters.length];
+        for (int i = 0; i < listParameters.length; i++) {
+            argument[i] = listParameters[i].getType();
         }
         return argument;
     }
