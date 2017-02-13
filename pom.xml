@@ -179,7 +179,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.javadoc.skip>true</maven.javadoc.skip>
-        <idea.version>14.1.3</idea.version>
+        <idea.version>LOCAL</idea.version>
         <ij.plugin>true</ij.plugin>
     </properties>
 </project>
