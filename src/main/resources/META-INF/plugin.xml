@@ -11,6 +11,10 @@
         Please report issues at http://issues.axonframework.org
     </description>
 
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+    <depends>org.jetbrains.kotlin</depends>
+
     <change-notes><![CDATA[
         Version 0.3.9<br />
         -------------<br />
@@ -139,13 +143,16 @@
     </extensionPoints>
 
     <extensions defaultExtensionNs="com.intellij">
-        <annotator language="JAVA"
-                   implementationClass="org.axonframework.intellij.ide.plugin.annotator.AxonGutterAnnotator"/>
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager"
                         serviceInterface="org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager"/>
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager"
                         serviceInterface="org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager"/>
         <implicitUsageProvider implementation="org.axonframework.intellij.ide.plugin.handler.HandlerUsageProvider"/>
+        <postStartupActivity implementation="org.axonframework.intellij.ide.plugin.AxonProjectManagementListener"/>
+        <codeInsight.lineMarkerProvider language="JAVA" implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaPublishMethodLineMarker"/>
+        <codeInsight.lineMarkerProvider language="JAVA" implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaHandlerMethodLineMarker"/>
+        <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.axonframework.intellij.ide.plugin.markers.KotlinPublishMethodLineMarker"/>
+        <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.axonframework.intellij.ide.plugin.markers.KotlinHandlerMethodLineMarker"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.axonframework.intellij.axonplugin">

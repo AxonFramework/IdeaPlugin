@@ -38,14 +38,12 @@ class DefaultEventPublisherProvider implements PublisherProvider {
     @Override
     public void scanPublishers(final Project project, GlobalSearchScope scope, final Registrar registrar) {
         cleanClosedProjects();
-        publisherMethodsPerProject.putIfAbsent(project, new HashSet<PsiElement>());
+        publisherMethodsPerProject.putIfAbsent(project, new HashSet<>());
         Set<PsiElement> psiMethods = publisherMethodsPerProject.get(project);
         psiMethods.addAll(findMethods(project, GlobalSearchScope.allScope(project),
-                "org.axonframework.eventsourcing.AbstractEventSourcedAggregateRoot", "apply"));
+                "org.axonframework.modelling.command.AggregateLifecycle", "apply"));
         psiMethods.addAll(findMethods(project, GlobalSearchScope.allScope(project),
-                "org.axonframework.domain.AbstractAggregateRoot", "registerEvent"));
-        psiMethods.addAll(findMethods(project, GlobalSearchScope.allScope(project),
-                "org.axonframework.eventsourcing.AbstractEventSourcedEntity", "apply"));
+                "org.axonframework.modelling.command.AggregateLifecycle", "apply"));
 
         GlobalSearchScope scopeNarrowedToJavaSourceFiles =
                 GlobalSearchScope.getScopeRestrictedByFileTypes(scope, StdFileTypes.JAVA);
@@ -86,8 +84,7 @@ class DefaultEventPublisherProvider implements PublisherProvider {
 
                 private void findAndRegisterAllConstructors(PsiTypeElement firstCommandHandlerArgumentType) {
                     final PsiType type = firstCommandHandlerArgumentType.getType();
-                    GlobalSearchScope scopeNarrowedToJavaSourceFiles =
-                            GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.allScope(project), StdFileTypes.JAVA);
+                    GlobalSearchScope scopeNarrowedToJavaSourceFiles = GlobalSearchScope.allScope(project);
                     PsiClass parameterClass = JavaPsiFacade.getInstance(project)
                             .findClass(type.getCanonicalText(), scopeNarrowedToJavaSourceFiles);
                     if (parameterClass != null) {
@@ -128,7 +125,7 @@ class DefaultEventPublisherProvider implements PublisherProvider {
 
     private PsiClass findCommandHandlersAnnotation(Project project) {
         return JavaPsiFacade.getInstance(project)
-                .findClass("org.axonframework.commandhandling.annotation.CommandHandler",
+                .findClass("org.axonframework.commandhandling.CommandHandler",
                         GlobalSearchScope.allScope(project));
     }
 

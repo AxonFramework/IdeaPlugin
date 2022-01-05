@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.axonframework.intellij.ide.plugin.AxonProjectManagementListener;
 import org.axonframework.intellij.ide.plugin.handler.AnnotationTypes;
 import org.axonframework.intellij.ide.plugin.handler.Handler;
 import org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager;
@@ -34,11 +35,12 @@ import com.intellij.psi.util.PsiTypesUtil;
  */
 public class AxonGutterAnnotator implements Annotator {
 
-    private static final Icon AxonIconIn = IconLoader.getIcon("/icons/axon_into.png"); // 16x16
-    private static final Icon AxonIconOut = IconLoader.getIcon("/icons/axon_publish.png"); // 16x16
+    private static final Icon AxonIconIn = IconLoader.getIcon("/icons/axon_into.png", AxonGutterAnnotator.class); // 16x16
+    private static final Icon AxonIconOut = IconLoader.getIcon("/icons/axon_publish.png", AxonGutterAnnotator.class); // 16x16
 
     @Override
     public void annotate(@NotNull final PsiElement element, @NotNull AnnotationHolder holder) {
+        new AxonProjectManagementListener().runActivity(element.getProject());
         final PublisherProviderManager publisherManager = PublisherProviderManager.getInstance(element.getProject());
         final HandlerProviderManager handlerManager = HandlerProviderManager.getInstance(element.getProject());
         if (element instanceof PsiClass) {

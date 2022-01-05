@@ -6,40 +6,32 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
+import jnr.ffi.annotations.In;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 public class PublisherProviderManager {
+    private static final ExtensionPointName<PublisherProvider> PUBLISHER_EP = ExtensionPointName.create("org.axonframework.intellij.axonplugin.publisherProvider");
 
     private final PublisherRepository repository;
     private final Project project;
-    private boolean initialized;
-    private PublisherProvider[] eventPublisherProviders;
+    private final PublisherProvider[] eventPublisherProviders;
 
     public static PublisherProviderManager getInstance(Project project) {
-        final PublisherProviderManager manager = ServiceManager.getService(project, PublisherProviderManager.class);
-        manager.ensureInitialized();
-        return manager;
+        return ServiceManager.getService(project, PublisherProviderManager.class);
     }
+
 
     public PublisherProviderManager(Project project) {
         this.project = project;
         repository = new DefaultEventPublisherRepository();
+        eventPublisherProviders = PUBLISHER_EP.getExtensions();
     }
 
-    private synchronized void ensureInitialized() {
-        if (!initialized) {
-            eventPublisherProviders = Extensions.getExtensions(ExtensionPointName
-                                                                       .<PublisherProvider>create(
-                                                                               "org.axonframework.intellij.axonplugin.publisherProvider"));
-            for (PublisherProvider provider : eventPublisherProviders) {
-                provider.scanPublishers(project, GlobalSearchScope.projectScope(project),
-                                        new PublisherProvider.Registrar() {
-                                            @Override
-                                            public void registerPublisher(Publisher eventPublisher) {
-                                                repository.registerPublisher(eventPublisher);
-                                            }
-                                        });
-            }
-            initialized = true;
+    public synchronized void initialize() {
+        for (PublisherProvider provider : eventPublisherProviders) {
+            provider.scanPublishers(project, GlobalSearchScope.projectScope(project), repository::registerPublisher);
         }
     }
 

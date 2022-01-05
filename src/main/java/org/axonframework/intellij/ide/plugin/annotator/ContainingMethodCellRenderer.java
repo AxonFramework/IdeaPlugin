@@ -10,11 +10,11 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-class ContainingMethodCellRenderer extends PsiElementListCellRenderer<PsiElement> {
+public class ContainingMethodCellRenderer extends PsiElementListCellRenderer<PsiElement> {
 
     private final IconMethodCellRenderer delegate;
 
-    ContainingMethodCellRenderer() {
+    public ContainingMethodCellRenderer() {
         this.delegate = new IconMethodCellRenderer();
     }
 
