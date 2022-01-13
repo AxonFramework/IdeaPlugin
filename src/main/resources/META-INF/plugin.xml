@@ -135,29 +135,16 @@
 
     <project-components/>
 
-    <extensionPoints>
-        <extensionPoint name="publisherProvider"
-                        interface="org.axonframework.intellij.ide.plugin.publisher.PublisherProvider"/>
-        <extensionPoint name="handlerProvider"
-                        interface="org.axonframework.intellij.ide.plugin.handler.HandlerProvider"/>
-    </extensionPoints>
-
     <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager"
-                        serviceInterface="org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager"/>
-        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager"
-                        serviceInterface="org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager"/>
-        <implicitUsageProvider implementation="org.axonframework.intellij.ide.plugin.handler.HandlerUsageProvider"/>
-        <postStartupActivity implementation="org.axonframework.intellij.ide.plugin.AxonProjectManagementListener"/>
+        <toolWindow id="Axon" factoryClass="org.axonframework.intellij.ide.plugin.window.MessageOverviewToolWindowFactory" icon="AllIcons.General.Modified" anchor="right"/>
         <codeInsight.lineMarkerProvider language="JAVA" implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaPublishMethodLineMarker"/>
         <codeInsight.lineMarkerProvider language="JAVA" implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaHandlerMethodLineMarker"/>
+        <codeInsight.lineMarkerProvider language="JAVA" implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaClassLineMarker"/>
         <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.axonframework.intellij.ide.plugin.markers.KotlinPublishMethodLineMarker"/>
         <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.axonframework.intellij.ide.plugin.markers.KotlinHandlerMethodLineMarker"/>
-    </extensions>
+        <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.axonframework.intellij.ide.plugin.markers.KotlinClassLineMarker"/>
 
-    <extensions defaultExtensionNs="org.axonframework.intellij.axonplugin">
-        <publisherProvider
-                implementation="org.axonframework.intellij.ide.plugin.publisher.DefaultEventPublisherProvider"/>
-        <handlerProvider implementation="org.axonframework.intellij.ide.plugin.handler.DefaultEventHandlerProvider"/>
+        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver" />
+        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessagePublisherResolver" />
     </extensions>
 </idea-plugin>
