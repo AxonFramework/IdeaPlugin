@@ -1,4 +1,4 @@
-package org.axonframework.intellij.ide.plugin.search
+package org.axonframework.intellij.ide.plugin.api
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
@@ -19,7 +19,7 @@ enum class PublishingMethod(
     // TODO:  Add support for scatter/gather and subscription queries
     ;
 
-    fun getClass(project: Project): PsiMethod? {
+    fun getMethod(project: Project): PsiMethod? {
         return JavaPsiFacade.getInstance(project).findClass(containingClass, GlobalSearchScope.allScope(project))
                 ?.methods
                 ?.firstOrNull { m -> m.name == method }
