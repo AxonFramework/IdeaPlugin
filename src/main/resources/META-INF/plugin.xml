@@ -1,6 +1,6 @@
-<idea-plugin version="2">
+<idea-plugin>
     <id>org.axonframework.intellij.axonplugin</id>
-    <name>Axon Framework Plugin</name>
+    <name>Axon Framework</name>
     <version>${project.version}</version>
     <vendor email="intellijplugin@axonframework.org" url="http://www.axonframework.org/">Axon Framework</vendor>
 
@@ -15,120 +15,6 @@
     <depends>com.intellij.modules.java</depends>
     <depends>org.jetbrains.kotlin</depends>
 
-    <change-notes><![CDATA[
-        Version 0.3.9<br />
-        -------------<br />
-        <ul>
-            <li>FIXED IDEAPLUGIN-10 Plugin crashes because it cannot find java.util.concurrent.ConcurrentHashMap.keySet </li>
-        </ul>
-        <br />
-        <br />
-        Version 0.3.7<br />
-        -------------<br />
-        <ul>
-            <li>FIXED IDEAPLUGIN-5 Command Publisher now links to @CommandHandler</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.3.6<br />
-        -------------<br />
-        <ul>
-            <li>Performance improvements and navigation from event classes and command classes to handlers (thanks to Pawel Badenski)</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.3.5<br />
-        -------------<br />
-        <ul>
-            <li>Several bugfixes for IDEAPLUGIN-4</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.3.4<br />
-        -------------<br />
-        <ul>
-            <li>FIXED IDEAPLUGIN-4 @CommandHandler now links to the constructor of the commandhandler argument</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.3.3<br />
-        -------------<br />
-        <ul>
-            <li>FIXED IDEAPLUGIN-13 / IDEAPLUGIN-14 Plugin crashes all the time </li>
-        </ul>
-        <br />
-        <br />
-        Version 0.3.2<br />
-        -------------<br />
-        <ul>
-            <li>IDEAPLUGIN-6 Added visual distinction between internal, saga and other events</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.3.0<br />
-        -------------<br />
-        <ul>
-            <li>IDEAPLUGIN-6 Added visual distinction between internal and external events</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.2.2<br />
-        -------------<br />
-        <ul>
-            <li>Bugfix: IDEAPLUGIN-9 / Issue when switching projects with Axon plugin #3 </li>
-        </ul>
-        <br />
-        <br />
-        Version 0.2.1<br />
-        -------------<br />
-        <ul>
-            <li>Bugfix: IDEAPLUGIN-10 </li>
-            <li>Small performance improvement </li>
-        </ul>
-        <br />
-        <br />
-        Version 0.2.0<br />
-        -------------<br />
-        <ul>
-            <li>Added Create Event Handler Quickfix</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.1.1<br />
-        -------------<br />
-        <ul>
-            <li>Added support for Events from AbstractAnnotatedEntity</li>
-            <li>Fixed some issues where the plugin would not always show all handlers/publishers</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.1.0<br />
-        -------------<br />
-        <ul>
-            <li>Fixed NPE</li>
-            <li>Fixed ConcurrentModificationException</li>
-            <li>Restructured code</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.0.8<br />
-        -------------<br />
-        <ul>
-            <li>Fixed NPE</li>
-            <li>Fixed ConcurrentModificationException</li>
-            <li>Added support for all event handlers annotation types:
-            <ul>
-                <li>@EventHandler</li>
-                <li>@EventSourcingHandler</li>
-                <li>@SagaEventHandler</li>
-            </ul>
-            </li>
-            <li>Event handler methods (and parameters used to defined the event type) are not marked as unused if a
-           publishers for the declared event is available.</li>
-        </ul>
-        ]]>
-    </change-notes>
-
     <idea-version since-build="129.1359"/>
 
     <application-components/>
@@ -136,7 +22,6 @@
     <project-components/>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="Axon" factoryClass="org.axonframework.intellij.ide.plugin.window.MessageOverviewToolWindowFactory" icon="AllIcons.General.Modified" anchor="right"/>
         <codeInsight.lineMarkerProvider language="JAVA" implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaPublishMethodLineMarker"/>
         <codeInsight.lineMarkerProvider language="JAVA" implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaHandlerMethodLineMarker"/>
         <codeInsight.lineMarkerProvider language="JAVA" implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaClassLineMarker"/>
