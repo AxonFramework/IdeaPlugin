@@ -13,10 +13,17 @@ abstract class AbstractHandlerLineMarker : LineMarkerProvider {
         val repository = element.project.getService(MessageHandlerResolver::class.java)
         val handler = repository.findHandlerByElement(psiMethod) ?: return null
 
+        return createLineMarker(element, handler.payloadType)
+    }
+
+    protected fun createLineMarker(element: PsiElement, qualifiedName: String): RelatedItemLineMarkerInfo<PsiElement>? {
         val publisherResolver = element.project.getService(MessagePublisherResolver::class.java)
-        val resolvers = publisherResolver.getConstructorPublishersForType(handler.payloadType)
+        val resolvers = publisherResolver.getConstructorPublishersForType(qualifiedName)
+        if (resolvers.isEmpty()) {
+            return null
+        }
         return NavigationGutterIconBuilder.create(AxonIcons.Handler)
-                .setTooltipText("Navigate to ${handler.messageType.displayName()} constructor")
+                .setTooltipText("Navigate to publishers")
                 .setCellRenderer(AxonCellRenderer.getInstance())
                 .setTargets(resolvers)
                 .createLineMarkerInfo(element)

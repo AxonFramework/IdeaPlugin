@@ -1,4 +1,4 @@
-package org.axonframework.intellij.ide.plugin.search
+package org.axonframework.intellij.ide.plugin.util
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.TestSourcesFilter
@@ -36,8 +36,12 @@ fun renderElementText(element: PsiElement): String {
 
 fun renderElementContainerText(element: PsiElement): String? {
     val methodParent = PsiTreeUtil.findFirstParent(element) { it is PsiMethod } as PsiMethod? ?: return null
-    val handler = element.project.getService(MessageHandlerResolver::class.java).findHandlerByElement(methodParent) ?: return null
-    if (handler.messageType == MessageHandlerType.EVENT_SOURCING) {
+    val handler = element.project.getService(MessageHandlerResolver::class.java).findHandlerByElement(methodParent)
+            ?: return null
+    if (handler.handlerType == MessageHandlerType.COMMAND_INTERCEPTOR) {
+        return "Interceptor of ${methodParent.containingClass?.name}"
+    }
+    if (handler.handlerType == MessageHandlerType.EVENT_SOURCING || handler.handlerType == MessageHandlerType.COMMAND) {
         return "Aggregate: ${methodParent.containingClass?.name}"
     }
     return handler.processingGroup?.let { "ProcessingGroup: $it" }

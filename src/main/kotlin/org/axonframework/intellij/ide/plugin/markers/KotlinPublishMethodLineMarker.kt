@@ -1,9 +1,7 @@
 package org.axonframework.intellij.ide.plugin.markers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
-import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -15,11 +13,8 @@ class KotlinPublishMethodLineMarker : AbstractPublisherLineMarker() {
             return null
         }
         val resolvedType = (element.parent.parent as KtCallExpression?)?.resolveType() ?: return null
-        val fq = resolvedType.fqName ?: return null
-        val project = element.project
-        val scope = GlobalSearchScope.allScope(project)
-        val type = JavaPsiFacade.getInstance(project).elementFactory.createTypeByFQClassName(fq.asString(), scope)
+        val fq = resolvedType.fqName?.toString() ?: return null
 
-        return createLineMarker(element, type)
+        return createLineMarker(element, fq)
     }
 }

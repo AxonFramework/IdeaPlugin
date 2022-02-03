@@ -5,8 +5,8 @@ import com.intellij.openapi.util.Iconable.ICON_FLAG_READ_STATUS
 import com.intellij.openapi.util.Iconable.ICON_FLAG_VISIBILITY
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
-import org.axonframework.intellij.ide.plugin.search.renderElementContainerText
-import org.axonframework.intellij.ide.plugin.search.renderElementText
+import org.axonframework.intellij.ide.plugin.util.renderElementContainerText
+import org.axonframework.intellij.ide.plugin.util.renderElementText
 import javax.swing.Icon
 
 class AxonCellRenderer : PsiElementListCellRenderer<PsiElement>() {

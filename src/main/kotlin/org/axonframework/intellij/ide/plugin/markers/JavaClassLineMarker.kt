@@ -4,8 +4,6 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiIdentifier
-import com.intellij.psi.PsiType
-import com.intellij.psi.search.GlobalSearchScope
 
 class JavaClassLineMarker : AbstractClassLineMarker() {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
@@ -13,11 +11,9 @@ class JavaClassLineMarker : AbstractClassLineMarker() {
             return null
         }
 
-        val method = element.parent as PsiClass
+        val clazz = element.parent as PsiClass
+        val qualifiedName = clazz.qualifiedName ?: return null
 
-        val qualifiedName = method.qualifiedName ?: return null
-        val psiType = PsiType.getTypeByName(qualifiedName, element.project, GlobalSearchScope.projectScope(element.project))
-
-        return createLineMarker(element, psiType)
+        return createLineMarker(element, qualifiedName)
     }
 }

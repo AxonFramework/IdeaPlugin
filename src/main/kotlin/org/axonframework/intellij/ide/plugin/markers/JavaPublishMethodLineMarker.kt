@@ -11,7 +11,7 @@ class JavaPublishMethodLineMarker : AbstractPublisherLineMarker() {
             return null
         }
         val parent = element.parent.parent as PsiNewExpression
-        val type = parent.type ?: return null
+        val type = parent.classReference?.qualifiedName ?: return null
         return createLineMarker(element, type)
     }
 }

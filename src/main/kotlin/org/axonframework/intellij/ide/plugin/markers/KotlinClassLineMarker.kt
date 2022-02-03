@@ -2,8 +2,6 @@ package org.axonframework.intellij.ide.plugin.markers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiType
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.idea.search.getKotlinFqName
 import org.jetbrains.kotlin.lexer.KtKeywordToken
@@ -17,8 +15,7 @@ class KotlinClassLineMarker : AbstractClassLineMarker() {
 
         val method = element.parent as KtClass
 
-        val kotlinFqName = method.getKotlinFqName()?.toString() ?: return null
-        val psiType = PsiType.getTypeByName(kotlinFqName, element.project, GlobalSearchScope.projectScope(element.project))
-        return createLineMarker(element, psiType)
+        val qualifiedName = method.getKotlinFqName()?.toString() ?: return null
+        return createLineMarker(element, qualifiedName)
     }
 }

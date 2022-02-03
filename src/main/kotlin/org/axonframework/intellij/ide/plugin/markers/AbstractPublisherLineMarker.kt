@@ -5,13 +5,12 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiType
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 
 abstract class AbstractPublisherLineMarker : LineMarkerProvider {
-    protected fun createLineMarker(element: PsiElement, psiType: PsiType): RelatedItemLineMarkerInfo<PsiElement>? {
+    protected fun createLineMarker(element: PsiElement, qualifiedName: String): RelatedItemLineMarkerInfo<PsiElement>? {
         val repository = element.project.getService(MessageHandlerResolver::class.java)
-        val handlers = repository.findHandlersForType(psiType)
+        val handlers = repository.findHandlersForType(qualifiedName)
         if (handlers.isEmpty()) {
             return null
         }
