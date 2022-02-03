@@ -12,6 +12,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.axonframework.intellij.ide.plugin.util.areAssignable
 import org.axonframework.intellij.ide.plugin.util.axonScope
+import org.axonframework.intellij.ide.plugin.util.comparePsiElementsBasedOnDisplayName
 import org.jetbrains.kotlin.idea.KotlinFileType
 import java.util.concurrent.ConcurrentHashMap
 
@@ -38,10 +39,13 @@ class MessagePublisherResolver(val project: Project) {
                 .filter { areAssignable(project, qualifiedName, it) }
                 .mapNotNull { psiFacade.findClass(it, project.axonScope()) }
         val constructors = classesForQN.map { it.constructors }
-        return constructors.flatMap { it ->
-            it.flatMap {
-                MethodReferencesSearch.search(it, searchScope, true)
-            }.map { ref -> ref.element }
-        }
+        return constructors
+                .flatMap { it ->
+                    it.flatMap {
+                        MethodReferencesSearch.search(it, searchScope, true)
+                    }.map { ref -> ref.element }
+                }
+                .distinct()
+                .sortedWith { a, b -> comparePsiElementsBasedOnDisplayName(project, a, b) }
     }
 }
