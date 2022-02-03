@@ -41,6 +41,9 @@ fun renderElementContainerText(element: PsiElement): String? {
     if (handler.handlerType == MessageHandlerType.COMMAND_INTERCEPTOR) {
         return "Interceptor of ${methodParent.containingClass?.name}"
     }
+    if (handler.handlerType == MessageHandlerType.SAGA) {
+        return "Saga: " + handler.processingGroup
+    }
     if (handler.handlerType == MessageHandlerType.EVENT_SOURCING || handler.handlerType == MessageHandlerType.COMMAND) {
         return "Aggregate: ${methodParent.containingClass?.name}"
     }
