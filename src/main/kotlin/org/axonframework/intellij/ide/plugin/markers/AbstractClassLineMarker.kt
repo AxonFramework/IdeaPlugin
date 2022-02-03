@@ -3,6 +3,7 @@ package org.axonframework.intellij.ide.plugin.markers
 import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
+import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessagePublisherResolver
@@ -21,6 +22,7 @@ abstract class AbstractClassLineMarker : LineMarkerProvider {
                 .setTooltipText("Navigate to message references")
                 .setCellRenderer(AxonCellRenderer.getInstance())
                 .setTargets(items)
+                .setAlignment(GutterIconRenderer.Alignment.LEFT)
                 .createLineMarkerInfo(element)
 
     }

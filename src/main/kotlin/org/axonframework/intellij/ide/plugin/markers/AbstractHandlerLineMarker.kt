@@ -3,6 +3,7 @@ package org.axonframework.intellij.ide.plugin.markers
 import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
+import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
@@ -26,6 +27,7 @@ abstract class AbstractHandlerLineMarker : LineMarkerProvider {
                 .setTooltipText("Navigate to publishers")
                 .setCellRenderer(AxonCellRenderer.getInstance())
                 .setTargets(resolvers)
+                .setAlignment(GutterIconRenderer.Alignment.LEFT)
                 .createLineMarkerInfo(element)
     }
 }
