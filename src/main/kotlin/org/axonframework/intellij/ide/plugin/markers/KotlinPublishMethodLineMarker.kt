@@ -7,6 +7,10 @@ import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
+/**
+ * Renders a line marker when an instance of a class is created.
+ * Contains all handlers for that payload type.
+ */
 class KotlinPublishMethodLineMarker : AbstractPublisherLineMarker() {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
         if (element.parent !is KtNameReferenceExpression || element.parent.parent !is KtCallExpression) {

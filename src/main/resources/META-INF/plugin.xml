@@ -2,34 +2,50 @@
     <id>org.axonframework.intellij.axonplugin</id>
     <name>Axon Framework</name>
     <version>${project.version}</version>
-    <vendor email="intellijplugin@axonframework.org" url="http://www.axonframework.org/">Axon Framework</vendor>
+    <vendor url="https://axoniq.io/">Axon Framework</vendor>
 
     <description>
         This plugin helps to navigate from and to the axon framework event handler annotations. Axon Framework helps
         build scalable, extensible and maintainable applications by supporting developers apply the Command Query
         Responsibility Segregation (CQRS) architectural pattern.
-        Please report issues at http://issues.axonframework.org
+        Please report issues at https://github.com/AxonFramework/IdeaPlugin/issues
     </description>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.java</depends>
     <depends>org.jetbrains.kotlin</depends>
 
-    <idea-version since-build="129.1359"/>
+    <idea-version since-build="203"/>
 
-    <application-components/>
-
-    <project-components/>
+    <extensionPoints>
+        <extensionPoint name="handlerSearcher"
+                        interface="org.axonframework.intellij.ide.plugin.api.HandlerSearcher"/>
+    </extensionPoints>
 
     <extensions defaultExtensionNs="com.intellij">
-        <codeInsight.lineMarkerProvider language="JAVA" implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaPublishMethodLineMarker"/>
-        <codeInsight.lineMarkerProvider language="JAVA" implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaHandlerMethodLineMarker"/>
-        <codeInsight.lineMarkerProvider language="JAVA" implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaClassLineMarker"/>
-        <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.axonframework.intellij.ide.plugin.markers.KotlinPublishMethodLineMarker"/>
-        <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.axonframework.intellij.ide.plugin.markers.KotlinHandlerMethodLineMarker"/>
-        <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.axonframework.intellij.ide.plugin.markers.KotlinClassLineMarker"/>
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaPublishMethodLineMarker"/>
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaHandlerMethodLineMarker"/>
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaClassLineMarker"/>
+        <codeInsight.lineMarkerProvider language="kotlin"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.KotlinPublishMethodLineMarker"/>
+        <codeInsight.lineMarkerProvider language="kotlin"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.KotlinHandlerMethodLineMarker"/>
+        <codeInsight.lineMarkerProvider language="kotlin"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.KotlinClassLineMarker"/>
 
-        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver" />
-        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessagePublisherResolver" />
+        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver"/>
+        <projectService
+                serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="org.axonframework.intellij.axonplugin">
+        <handlerSearcher implementation="org.axonframework.intellij.ide.plugin.handlers.searchers.EventProcessorHandlerSearcher"/>
+        <handlerSearcher implementation="org.axonframework.intellij.ide.plugin.handlers.searchers.EventSourcingHandlerSearcher"/>
+        <handlerSearcher implementation="org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerSearcher"/>
+        <handlerSearcher implementation="org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerInterceptorSearcher"/>
+        <handlerSearcher implementation="org.axonframework.intellij.ide.plugin.handlers.searchers.QueryHandlerSearcher"/>
     </extensions>
 </idea-plugin>

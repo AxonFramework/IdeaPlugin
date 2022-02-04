@@ -7,6 +7,10 @@ import org.jetbrains.kotlin.idea.search.getKotlinFqName
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.psi.KtClass
 
+/**
+ * Renders a line marker icon when a class has a handler defined in the application.
+ * The list contains both creators and handlers.
+ */
 class KotlinClassLineMarker : AbstractClassLineMarker() {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
         if (element.elementType !is KtKeywordToken || element.parent !is KtClass) {

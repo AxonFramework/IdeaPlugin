@@ -5,6 +5,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiNewExpression
 
+/**
+ * Renders a line marker when an instance of a class is created.
+ * Contains all handlers for that payload type.
+ */
 class JavaPublishMethodLineMarker : AbstractPublisherLineMarker() {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
         if (element !is PsiIdentifier || element.parent.parent !is PsiNewExpression) {

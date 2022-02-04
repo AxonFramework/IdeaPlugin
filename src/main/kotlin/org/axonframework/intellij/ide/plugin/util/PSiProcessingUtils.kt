@@ -6,8 +6,15 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiType
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.idea.KotlinFileType
 
+/**
+ * Convenience method to fully qualified name of type.
+ * Throws if we get a type we do not expect so we can support it.
+ */
 fun PsiType?.toQualifiedName(): String? = this?.let {
     if (this is PsiClassReferenceType) {
         return this.resolve()?.qualifiedName
@@ -16,6 +23,10 @@ fun PsiType?.toQualifiedName(): String? = this?.let {
     }
 }
 
+/**
+ * Checks whether A can be assigned to B. For example:
+ * A extends B, then A is assignable to B. Used for matching of java supertypes in handlers.
+ */
 fun areAssignable(project: Project, qualifiedNameA: String, qualifiedNameB: String): Boolean {
     if (qualifiedNameA == qualifiedNameB) {
         return true
@@ -30,5 +41,12 @@ fun areAssignable(project: Project, qualifiedNameA: String, qualifiedNameB: Stri
     }
 }
 
-
 fun Project.axonScope() = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(this), JavaFileType.INSTANCE, KotlinFileType.INSTANCE)
+fun Project.allScope() = GlobalSearchScope.allScope(this)
+
+/**
+ * Convenience method to quickly create a cached value for a project based on PSI modifications.
+ */
+fun <T> Project.createCachedValue(supplier: () -> T) = CachedValuesManager.getManager(this).createCachedValue() {
+    CachedValueProvider.Result.create(supplier.invoke(), PsiModificationTracker.MODIFICATION_COUNT)
+}

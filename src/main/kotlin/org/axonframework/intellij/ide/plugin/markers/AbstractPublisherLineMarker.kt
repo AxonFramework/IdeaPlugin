@@ -6,6 +6,7 @@ import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
+import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 
 abstract class AbstractPublisherLineMarker : LineMarkerProvider {

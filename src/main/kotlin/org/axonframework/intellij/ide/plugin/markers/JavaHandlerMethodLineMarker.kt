@@ -8,6 +8,10 @@ import com.intellij.psi.PsiJavaCodeReferenceElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.util.PsiTreeUtil
 
+/**
+ * Shows a line marker at a method defition if it is also a handler.
+ * Navigates to creators of the payload.
+ */
 class JavaHandlerMethodLineMarker : AbstractHandlerLineMarker() {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
         if (element is PsiIdentifier && element.parent is PsiMethod) {

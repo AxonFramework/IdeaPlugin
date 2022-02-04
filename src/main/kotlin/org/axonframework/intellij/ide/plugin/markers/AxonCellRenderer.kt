@@ -1,13 +1,11 @@
 package org.axonframework.intellij.ide.plugin.markers
 
 import com.intellij.ide.util.PsiElementListCellRenderer
-import com.intellij.openapi.util.Iconable.ICON_FLAG_READ_STATUS
 import com.intellij.openapi.util.Iconable.ICON_FLAG_VISIBILITY
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.axonframework.intellij.ide.plugin.api.MessageHandler
-import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
+import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.axonframework.intellij.ide.plugin.util.renderElementContainerText
 import org.axonframework.intellij.ide.plugin.util.renderElementText
@@ -28,30 +26,41 @@ class AxonCellRenderer : PsiElementListCellRenderer<PsiElement>() {
     }
 
     override fun getIconFlags(): Int {
-        return ICON_FLAG_VISIBILITY + ICON_FLAG_READ_STATUS
+        return ICON_FLAG_VISIBILITY
     }
 
     override fun getIcon(element: PsiElement): Icon {
         val handler = element.project.getService(MessageHandlerResolver::class.java).findHandlerByElement(element)
         if (handler != null) {
-            return iconForHandler(handler)
+            return handler.getIcon()
         }
+        return determineCreatorIcon(element)
+    }
+
+    private fun determineCreatorIcon(element: PsiElement): Icon {
         val clazzParent = PsiTreeUtil.findFirstParent(element, true) { it is PsiClass } as PsiClass?
-        if (clazzParent != null && clazzParent.annotations.any { it.hasQualifiedName("org.axonframework.spring.stereotype.Saga") }) {
-            return AxonIcons.Saga
+        if (clazzParent != null) {
+            val isInSaga = clazzParent.annotations.any { it.hasQualifiedName("org.axonframework.spring.stereotype.Saga")}
+            if(isInSaga) {
+                return AxonIcons.Saga
+            }
+            if(isAggregateInstance(clazzParent)) {
+                return AxonIcons.Aggregate
+            }
         }
         return AxonIcons.Publisher
     }
 
-    private fun iconForHandler(handler: MessageHandler): Icon {
-        return when (handler.handlerType) {
-            MessageHandlerType.SAGA -> AxonIcons.Saga
-            MessageHandlerType.EVENT_SOURCING -> AxonIcons.Aggregate
-            MessageHandlerType.COMMAND -> AxonIcons.Aggregate
-            MessageHandlerType.COMMAND_INTERCEPTOR -> AxonIcons.Aggregate
-            else -> AxonIcons.Handler
+    private fun isAggregateInstance(clazzParent: PsiClass): Boolean {
+        val isAggregate = clazzParent.annotations.any { it.hasQualifiedName("org.axonframework.spring.stereotype.Aggregate")}
+        if(isAggregate) {
+            return true
         }
+        val isEntity = clazzParent.allFields.any { it.hasAnnotation("org.axonframework.modelling.command.EntityId") }
+        if(isEntity) {
+            return true
+        }
+
+        return false
     }
-
-
 }
