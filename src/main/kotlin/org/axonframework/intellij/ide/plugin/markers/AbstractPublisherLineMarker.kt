@@ -8,11 +8,13 @@ import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
+import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 
 abstract class AbstractPublisherLineMarker : LineMarkerProvider {
     protected fun createLineMarker(element: PsiElement, qualifiedName: String): RelatedItemLineMarkerInfo<PsiElement>? {
         val repository = element.project.getService(MessageHandlerResolver::class.java)
         val handlers = repository.findHandlersForType(qualifiedName)
+                .sortedWith(element.project.sortingByDisplayName())
         if (handlers.isEmpty()) {
             return null
         }

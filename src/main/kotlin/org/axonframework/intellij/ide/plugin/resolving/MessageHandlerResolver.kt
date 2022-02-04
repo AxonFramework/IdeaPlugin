@@ -6,7 +6,6 @@ import org.axonframework.intellij.ide.plugin.api.HANDLER_SEARCHER_EP
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.util.areAssignable
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
-import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 
 /**
  * Searches the codebase for Message handlers based on the annotations defined in MessageHandlerType.
@@ -35,7 +34,6 @@ class MessageHandlerResolver(private val project: Project) {
         return HANDLER_SEARCHER_EP.extensionList
                 .flatMap { it.search(project) }
                 .distinct()
-                .sortedWith(project.sortingByDisplayName())
     }
 }
 

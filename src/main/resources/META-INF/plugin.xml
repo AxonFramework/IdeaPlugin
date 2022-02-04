@@ -47,5 +47,7 @@
         <handlerSearcher implementation="org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerSearcher"/>
         <handlerSearcher implementation="org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerInterceptorSearcher"/>
         <handlerSearcher implementation="org.axonframework.intellij.ide.plugin.handlers.searchers.QueryHandlerSearcher"/>
+        <handlerSearcher
+                implementation="org.axonframework.intellij.ide.plugin.handlers.searchers.SagaEventHandlerSearcher"/>
     </extensions>
 </idea-plugin>

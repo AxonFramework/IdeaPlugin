@@ -8,6 +8,7 @@ enum class MessageHandlerType(
     EVENT_SOURCING("org.axonframework.eventsourcing.EventSourcingHandler"),
     QUERY("org.axonframework.queryhandling.QueryHandler"),
     COMMAND_INTERCEPTOR("org.axonframework.modelling.command.CommandHandlerInterceptor"),
+    SAGA("org.axonframework.modelling.saga.SagaEventHandler"),
     ;
 
     companion object {

@@ -2,13 +2,14 @@ package org.axonframework.intellij.ide.plugin.markers
 
 import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.openapi.util.Iconable.ICON_FLAG_VISIBILITY
-import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.util.PsiTreeUtil
 import org.axonframework.intellij.ide.plugin.AxonIcons
+import org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
-import org.axonframework.intellij.ide.plugin.util.renderElementContainerText
-import org.axonframework.intellij.ide.plugin.util.renderElementText
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import javax.swing.Icon
 
 class AxonCellRenderer : PsiElementListCellRenderer<PsiElement>() {
@@ -18,11 +19,49 @@ class AxonCellRenderer : PsiElementListCellRenderer<PsiElement>() {
     }
 
     override fun getElementText(element: PsiElement): String {
-        return renderElementText(element)
+        val handlerResolver = element.project.getService(MessageHandlerResolver::class.java)
+        val handler = handlerResolver.findHandlerByElement(element)
+        if(handler != null) {
+            return handler.payloadFullyQualifiedName.split(".").last()
+        }
+
+        val creatorResolver = element.project.getService(MessageCreationResolver::class.java)
+        val creator = creatorResolver.findCreatorByElement(element)
+        if(creator?.parentHandler != null) {
+            return creator.parentHandler!!.payloadFullyQualifiedName.split(".").last()
+        }
+
+        val ktMethodParent = PsiTreeUtil.getParentOfType(element, KtNamedFunction::class.java)
+        if (ktMethodParent != null) {
+            return ktMethodParent.containingClass()?.name + "." + ktMethodParent.name
+        }
+        val javaMethodParent = PsiTreeUtil.getParentOfType(element, PsiMethod::class.java)
+        if (javaMethodParent != null) {
+            return javaMethodParent.containingClass?.name + "." + javaMethodParent.name
+        }
+
+        return element.containingFile.name
     }
 
+    /**
+     * Renders the container text in the line marker popup. Contains additional contextual information.
+     *
+     * @return PSI element container text
+     */
     override fun getContainerText(element: PsiElement, name: String?): String? {
-        return renderElementContainerText(element)
+        val handlerResolver = element.project.getService(MessageHandlerResolver::class.java)
+
+        val handler = handlerResolver.findHandlerByElement(element)
+        if (handler != null) {
+            return handler.renderContainerText()
+        }
+
+        val creatorResolver = element.project.getService(MessageCreationResolver::class.java)
+        val creator = creatorResolver.findCreatorByElement(element)
+        if (creator != null) {
+            return creator.renderContainerText()
+        }
+        return null
     }
 
     override fun getIconFlags(): Int {
@@ -34,33 +73,10 @@ class AxonCellRenderer : PsiElementListCellRenderer<PsiElement>() {
         if (handler != null) {
             return handler.getIcon()
         }
-        return determineCreatorIcon(element)
-    }
-
-    private fun determineCreatorIcon(element: PsiElement): Icon {
-        val clazzParent = PsiTreeUtil.findFirstParent(element, true) { it is PsiClass } as PsiClass?
-        if (clazzParent != null) {
-            val isInSaga = clazzParent.annotations.any { it.hasQualifiedName("org.axonframework.spring.stereotype.Saga")}
-            if(isInSaga) {
-                return AxonIcons.Saga
-            }
-            if(isAggregateInstance(clazzParent)) {
-                return AxonIcons.Aggregate
-            }
+        val creator = element.project.getService(MessageCreationResolver::class.java).findCreatorByElement(element)
+        if(creator != null) {
+            return creator.getIcon()
         }
         return AxonIcons.Publisher
-    }
-
-    private fun isAggregateInstance(clazzParent: PsiClass): Boolean {
-        val isAggregate = clazzParent.annotations.any { it.hasQualifiedName("org.axonframework.spring.stereotype.Aggregate")}
-        if(isAggregate) {
-            return true
-        }
-        val isEntity = clazzParent.allFields.any { it.hasAnnotation("org.axonframework.modelling.command.EntityId") }
-        if(isEntity) {
-            return true
-        }
-
-        return false
     }
 }

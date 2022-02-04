@@ -9,6 +9,7 @@ import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
+import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 
 abstract class AbstractHandlerLineMarker : LineMarkerProvider {
     protected fun createLineMarker(element: PsiElement, psiMethod: PsiMethod): RelatedItemLineMarkerInfo<PsiElement>? {
@@ -21,6 +22,7 @@ abstract class AbstractHandlerLineMarker : LineMarkerProvider {
     protected fun createLineMarker(element: PsiElement, qualifiedName: String): RelatedItemLineMarkerInfo<PsiElement>? {
         val publisherResolver = element.project.getService(MessageCreationResolver::class.java)
         val resolvers = publisherResolver.getCreatorsForPayload(qualifiedName)
+                .sortedWith(element.project.sortingByDisplayName())
         if (resolvers.isEmpty()) {
             return null
         }
