@@ -3,6 +3,7 @@ package org.axonframework.intellij.ide.plugin.resolving
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.api.Handler
+import org.axonframework.intellij.ide.plugin.handlers.searchers.AggregateConstructorSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerInterceptorSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.EventProcessorHandlerSearcher
@@ -27,7 +28,8 @@ class MessageHandlerResolver(private val project: Project) {
             EventProcessorHandlerSearcher(),
             EventSourcingHandlerSearcher(),
             QueryHandlerSearcher(),
-            SagaEventHandlerSearcher()
+            SagaEventHandlerSearcher(),
+            AggregateConstructorSearcher()
     )
     private val handlerCache = project.createCachedValue { executeFindMessageHandlers() }
 

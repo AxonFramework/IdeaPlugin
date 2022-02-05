@@ -28,7 +28,7 @@ import org.axonframework.intellij.ide.plugin.util.axonScope
 abstract class HandlerSearcher(private val handlerType: MessageHandlerType) {
     abstract fun createMessageHandler(method: PsiMethod): Handler?
 
-    fun search(project: Project): List<Handler> {
+    open fun search(project: Project): List<Handler> {
         val annotationClasses = findAllRelevantAnnotationClasses(project)
         val annotatedMethods = annotationClasses.flatMap {
             AnnotatedElementsSearch.searchPsiMethods(it, project.axonScope()).findAll()
@@ -56,10 +56,11 @@ abstract class HandlerSearcher(private val handlerType: MessageHandlerType) {
     protected fun resolvePayloadType(method: PsiMethod): PsiType? {
         val possibleAnnotations = findAllRelevantAnnotationClasses(method.project)
         val annotation = method.annotations.firstOrNull { possibleAnnotations.contains(it.resolveAnnotationType()) }
-                ?: return null
-        val value = annotation.findDeclaredAttributeValue("payloadType")
-        if (value is PsiClassObjectAccessExpression) {
-            return value.type
+        if (annotation != null) {
+            val value = annotation.findDeclaredAttributeValue("payloadType")
+            if (value is PsiClassObjectAccessExpression) {
+                return value.type
+            }
         }
         return method.parameters.getOrNull(0)?.type as PsiType?
     }

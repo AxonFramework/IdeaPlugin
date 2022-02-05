@@ -35,4 +35,9 @@
         <projectService
                 serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver"/>
     </extensions>
+
+    <actions>
+        <action id="EventModelingAction" text="Generate Event Model From Axon Framework Details"
+                class="org.axonframework.intellij.ide.plugin.actions.EventModelingAction"/>
+    </actions>
 </idea-plugin>
