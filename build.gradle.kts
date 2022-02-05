@@ -1,4 +1,3 @@
-import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 fun properties(key: String) = project.findProperty(key).toString()
@@ -107,6 +106,11 @@ tasks {
     }
     runIde {
         jvmArgs("-Xmx2G")
+    }
+
+    buildSearchableOptions {
+        // Disable for hot-reload to work
+        enabled = false
     }
 }
 

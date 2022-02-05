@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin require-restart="false">
     <id>org.axonframework.intellij.axonplugin</id>
     <name>Axon Framework</name>
     <version>${project.version}</version>
@@ -17,11 +17,6 @@
 
     <idea-version since-build="203"/>
 
-    <extensionPoints>
-        <extensionPoint name="handlerSearcher"
-                        interface="org.axonframework.intellij.ide.plugin.api.HandlerSearcher"/>
-    </extensionPoints>
-
     <extensions defaultExtensionNs="com.intellij">
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaPublishMethodLineMarker"/>
@@ -39,15 +34,5 @@
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver"/>
         <projectService
                 serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver"/>
-    </extensions>
-
-    <extensions defaultExtensionNs="org.axonframework.intellij.axonplugin">
-        <handlerSearcher implementation="org.axonframework.intellij.ide.plugin.handlers.searchers.EventProcessorHandlerSearcher"/>
-        <handlerSearcher implementation="org.axonframework.intellij.ide.plugin.handlers.searchers.EventSourcingHandlerSearcher"/>
-        <handlerSearcher implementation="org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerSearcher"/>
-        <handlerSearcher implementation="org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerInterceptorSearcher"/>
-        <handlerSearcher implementation="org.axonframework.intellij.ide.plugin.handlers.searchers.QueryHandlerSearcher"/>
-        <handlerSearcher
-                implementation="org.axonframework.intellij.ide.plugin.handlers.searchers.SagaEventHandlerSearcher"/>
     </extensions>
 </idea-plugin>

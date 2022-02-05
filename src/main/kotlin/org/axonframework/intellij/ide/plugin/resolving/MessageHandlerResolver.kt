@@ -2,8 +2,13 @@ package org.axonframework.intellij.ide.plugin.resolving
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.axonframework.intellij.ide.plugin.api.HANDLER_SEARCHER_EP
 import org.axonframework.intellij.ide.plugin.api.Handler
+import org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerInterceptorSearcher
+import org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerSearcher
+import org.axonframework.intellij.ide.plugin.handlers.searchers.EventProcessorHandlerSearcher
+import org.axonframework.intellij.ide.plugin.handlers.searchers.EventSourcingHandlerSearcher
+import org.axonframework.intellij.ide.plugin.handlers.searchers.QueryHandlerSearcher
+import org.axonframework.intellij.ide.plugin.handlers.searchers.SagaEventHandlerSearcher
 import org.axonframework.intellij.ide.plugin.util.areAssignable
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 
@@ -16,6 +21,14 @@ import org.axonframework.intellij.ide.plugin.util.createCachedValue
  * @see org.axonframework.intellij.ide.plugin.api.MessageHandlerType
  */
 class MessageHandlerResolver(private val project: Project) {
+    private val searchers = listOf(
+            CommandHandlerInterceptorSearcher(),
+            CommandHandlerSearcher(),
+            EventProcessorHandlerSearcher(),
+            EventSourcingHandlerSearcher(),
+            QueryHandlerSearcher(),
+            SagaEventHandlerSearcher()
+    )
     private val handlerCache = project.createCachedValue { executeFindMessageHandlers() }
 
     fun findHandlersForType(qualifiedName: String): List<Handler> {
@@ -31,7 +44,7 @@ class MessageHandlerResolver(private val project: Project) {
     }
 
     private fun executeFindMessageHandlers(): List<Handler> {
-        return HANDLER_SEARCHER_EP.extensionList
+        return searchers
                 .flatMap { it.search(project) }
                 .distinct()
     }
