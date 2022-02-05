@@ -16,5 +16,6 @@ fun PsiMethod.findProcessingGroup(): String {
 }
 
 fun PsiMethod.containingClassname() = containingClass?.name ?: ""
+fun PsiMethod.containingClassFqn() = containingClass?.qualifiedName ?: ""
 
 private fun PsiMethod.toPackageName() = containingClass?.qualifiedName?.split(".")?.dropLast(1)?.joinToString(".") ?: ""

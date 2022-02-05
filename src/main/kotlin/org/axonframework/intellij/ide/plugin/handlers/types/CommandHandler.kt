@@ -8,10 +8,11 @@ import javax.swing.Icon
 data class CommandHandler(
         override val element: PsiMethod,
         override val payloadFullyQualifiedName: String,
-        val aggregate: String
+        val model: String,
+        val modelFqn: String
 ) : Handler {
     override fun renderContainerText(): String {
-        return aggregate
+        return model
     }
 
     override fun getIcon(): Icon {

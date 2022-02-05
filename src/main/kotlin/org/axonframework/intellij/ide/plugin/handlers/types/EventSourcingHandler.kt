@@ -7,10 +7,10 @@ import org.axonframework.intellij.ide.plugin.api.Handler
 data class EventSourcingHandler(
         override val element: PsiMethod,
         override val payloadFullyQualifiedName: String,
-        val aggregate: String
+        val model: String
 ) : Handler {
     override fun renderContainerText(): String {
-        return aggregate
+        return model
     }
 
     override fun getIcon() = AxonIcons.Aggregate
