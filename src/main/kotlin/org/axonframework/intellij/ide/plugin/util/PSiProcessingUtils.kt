@@ -3,12 +3,14 @@ package org.axonframework.intellij.ide.plugin.util
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiType
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.jetbrains.kotlin.idea.KotlinFileType
 
 /**
@@ -50,3 +52,6 @@ fun Project.allScope() = GlobalSearchScope.allScope(this)
 fun <T> Project.createCachedValue(supplier: () -> T) = CachedValuesManager.getManager(this).createCachedValue() {
     CachedValueProvider.Result.create(supplier.invoke(), PsiModificationTracker.MODIFICATION_COUNT)
 }
+
+fun PsiClass?.isAggregate() = this?.hasAnnotation(AxonAnnotation.AGGREGATE.annotationName) == true
+fun PsiClass?.isEntity() = this?.allFields?.any { it.hasAnnotation(AxonAnnotation.ENTITY_ID.annotationName) } == true

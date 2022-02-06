@@ -1,17 +1,33 @@
 package org.axonframework.intellij.ide.plugin.markers
 
+import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
-import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
+import org.axonframework.intellij.ide.plugin.util.isAggregate
 import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
+import org.jetbrains.uast.UClass
+import org.jetbrains.uast.UIdentifier
+import org.jetbrains.uast.toUElement
 
-abstract class AbstractClassLineMarker : LineMarkerProvider {
-    protected fun createLineMarker(element: PsiElement, qualifiedName: String): RelatedItemLineMarkerInfo<PsiElement>? {
+/**
+ * Provides a gutter icon on class declarations of types which are used in handlers.
+ */
+class ClassLineMarkerProvider : LineMarkerProvider {
+    override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
+        if (element.toUElement() !is UIdentifier) {
+            return null
+        }
+        val uElement = element.parent.toUElement()
+        if (uElement !is UClass || uElement.isAggregate()) {
+            return null
+        }
+
+        val qualifiedName = uElement.qualifiedName ?: return null
         val handlers = element.project.getService(MessageHandlerResolver::class.java).findHandlersForType(qualifiedName)
         if (handlers.isEmpty()) {
             return null
@@ -25,6 +41,5 @@ abstract class AbstractClassLineMarker : LineMarkerProvider {
                 .setTargets(items)
                 .setAlignment(GutterIconRenderer.Alignment.LEFT)
                 .createLineMarkerInfo(element)
-
     }
 }

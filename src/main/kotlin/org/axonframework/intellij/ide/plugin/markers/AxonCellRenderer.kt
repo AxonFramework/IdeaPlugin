@@ -3,13 +3,13 @@ package org.axonframework.intellij.ide.plugin.markers
 import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.openapi.util.Iconable.ICON_FLAG_VISIBILITY
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.util.PsiTreeUtil
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.axonframework.intellij.ide.plugin.util.containingClassname
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.getParentOfType
+import org.jetbrains.uast.toUElement
 import javax.swing.Icon
 
 class AxonCellRenderer : PsiElementListCellRenderer<PsiElement>() {
@@ -21,23 +21,19 @@ class AxonCellRenderer : PsiElementListCellRenderer<PsiElement>() {
     override fun getElementText(element: PsiElement): String {
         val handlerResolver = element.project.getService(MessageHandlerResolver::class.java)
         val handler = handlerResolver.findHandlerByElement(element)
-        if(handler != null) {
+        if (handler != null) {
             return handler.payloadFullyQualifiedName.split(".").last()
         }
 
         val creatorResolver = element.project.getService(MessageCreationResolver::class.java)
         val creator = creatorResolver.findCreatorByElement(element)
-        if(creator?.parentHandler != null) {
+        if (creator?.parentHandler != null) {
             return creator.parentHandler!!.payloadFullyQualifiedName.split(".").last()
         }
 
-        val ktMethodParent = PsiTreeUtil.getParentOfType(element, KtNamedFunction::class.java)
-        if (ktMethodParent != null) {
-            return ktMethodParent.containingClass()?.name + "." + ktMethodParent.name
-        }
-        val javaMethodParent = PsiTreeUtil.getParentOfType(element, PsiMethod::class.java)
-        if (javaMethodParent != null) {
-            return javaMethodParent.containingClass?.name + "." + javaMethodParent.name
+        val methodParent = element.toUElement()?.getParentOfType<UMethod>()
+        if (methodParent != null) {
+            return methodParent.containingClassname() + "." + methodParent.name
         }
 
         return element.containingFile.name

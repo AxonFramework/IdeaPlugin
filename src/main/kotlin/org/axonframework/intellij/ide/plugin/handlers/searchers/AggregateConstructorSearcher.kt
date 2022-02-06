@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.searches.AnnotatedElementsSearch
+import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.HandlerSearcher
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
@@ -17,7 +18,7 @@ import org.axonframework.intellij.ide.plugin.util.axonScope
  */
 class AggregateConstructorSearcher : HandlerSearcher(MessageHandlerType.COMMAND) {
     override fun search(project: Project): List<Handler> {
-        val annotation = JavaPsiFacade.getInstance(project).findClass("org.axonframework.spring.stereotype.Aggregate", project.allScope())
+        val annotation = JavaPsiFacade.getInstance(project).findClass(AxonAnnotation.AGGREGATE.annotationName, project.allScope())
                 ?: return emptyList()
         val aggregates = AnnotatedElementsSearch.searchPsiClasses(annotation, project.axonScope()).findAll()
         return aggregates
@@ -25,13 +26,12 @@ class AggregateConstructorSearcher : HandlerSearcher(MessageHandlerType.COMMAND)
                 .filter {
                     !it.hasAnnotation(MessageHandlerType.COMMAND.annotationName) && it.hasParameters()
                 }.mapNotNull {
-                    AggregateConstructor(it, it.containingClass?.qualifiedName!!)
+                    createMessageHandler(it)
                 }
 
     }
 
-    override fun createMessageHandler(method: PsiMethod): Handler? {
-        // Unused
-        return null
+    override fun createMessageHandler(method: PsiMethod): Handler {
+        return AggregateConstructor(method, method.containingClass?.qualifiedName!!)
     }
 }

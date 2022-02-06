@@ -9,8 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
-import org.axonframework.intellij.ide.plugin.creators.DefaultMessageCreator
-import org.axonframework.intellij.ide.plugin.handlers.types.AggregateConstructor
 import org.axonframework.intellij.ide.plugin.handlers.types.CommandHandler
 import org.axonframework.intellij.ide.plugin.handlers.types.EventProcessorHandler
 import org.axonframework.intellij.ide.plugin.handlers.types.SagaEventHandler
@@ -18,6 +16,8 @@ import org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.axonframework.intellij.ide.plugin.util.areAssignable
 import org.axonframework.intellij.ide.plugin.util.axonScope
+import org.axonframework.intellij.ide.plugin.util.isAggregate
+import org.axonframework.intellij.ide.plugin.util.isEntity
 import java.io.File
 import java.nio.charset.Charset
 
@@ -69,20 +69,6 @@ class EventModelingAction : AnAction() {
 
             // Now find events that are produced by these commands
             val eventsCreatedDuringCommand = creators.filter { it.parentHandler != null && handlersForPayload.contains(it.parentHandler) }
-                    .flatMap { creator ->
-                        // Special case. An aggregate could have been constructed, not directly building an event.
-                        // Find the events created in the constructor, and execute some replace magic
-                        // so they are matched
-                        val constructorHandlers = handlers.filterIsInstance<AggregateConstructor>()
-                                .filter { it.payloadFullyQualifiedName == creator.payloadFullyQualifiedName }
-                        if (constructorHandlers.isNotEmpty()) {
-                            constructorHandlers.flatMap {
-                                creators.filter { c -> c.parentHandler == it }
-                                        .filterIsInstance<DefaultMessageCreator>()
-                                        .map { c -> c.copy(parentHandler = creator.parentHandler) }
-                            }
-                        } else listOf(creator)
-                    }
 
             val events = (eventsCreatedDuringCommand)
                     .filter { it.parentHandler is CommandHandler }
@@ -126,10 +112,10 @@ class EventModelingAction : AnAction() {
     private fun resolveModelType(project: Project, modelFqn: String): EventModelEntityType {
         val clazz = JavaPsiFacade.getInstance(project).findClass(modelFqn, project.axonScope())
                 ?: return EventModelEntityType.OTHER
-        if (clazz.hasAnnotation("org.axonframework.spring.stereotype.Aggregate")) {
+        if (clazz.isAggregate()) {
             return EventModelEntityType.AGGREGATE
         }
-        if (clazz.allFields.any { it.hasAnnotation("org.axonframework.modelling.command.EntityId") }) {
+        if (clazz.isEntity()) {
             return EventModelEntityType.ENTITY
         }
         return EventModelEntityType.OTHER

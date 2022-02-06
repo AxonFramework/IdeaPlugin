@@ -19,21 +19,26 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaPublishMethodLineMarker"/>
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.PublishMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaHandlerMethodLineMarker"/>
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.HandlerMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaClassLineMarker"/>
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.ClassLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin"
-                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.KotlinPublishMethodLineMarker"/>
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.PublishMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin"
-                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.KotlinHandlerMethodLineMarker"/>
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.HandlerMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin"
-                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.KotlinClassLineMarker"/>
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.ClassLineMarkerProvider"/>
 
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver"/>
         <projectService
                 serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver"/>
+        <implicitUsageProvider implementation="org.axonframework.intellij.ide.plugin.usage.AxonImplicitUsageProvider"/>
+        <annotator language="JAVA"
+                   implementationClass="org.axonframework.intellij.ide.plugin.usage.AggregateAnnotator"/>
+        <annotator language="kotlin"
+                   implementationClass="org.axonframework.intellij.ide.plugin.usage.AggregateAnnotator"/>
     </extensions>
 
     <actions>

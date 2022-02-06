@@ -9,6 +9,8 @@ import com.intellij.psi.PsiType
 import com.intellij.psi.search.searches.AnnotatedElementsSearch
 import org.axonframework.intellij.ide.plugin.util.allScope
 import org.axonframework.intellij.ide.plugin.util.axonScope
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.toUElement
 
 /**
  * HandlerSearchers are responsible for finding the handlers of their `MessageHandlerType`.
@@ -23,7 +25,6 @@ import org.axonframework.intellij.ide.plugin.util.axonScope
  *
  * @see HandlerSearcher
  * @see Handler
- * @see HANDLER_SEARCHER_EP
  */
 abstract class HandlerSearcher(private val handlerType: MessageHandlerType) {
     abstract fun createMessageHandler(method: PsiMethod): Handler?
@@ -62,6 +63,6 @@ abstract class HandlerSearcher(private val handlerType: MessageHandlerType) {
                 return value.type
             }
         }
-        return method.parameters.getOrNull(0)?.type as PsiType?
+        return method.toUElement(UMethod::class.java)?.uastParameters?.getOrNull(0)?.typeReference?.type
     }
 }

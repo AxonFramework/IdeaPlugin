@@ -2,6 +2,7 @@ package org.axonframework.intellij.ide.plugin.util
 
 import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.PsiMethod
+import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 
 /**
  * Resolves the name of the projection an event handler is in. Looks for the @ProcessingGroup annotation and
@@ -10,7 +11,7 @@ import com.intellij.psi.PsiMethod
 fun PsiMethod.findProcessingGroup(): String {
     val containingClass = this.containingClass ?: return ""
     return containingClass.annotations
-            .firstOrNull { annotation -> annotation.hasQualifiedName("org.axonframework.config.ProcessingGroup") }
+            .firstOrNull { annotation -> annotation.hasQualifiedName(AxonAnnotation.PROCESSING_GROUP.annotationName) }
             ?.let { (it.findAttributeValue("value") as PsiLiteralExpression).value as String }
             ?: toPackageName()
 }
