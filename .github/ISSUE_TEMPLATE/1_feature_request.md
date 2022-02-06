@@ -1,5 +1,5 @@
 ---
-name: 'Feature request' about: 'Suggest a feature for the GiftCard Demo' title:
+name: 'Feature request' about: 'Suggest a feature for the Intellij Plugin' title:
 labels: 'Type: Feature'
 ---
 

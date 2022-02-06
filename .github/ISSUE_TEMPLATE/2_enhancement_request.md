@@ -1,5 +1,5 @@
 ---
-name: 'Enhancement request' about: 'Suggest an enhancement/change to an existing feature for the GiftCard Demo' title:
+name: 'Enhancement request' about: 'Suggest an enhancement/change to an existing feature for the IntelliJ plugin' title:
 labels: 'Type: Enhancement'
 ---
 
