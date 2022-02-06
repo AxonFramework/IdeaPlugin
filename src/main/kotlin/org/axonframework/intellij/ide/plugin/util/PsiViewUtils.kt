@@ -26,3 +26,5 @@ fun comparePsiElementsBasedOnDisplayName(project: Project, elementA: PsiElement,
         renderer.getElementText(elementA).compareTo(renderer.getElementText(elementB))
     }
 }
+
+fun String.toShortName() = split(".").last()

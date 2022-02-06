@@ -11,11 +11,11 @@ import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UClassLiteralExpression
-import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.USimpleNameReferenceExpression
 import org.jetbrains.uast.UTypeReferenceExpression
 import org.jetbrains.uast.UastCallKind
 import org.jetbrains.uast.getQualifiedName
+import org.jetbrains.uast.getUParentForIdentifier
 import org.jetbrains.uast.toUElement
 
 /**
@@ -23,18 +23,15 @@ import org.jetbrains.uast.toUElement
  */
 class PublishMethodLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
-        if (element.toUElement() !is UIdentifier) {
-            return null
-        }
-        val uElement = element.parent.toUElement()
+        val referenceExpression = getUParentForIdentifier(element) as? USimpleNameReferenceExpression ?: return null
         val uElementParent = element.parent.parent.toUElement()
         val isConstructor = uElementParent is UCallExpression && uElementParent.kind == UastCallKind.CONSTRUCTOR_CALL
         val isClassReference = uElementParent is UTypeReferenceExpression && uElementParent.uastParent is UClassLiteralExpression
-        if (uElement !is USimpleNameReferenceExpression || (!isConstructor && !isClassReference)) {
+        if (!isConstructor && !isClassReference) {
             return null
         }
 
-        val qualifiedName = uElement.getQualifiedName() ?: return null
+        val qualifiedName = referenceExpression.getQualifiedName() ?: return null
         val repository = element.project.getService(MessageHandlerResolver::class.java)
         val handlers = repository.findHandlersForType(qualifiedName)
                 .sortedWith(element.project.sortingByDisplayName())

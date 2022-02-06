@@ -11,18 +11,14 @@ import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.axonframework.intellij.ide.plugin.util.isAggregate
 import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 import org.jetbrains.uast.UClass
-import org.jetbrains.uast.UIdentifier
-import org.jetbrains.uast.toUElement
+import org.jetbrains.uast.getUParentForIdentifier
 
 /**
  * Provides a gutter icon on class declarations of types which are used in handlers.
  */
 class ClassLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
-        if (element.toUElement() !is UIdentifier) {
-            return null
-        }
-        val uElement = element.parent.toUElement()
+        val uElement = getUParentForIdentifier(element) ?: return null
         if (uElement !is UClass || uElement.isAggregate()) {
             return null
         }
