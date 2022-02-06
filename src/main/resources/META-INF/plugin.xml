@@ -40,9 +40,4 @@
         <annotator language="kotlin"
                    implementationClass="org.axonframework.intellij.ide.plugin.usage.AggregateAnnotator"/>
     </extensions>
-
-    <actions>
-        <action id="EventModelingAction" text="Generate Event Model From Axon Framework Details"
-                class="org.axonframework.intellij.ide.plugin.actions.EventModelingAction"/>
-    </actions>
 </idea-plugin>
