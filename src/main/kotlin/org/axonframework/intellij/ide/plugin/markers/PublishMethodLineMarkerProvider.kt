@@ -21,7 +21,10 @@ import org.jetbrains.uast.getUParentForIdentifier
 import org.jetbrains.uast.toUElement
 
 /**
- * Provides a gutter icon on constructor invocations when that type is also known as a message paylaod.
+ * Provides a gutter icon on constructor invocations when that type is also known as a message payload.
+ * It is known as a message payload when a handler can be found for it.
+ *
+ * @see MessageHandlerResolver
  */
 class PublishMethodLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
@@ -36,12 +39,12 @@ class PublishMethodLineMarkerProvider : LineMarkerProvider {
         val qualifiedName = referenceExpression.getQualifiedName() ?: return null
         val repository = element.project.getService(MessageHandlerResolver::class.java)
         val handlers = repository.findHandlersForType(qualifiedName)
-                .sortedWith(element.project.sortingByDisplayName())
+                .sortedWith(sortingByDisplayName())
         if (handlers.isEmpty()) {
             return null
         }
         return NavigationGutterIconBuilder.create(AxonIcons.Publisher)
-                .setPopupTitle("Axon message handlers")
+                .setPopupTitle("Axon Message Handlers")
                 .setTooltipText("Navigate to Axon message handlers")
                 .setCellRenderer(AxonCellRenderer.getInstance())
                 .setAlignment(GutterIconRenderer.Alignment.LEFT)

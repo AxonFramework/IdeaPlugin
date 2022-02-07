@@ -9,7 +9,7 @@ import org.axonframework.intellij.ide.plugin.util.allScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 
 /**
- * Responsible for managing (and caching) information regarding Axon annotations
+ * Responsible for managing (and caching) information regarding Axon annotations.
  */
 class AnnotationResolver(val project: Project) {
     private val annotationCache = project.createCachedValue { computeAnnotations() }

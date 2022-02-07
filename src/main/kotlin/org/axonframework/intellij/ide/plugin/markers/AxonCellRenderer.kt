@@ -22,7 +22,7 @@ class AxonCellRenderer : PsiElementListCellRenderer<PsiElement>() {
         val handlerResolver = element.project.getService(MessageHandlerResolver::class.java)
         val handler = handlerResolver.findHandlerByElement(element)
         if (handler != null) {
-            return handler.payloadFullyQualifiedName.split(".").last()
+            return handler.renderText()
         }
 
         val creatorResolver = element.project.getService(MessageCreationResolver::class.java)

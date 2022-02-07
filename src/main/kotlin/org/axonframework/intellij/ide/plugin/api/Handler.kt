@@ -6,6 +6,9 @@ import javax.swing.Icon
 
 /**
  * Parent interface of any Handler, providing methods to describe the handler in interface elements.
+ *
+ * @see org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
+ * @see HandlerSearcher
  */
 interface Handler : PsiElementWrapper {
     override val element: PsiElement

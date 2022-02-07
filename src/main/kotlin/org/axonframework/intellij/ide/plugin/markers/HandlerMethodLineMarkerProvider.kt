@@ -25,7 +25,14 @@ import org.jetbrains.uast.getParentOfType
 import org.jetbrains.uast.toUElementOfType
 
 /**
- * Provides a gutter icon on constructor invocations when that type is also known as a message paylaod
+ * Provides a gutter icon on handler annotations. These contain the places where the message payload was created,
+ * for quick navigation.
+ *
+ * Also provides an Interceptor icon on CommandHandlerInterceptors specifically, containing all command handlers
+ * that are intercepted by that interceptor.
+ *
+ * @see MessageHandlerResolver
+ * @see MessageCreationResolver
  */
 class HandlerMethodLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
@@ -56,7 +63,7 @@ class HandlerMethodLineMarkerProvider : LineMarkerProvider {
     private fun createPayloadCreatorLineMarker(element: PsiElement, qualifiedName: String): RelatedItemLineMarkerInfo<PsiElement> {
         val publisherResolver = element.project.getService(MessageCreationResolver::class.java)
         val creators = publisherResolver.getCreatorsForPayload(qualifiedName)
-                .sortedWith(element.project.sortingByDisplayName())
+                .sortedWith(sortingByDisplayName())
         return NavigationGutterIconBuilder.create(AxonIcons.Handler)
                 .setPopupTitle("Payload Creators")
                 .setTooltipText("Navigate to creation of message payload")
@@ -78,7 +85,7 @@ class HandlerMethodLineMarkerProvider : LineMarkerProvider {
         val handlers = handlerResolver.findHandlersForType(qualifiedName, MessageType.COMMAND)
                 .filterIsInstance<CommandHandler>()
                 .filter { it.modelFqn == element.getContainingClass()?.getQualifiedName() }
-                .sortedWith(element.project.sortingByDisplayName())
+                .sortedWith(sortingByDisplayName())
         return NavigationGutterIconBuilder.create(AxonIcons.Interceptor)
                 .setPopupTitle("Commands Intercepted")
                 .setTooltipText("Navigate to command handlers that are intercepted")

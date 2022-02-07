@@ -30,7 +30,7 @@ class ClassLineMarkerProvider : LineMarkerProvider {
         }
         val publishers = element.project.getService(MessageCreationResolver::class.java).getCreatorsForPayload(qualifiedName)
 
-        val items = (handlers + publishers).sortedWith(element.project.sortingByDisplayName()).map { it.element }
+        val items = (handlers + publishers).sortedWith(sortingByDisplayName()).map { it.element }
         return NavigationGutterIconBuilder.create(AxonIcons.Publisher)
                 .setTooltipText("Navigate to message handlers and creations")
                 .setCellRenderer(AxonCellRenderer.getInstance())
