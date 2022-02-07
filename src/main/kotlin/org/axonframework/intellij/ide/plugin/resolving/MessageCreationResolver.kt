@@ -3,17 +3,17 @@ package org.axonframework.intellij.ide.plugin.resolving
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.util.CachedValue
-import com.intellij.psi.util.PsiTreeUtil
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageCreator
 import org.axonframework.intellij.ide.plugin.creators.DefaultMessageCreator
 import org.axonframework.intellij.ide.plugin.util.areAssignable
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
-import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.getParentOfType
+import org.jetbrains.uast.toUElement
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -27,7 +27,6 @@ class MessageCreationResolver(private val project: Project) {
     private val psiFacade = JavaPsiFacade.getInstance(project)
     private val handlerResolver = project.getService(MessageHandlerResolver::class.java)
     private val constructorsByPayloadCache = ConcurrentHashMap<String, CachedValue<List<MessageCreator>>>()
-
 
     fun getCreatorsForPayload(payloadQualifiedClassName: String): List<MessageCreator> {
         val cache = constructorsByPayloadCache.getOrPut(payloadQualifiedClassName) {
@@ -70,25 +69,35 @@ class MessageCreationResolver(private val project: Project) {
             val clazz = psiFacade.findClass(typeFqn, project.axonScope()) ?: return@flatMap emptyList()
             clazz.constructors
                     .flatMap { MethodReferencesSearch.search(it, project.axonScope(), true) }
-                    .map { ref -> createCreator(ref.element, typeFqn) }
+                    .flatMap { ref -> createCreators(ref.element, typeFqn) }
                     .distinct()
         }
     }
 
-    private fun createCreator(element: PsiElement, qualifiedName: String): MessageCreator {
-        return DefaultMessageCreator(element, qualifiedName, findParentHandler(element))
+    private fun createCreators(element: PsiElement, qualifiedName: String): List<MessageCreator> {
+        val parentHandlers = findParentHandlers(element)
+        if (parentHandlers.isEmpty()) {
+            return listOf(DefaultMessageCreator(element, qualifiedName, null))
+        }
+        return parentHandlers.map { DefaultMessageCreator(element, qualifiedName, it) }
     }
 
-    private fun findParentHandler(element: PsiElement): Handler? {
-        val ktMethodParent = PsiTreeUtil.getParentOfType(element, KtNamedFunction::class.java)
-        if (ktMethodParent != null) {
-            return handlerResolver.findHandlerByElement(ktMethodParent)
+    /**
+     * Finds all parent handlers of a method. This is kind of intense on IntelliJ, so we should monitor performance
+     * on this and perhaps reduce the recursion limit. The recursion limit the depth of the call tree that is searched.
+     */
+    private fun findParentHandlers(element: PsiElement, depth: Int = 0): List<Handler> {
+        if (depth > 3) {
+            // Recursion guard
+            return listOf()
         }
-        val javaMethodParent = PsiTreeUtil.getParentOfType(element, PsiMethod::class.java)
-        if (javaMethodParent != null) {
-            return handlerResolver.findHandlerByElement(javaMethodParent)
+        val parent = element.toUElement()?.getParentOfType<UMethod>()?.javaPsi ?: return listOf()
+        val parentHandler = handlerResolver.findHandlerByElement(parent)
+        if (parentHandler != null) {
+            return listOf(parentHandler)
         }
 
-        return null
+        val references = MethodReferencesSearch.search(parent, element.project.axonScope(), true)
+        return references.flatMap { findParentHandlers(it.element, depth + 1) }
     }
 }

@@ -3,6 +3,7 @@ package org.axonframework.intellij.ide.plugin.resolving
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.api.Handler
+import org.axonframework.intellij.ide.plugin.api.MessageType
 import org.axonframework.intellij.ide.plugin.handlers.searchers.AggregateConstructorSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerInterceptorSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerSearcher
@@ -33,8 +34,9 @@ class MessageHandlerResolver(private val project: Project) {
     )
     private val handlerCache = project.createCachedValue { executeFindMessageHandlers() }
 
-    fun findHandlersForType(qualifiedName: String): List<Handler> {
+    fun findHandlersForType(qualifiedName: String, messageType: MessageType? = null): List<Handler> {
         return handlerCache.value
+                .filter { messageType == null || it.handlerType.messageType == messageType }
                 .filter { areAssignable(project, it.payloadFullyQualifiedName, qualifiedName) }
                 .filter { it.element.isValid }
     }

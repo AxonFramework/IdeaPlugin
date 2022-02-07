@@ -22,7 +22,7 @@ data class DefaultMessageCreator(override val element: PsiElement, override val 
 
     override fun getIcon(): Icon {
         if (parentHandler is CommandHandler || parentHandler is EventSourcingHandler) {
-            return AxonIcons.Aggregate
+            return AxonIcons.Model
         }
         if (parentHandler is SagaEventHandler) {
             return AxonIcons.Saga

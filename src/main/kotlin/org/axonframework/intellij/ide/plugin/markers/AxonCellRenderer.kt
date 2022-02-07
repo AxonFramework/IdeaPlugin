@@ -28,7 +28,7 @@ class AxonCellRenderer : PsiElementListCellRenderer<PsiElement>() {
         val creatorResolver = element.project.getService(MessageCreationResolver::class.java)
         val creator = creatorResolver.findCreatorByElement(element)
         if (creator?.parentHandler != null) {
-            return creator.parentHandler!!.payloadFullyQualifiedName.split(".").last()
+            return creator.parentHandler!!.renderText()
         }
 
         val methodParent = element.toUElement()?.getParentOfType<UMethod>()
@@ -71,7 +71,7 @@ class AxonCellRenderer : PsiElementListCellRenderer<PsiElement>() {
         }
         val creator = element.project.getService(MessageCreationResolver::class.java).findCreatorByElement(element)
         if(creator != null) {
-            return creator.getIcon()
+            return creator.parentHandler?.getIcon() ?: creator.getIcon()
         }
         return AxonIcons.Publisher
     }

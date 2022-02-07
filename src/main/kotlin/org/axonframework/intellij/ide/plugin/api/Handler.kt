@@ -1,6 +1,7 @@
 package org.axonframework.intellij.ide.plugin.api
 
 import com.intellij.psi.PsiElement
+import org.axonframework.intellij.ide.plugin.util.toShortName
 import javax.swing.Icon
 
 /**
@@ -8,8 +9,10 @@ import javax.swing.Icon
  */
 interface Handler : PsiElementWrapper {
     override val element: PsiElement
+    val handlerType: MessageHandlerType
     val payloadFullyQualifiedName: String
 
+    fun renderText(): String = payloadFullyQualifiedName.toShortName()
     fun renderContainerText(): String?
     fun getIcon(): Icon
 }

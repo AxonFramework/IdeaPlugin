@@ -31,6 +31,7 @@
         <codeInsight.lineMarkerProvider language="kotlin"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.ClassLineMarkerProvider"/>
 
+        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver"/>
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver"/>
         <projectService
                 serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver"/>
