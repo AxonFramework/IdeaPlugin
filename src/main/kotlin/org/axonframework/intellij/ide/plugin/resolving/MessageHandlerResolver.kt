@@ -11,6 +11,8 @@ import org.axonframework.intellij.ide.plugin.handlers.searchers.EventProcessorHa
 import org.axonframework.intellij.ide.plugin.handlers.searchers.EventSourcingHandlerSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.QueryHandlerSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.SagaEventHandlerSearcher
+import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
+import org.axonframework.intellij.ide.plugin.util.PerformanceSubject
 import org.axonframework.intellij.ide.plugin.util.areAssignable
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 
@@ -32,7 +34,12 @@ class MessageHandlerResolver(private val project: Project) {
             SagaEventHandlerSearcher(),
             AggregateConstructorSearcher()
     )
-    private val handlerCache = project.createCachedValue { executeFindMessageHandlers() }
+
+    private val handlerCache = project.createCachedValue {
+        PerformanceRegistry.measure(PerformanceSubject.MessageHandlerResolverResolve) {
+            executeFindMessageHandlers()
+        }
+    }
 
     fun findHandlersForType(qualifiedName: String, messageType: MessageType? = null): List<Handler> {
         return handlerCache.value

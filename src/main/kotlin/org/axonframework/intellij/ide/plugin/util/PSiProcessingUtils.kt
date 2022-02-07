@@ -39,16 +39,16 @@ fun PsiType?.toQualifiedName(): String? = this?.let {
  *
  * @return Payload Type
  */
-fun PsiMethod.resolvePayloadType(): PsiType? {
+fun PsiMethod.resolvePayloadType(): PsiType? = PerformanceRegistry.measure(PerformanceSubject.UtilResolvePayloadType) {
     val annotationResolver = this.project.getService(AnnotationResolver::class.java)
     val annotation = annotations.firstOrNull { it.qualifiedName != null && annotationResolver.getClassByAnnotationName(it.qualifiedName!!) != null }
     if (annotation != null) {
         val value = annotation.findDeclaredAttributeValue("payloadType")
         if (value is PsiClassObjectAccessExpression) {
-            return value.type
+            return@measure value.type
         }
     }
-    return toUElement(UMethod::class.java)?.uastParameters?.getOrNull(0)?.typeReference?.type
+    toUElement(UMethod::class.java)?.uastParameters?.getOrNull(0)?.typeReference?.type
 }
 
 /**
@@ -59,10 +59,12 @@ fun areAssignable(project: Project, qualifiedNameA: String, qualifiedNameB: Stri
     if (qualifiedNameA == qualifiedNameB) {
         return true
     }
-    val classesA = JavaPsiFacade.getInstance(project).findClasses(qualifiedNameA, project.allScope())
-    val classesB = JavaPsiFacade.getInstance(project).findClasses(qualifiedNameB, project.allScope())
+    return PerformanceRegistry.measure(PerformanceSubject.UtilCheckAssignableInheritors) {
+        val classesA = JavaPsiFacade.getInstance(project).findClasses(qualifiedNameA, project.allScope())
+        val classesB = JavaPsiFacade.getInstance(project).findClasses(qualifiedNameB, project.allScope())
 
-    return classesA.any { a -> a.supers.any { b -> classesB.contains(b) } }
+        classesA.any { a -> a.supers.any { b -> classesB.contains(b) } }
+    }
 }
 
 fun Project.axonScope() = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScopes.projectProductionScope(this), JavaFileType.INSTANCE, KotlinFileType.INSTANCE)

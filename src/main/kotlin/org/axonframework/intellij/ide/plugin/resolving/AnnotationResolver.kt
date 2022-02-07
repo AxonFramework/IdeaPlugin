@@ -5,6 +5,8 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.searches.AnnotatedElementsSearch
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
+import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
+import org.axonframework.intellij.ide.plugin.util.PerformanceSubject
 import org.axonframework.intellij.ide.plugin.util.allScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 
@@ -12,7 +14,9 @@ import org.axonframework.intellij.ide.plugin.util.createCachedValue
  * Responsible for managing (and caching) information regarding Axon annotations.
  */
 class AnnotationResolver(val project: Project) {
-    private val annotationCache = project.createCachedValue { computeAnnotations() }
+    private val annotationCache = project.createCachedValue {
+        PerformanceRegistry.measure(PerformanceSubject.AnnotationResolverCompute) { computeAnnotations() }
+    }
 
     fun getAnnotationClassesForType(type: MessageHandlerType): List<PsiClass> = annotationCache.value[type]
             ?: emptyList()

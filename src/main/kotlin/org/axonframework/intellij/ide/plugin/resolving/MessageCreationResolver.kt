@@ -8,6 +8,8 @@ import com.intellij.psi.util.CachedValue
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageCreator
 import org.axonframework.intellij.ide.plugin.creators.DefaultMessageCreator
+import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
+import org.axonframework.intellij.ide.plugin.util.PerformanceSubject
 import org.axonframework.intellij.ide.plugin.util.areAssignable
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
@@ -31,7 +33,9 @@ class MessageCreationResolver(private val project: Project) {
     fun getCreatorsForPayload(payloadQualifiedClassName: String): List<MessageCreator> {
         val cache = constructorsByPayloadCache.getOrPut(payloadQualifiedClassName) {
             project.createCachedValue {
-                resolveCreatorForFqn(payloadQualifiedClassName)
+                PerformanceRegistry.measure(PerformanceSubject.MessageCreationResolverResolve) {
+                    resolveCreatorForFqn(payloadQualifiedClassName)
+                }
             }
         }
         return cache.value
@@ -75,7 +79,9 @@ class MessageCreationResolver(private val project: Project) {
     }
 
     private fun createCreators(element: PsiElement, qualifiedName: String): List<MessageCreator> {
-        val parentHandlers = findParentHandlers(element)
+        val parentHandlers = PerformanceRegistry.measure(PerformanceSubject.MessageCreationResolverFindParents) {
+            findParentHandlers(element)
+        }
         if (parentHandlers.isEmpty()) {
             return listOf(DefaultMessageCreator(element, qualifiedName, null))
         }
@@ -97,7 +103,9 @@ class MessageCreationResolver(private val project: Project) {
             return listOf(parentHandler)
         }
 
-        val references = MethodReferencesSearch.search(parent, element.project.axonScope(), true)
-        return references.flatMap { findParentHandlers(it.element, depth + 1) }
+        return PerformanceRegistry.measure(PerformanceSubject.MessageCreationResolverFindParentsRecursive) {
+            val references = MethodReferencesSearch.search(parent, element.project.axonScope(), true)
+            references.flatMap { findParentHandlers(it.element, depth + 1) }
+        }
     }
 }
