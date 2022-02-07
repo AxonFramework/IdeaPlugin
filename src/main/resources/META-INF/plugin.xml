@@ -35,10 +35,17 @@
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver"/>
         <projectService
                 serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver"/>
+
         <implicitUsageProvider implementation="org.axonframework.intellij.ide.plugin.usage.AxonImplicitUsageProvider"/>
+
         <annotator language="JAVA"
                    implementationClass="org.axonframework.intellij.ide.plugin.usage.AggregateAnnotator"/>
         <annotator language="kotlin"
                    implementationClass="org.axonframework.intellij.ide.plugin.usage.AggregateAnnotator"/>
     </extensions>
+
+    <actions>
+        <action id="DumpAxonInfoAction" text="Dump Axon Plugin Information"
+                class="org.axonframework.intellij.ide.plugin.actions.DumpAxonInformationAction"/>
+    </actions>
 </idea-plugin>

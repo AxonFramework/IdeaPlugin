@@ -25,6 +25,10 @@ class AnnotationResolver(val project: Project) {
         return annotationCache.value.entries.flatMap { it.value }.firstOrNull { it.qualifiedName == qualifiedName }
     }
 
+    fun getAllAnnotations(): Map<MessageHandlerType, List<PsiClass>> {
+        return annotationCache.value
+    }
+
     private fun computeAnnotations(): Map<MessageHandlerType, List<PsiClass>> {
         return MessageHandlerType.values().associateWith {
             val clazz = JavaPsiFacade.getInstance(project).findClass(it.annotationName, project.allScope())
