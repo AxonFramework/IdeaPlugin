@@ -77,5 +77,9 @@ fun <T> Project.createCachedValue(supplier: () -> T) = CachedValuesManager.getMa
     CachedValueProvider.Result.create(supplier.invoke(), PsiModificationTracker.MODIFICATION_COUNT)
 }
 
-fun PsiClass?.isAggregate() = this?.hasAnnotation(AxonAnnotation.AGGREGATE.annotationName) == true
+fun PsiClass?.isAggregate() = this?.let { psiClass ->
+    val annotationClasses = psiClass.project.getService(AnnotationResolver::class.java).getAnnotationClasses(AxonAnnotation.AGGREGATE_ROOT)
+    annotationClasses.any { psiClass.hasAnnotation(it.qualifiedName!!) }
+} == true
+
 fun PsiClass?.isEntity() = this?.allFields?.any { it.hasAnnotation(AxonAnnotation.ENTITY_ID.annotationName) } == true

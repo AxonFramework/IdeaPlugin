@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.testFramework.LightVirtualFile
+import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver
@@ -71,7 +72,7 @@ class DumpAxonInformationAction : AnAction() {
     )
 
     data class AnnotationInfo(
-            val type: MessageHandlerType,
+            val type: AxonAnnotation,
             val annotations: List<String>
     )
 }

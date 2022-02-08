@@ -8,7 +8,7 @@ package org.axonframework.intellij.ide.plugin.api
  * All custom annotations annotated with one of the annotations in this enum are supported.
  */
 enum class MessageHandlerType(
-        annotation: AxonAnnotation,
+        val annotation: AxonAnnotation,
         val messageType: MessageType,
 ) {
     COMMAND(AxonAnnotation.COMMAND_HANDLER, MessageType.COMMAND),

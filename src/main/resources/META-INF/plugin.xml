@@ -53,5 +53,7 @@
                 class="org.axonframework.intellij.ide.plugin.actions.DumpAxonInformationAction"/>
         <action id="DumpAxonPerformanceAction" text="Dump Axon Plugin Performance"
                 class="org.axonframework.intellij.ide.plugin.actions.DumpAxonPerformanceAction"/>
+        <action id="AxonReferenceGuideAction" text="Axon Reference Guide"
+                class="org.axonframework.intellij.ide.plugin.actions.AxonReferenceGuideAction"/>
     </actions>
 </idea-plugin>

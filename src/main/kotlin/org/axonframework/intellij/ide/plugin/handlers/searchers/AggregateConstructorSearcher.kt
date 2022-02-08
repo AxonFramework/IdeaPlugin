@@ -17,7 +17,7 @@ import org.axonframework.intellij.ide.plugin.util.axonScope
  */
 class AggregateConstructorSearcher : AbstractHandlerSearcher(MessageHandlerType.COMMAND) {
     override fun search(project: Project): List<Handler> {
-        val annotation = JavaPsiFacade.getInstance(project).findClass(AxonAnnotation.AGGREGATE.annotationName, project.allScope())
+        val annotation = JavaPsiFacade.getInstance(project).findClass(AxonAnnotation.AGGREGATE_ROOT.annotationName, project.allScope())
                 ?: return emptyList()
         val aggregates = AnnotatedElementsSearch.searchPsiClasses(annotation, project.axonScope()).findAll()
         return aggregates

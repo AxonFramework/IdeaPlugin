@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.searches.AnnotatedElementsSearch
+import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
 import org.axonframework.intellij.ide.plugin.util.PerformanceSubject
@@ -18,28 +19,48 @@ class AnnotationResolver(val project: Project) {
         PerformanceRegistry.measure(PerformanceSubject.AnnotationResolverCompute) { computeAnnotations() }
     }
 
-    fun getAnnotationClassesForType(type: MessageHandlerType): List<PsiClass> = annotationCache.value[type]
-            ?: emptyList()
+    fun getAnnotationClassesForType(type: MessageHandlerType): List<PsiClass> {
+        return getAnnotationClasses(type.annotation)
+    }
+
+    fun getAnnotationClasses(axonAnnotation: AxonAnnotation): List<PsiClass> {
+        return annotationCache.value[axonAnnotation]
+                ?: emptyList()
+    }
 
     fun getMessageTypeForAnnotation(qualifiedName: String): MessageHandlerType? {
-        return annotationCache.value.entries.firstOrNull { it.value.any { annClass -> annClass.qualifiedName == qualifiedName } }?.key
+        val annotation = annotationCache.value.entries.firstOrNull { it.value.any { annClass -> annClass.qualifiedName == qualifiedName } }?.key
+                ?: return null
+        return MessageHandlerType.values().firstOrNull { it.annotation == annotation }
     }
 
     fun getClassByAnnotationName(qualifiedName: String): PsiClass? {
         return annotationCache.value.entries.flatMap { it.value }.firstOrNull { it.qualifiedName == qualifiedName }
     }
 
-    fun getAllAnnotations(): Map<MessageHandlerType, List<PsiClass>> {
+    fun getAllAnnotations(): Map<AxonAnnotation, List<PsiClass>> {
         return annotationCache.value
     }
 
-    private fun computeAnnotations(): Map<MessageHandlerType, List<PsiClass>> {
-        return MessageHandlerType.values().associateWith {
-            val clazz = JavaPsiFacade.getInstance(project).findClass(it.annotationName, project.allScope())
-                    ?: return@associateWith listOf()
-            listOf(clazz) + AnnotatedElementsSearch.searchPsiClasses(clazz, project.allScope()).findAll()
-                    .filter { ht -> !MessageHandlerType.exists(ht.qualifiedName) }
+    private fun computeAnnotations(): Map<AxonAnnotation, List<PsiClass>> {
+        return AxonAnnotation.values().associateWith {
+            scanAnnotation(it)
         }
+    }
 
+    private fun scanAnnotation(annotation: AxonAnnotation): List<PsiClass> {
+        val clazz = JavaPsiFacade.getInstance(project).findClass(annotation.annotationName, project.allScope())
+                ?: return listOf()
+
+        return listOf(clazz) + scanDescendants(clazz, annotation.scanLevels)
+    }
+
+    private fun scanDescendants(clazz: PsiClass, remainingLevels: Int): List<PsiClass> {
+        if (remainingLevels == 0) {
+            return listOf(clazz)
+        }
+        return listOf(clazz) + AnnotatedElementsSearch.searchPsiClasses(clazz, project.allScope()).findAll()
+                .filter { ht -> !MessageHandlerType.exists(ht.qualifiedName) }
+                .flatMap { scanDescendants(it, remainingLevels - 1) }
     }
 }
