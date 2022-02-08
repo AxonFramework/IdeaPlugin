@@ -15,6 +15,7 @@ enum class AxonAnnotation(val annotationName: String) {
 
     AGGREGATE("org.axonframework.spring.stereotype.Aggregate"),
     AGGREGATE_IDENTIFIER("org.axonframework.modelling.command.AggregateIdentifier"),
+    TARGET_AGGREGATE_IDENTIFIER("org.axonframework.modelling.command.TargetAggregateIdentifier"),
     ENTITY_ID("org.axonframework.modelling.command.EntityId"),
     PROCESSING_GROUP("org.axonframework.config.ProcessingGroup")
     ;

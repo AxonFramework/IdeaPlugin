@@ -19,13 +19,13 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.PublishMethodLineMarkerProvider"/>
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaPublishMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.HandlerMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.ClassLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin"
-                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.PublishMethodLineMarkerProvider"/>
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.KotlinPublishMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.HandlerMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin"
@@ -42,6 +42,10 @@
                    implementationClass="org.axonframework.intellij.ide.plugin.usage.AggregateAnnotator"/>
         <annotator language="kotlin"
                    implementationClass="org.axonframework.intellij.ide.plugin.usage.AggregateAnnotator"/>
+        <annotator language="JAVA"
+                   implementationClass="org.axonframework.intellij.ide.plugin.usage.CommandMessageAnnotator"/>
+        <annotator language="kotlin"
+                   implementationClass="org.axonframework.intellij.ide.plugin.usage.CommandMessageAnnotator"/>
     </extensions>
 
     <actions>
