@@ -36,5 +36,6 @@ abstract class AbstractHandlerSearcher(private val handlerType: MessageHandlerTy
 
     private fun findAllRelevantAnnotationClasses(project: Project): List<PsiClass> {
         return project.getService(AnnotationResolver::class.java).getAnnotationClassesForType(handlerType)
+                .map { it.psiClass }
     }
 }

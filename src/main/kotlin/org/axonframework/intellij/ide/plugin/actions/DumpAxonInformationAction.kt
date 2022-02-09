@@ -32,7 +32,7 @@ class DumpAxonInformationAction : AnAction() {
 
 
         val annotations = project.getService<AnnotationResolver>().getAllAnnotations().map {
-            AnnotationInfo(it.key, it.value.mapNotNull { ann -> ann.qualifiedName })
+            AnnotationInfo(it.key, it.value.mapNotNull { ann -> AnnotationWithParent(ann.psiClass.qualifiedName, ann.parent?.psiClass?.qualifiedName) })
         }
         val handlers = project.getService<MessageHandlerResolver>().findAllHandlers().map {
             it.toInfo()
@@ -73,6 +73,11 @@ class DumpAxonInformationAction : AnAction() {
 
     data class AnnotationInfo(
             val type: AxonAnnotation,
-            val annotations: List<String>
+            val annotations: List<AnnotationWithParent>
+    )
+
+    data class AnnotationWithParent(
+            val annotation: String?,
+            val annotationParent: String?,
     )
 }

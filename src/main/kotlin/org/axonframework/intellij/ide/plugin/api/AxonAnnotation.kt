@@ -6,7 +6,7 @@ import org.jetbrains.uast.UField
 /**
  * Contains used Axon annotations during analysis of the source code with their fully qualified name.
  */
-enum class AxonAnnotation(val annotationName: String, val scanLevels: Int = 1) {
+enum class AxonAnnotation(val annotationName: String) {
     COMMAND_HANDLER("org.axonframework.commandhandling.CommandHandler"),
     EVENT_HANDLER("org.axonframework.eventhandling.EventHandler"),
     EVENT_SOURCING_HANDLER("org.axonframework.eventsourcing.EventSourcingHandler"),
@@ -14,7 +14,7 @@ enum class AxonAnnotation(val annotationName: String, val scanLevels: Int = 1) {
     COMMAND_HANDLER_INTERCEPTOR("org.axonframework.modelling.command.CommandHandlerInterceptor"),
     SAGA_EVENT_HANDLER("org.axonframework.modelling.saga.SagaEventHandler"),
 
-    AGGREGATE_ROOT("org.axonframework.modelling.command.AggregateRoot", 2),
+    AGGREGATE_ROOT("org.axonframework.modelling.command.AggregateRoot"),
     AGGREGATE_IDENTIFIER("org.axonframework.modelling.command.AggregateIdentifier"),
     TARGET_AGGREGATE_IDENTIFIER("org.axonframework.modelling.command.TargetAggregateIdentifier"),
     ENTITY_ID("org.axonframework.modelling.command.EntityId"),
