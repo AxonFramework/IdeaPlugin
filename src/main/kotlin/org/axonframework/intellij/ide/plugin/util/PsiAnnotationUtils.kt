@@ -92,10 +92,7 @@ private fun resolveAttributeStringValue(attribute: PsiAnnotationMemberValue?): S
     if (attribute is PsiReferenceExpression) {
         val resolvedElement = attribute.references[0].resolve() ?: return null
         val firstRelevantChild = resolvedElement.children.firstOrNull { it is PsiLiteralExpression || it is PsiReferenceExpression || it is PsiBinaryExpression }
-        if (firstRelevantChild == null) {
-            logger.warn("No relevant child found while resolving attribute of annotation. Found elements: " + resolvedElement.children.map { it })
-            return null
-        }
+                ?: return attribute.references[0].canonicalText
         return resolveAttributeStringValue(firstRelevantChild as PsiAnnotationMemberValue)
     }
     return null
