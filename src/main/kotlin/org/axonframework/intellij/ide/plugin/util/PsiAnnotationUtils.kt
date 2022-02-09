@@ -1,6 +1,5 @@
 package org.axonframework.intellij.ide.plugin.util
 
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiAnnotationMemberValue
 import com.intellij.psi.PsiBinaryExpression
@@ -10,11 +9,6 @@ import com.intellij.psi.PsiReferenceExpression
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver
 import org.axonframework.intellij.ide.plugin.resolving.ResolvedAnnotation
-
-
-object PsiAnnotationUtils {}
-
-val logger = logger<PsiAnnotationUtils>()
 
 /**
  * Find the most specific annotation of a specific type on a PsiElement.
@@ -72,13 +66,16 @@ fun PsiModifierListOwner.resolveAnnotationStringValue(annotation: AxonAnnotation
         return resolveAttributeStringValue(attribute)
     }
     // The annotation itself might be annotated with one that contains the value
-    val annType = relevantAnnotation.resolveAnnotationType() ?: return null
-    return annType.resolveAnnotationStringValue(annotation, attributeName)
+    // Note: resolveAnnotationType() does not work with kotlin code somehow. Resolve class by qualified name
+    val qualifiedName = relevantAnnotation.qualifiedName ?: return null
+    val annClass = project.javaFacade().findClass(qualifiedName, project.allScope()) ?: return null
+    return annClass.resolveAnnotationStringValue(annotation, attributeName)
 }
 
 private fun resolveAttributeStringValue(attribute: PsiAnnotationMemberValue?): String? {
     // Is a direct value, @ProcessingGroup("MY_GROUP")
     if (attribute is PsiLiteralExpression) {
+        // Kotlin will return null here. Known limitation for now.
         return attribute.value as String?
     }
 

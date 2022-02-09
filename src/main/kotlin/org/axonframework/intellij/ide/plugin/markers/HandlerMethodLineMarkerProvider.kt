@@ -5,6 +5,7 @@ import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.openapi.editor.markup.GutterIconRenderer
+import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
@@ -61,14 +62,16 @@ class HandlerMethodLineMarkerProvider : LineMarkerProvider {
     }
 
     private fun createPayloadCreatorLineMarker(element: PsiElement, qualifiedName: String): RelatedItemLineMarkerInfo<PsiElement> {
-        val publisherResolver = element.project.getService(MessageCreationResolver::class.java)
-        val creators = publisherResolver.getCreatorsForPayload(qualifiedName)
-                .sortedWith(sortingByDisplayName())
         return NavigationGutterIconBuilder.create(AxonIcons.Handler)
                 .setPopupTitle("Payload Creators")
                 .setTooltipText("Navigate to creation of message payload")
                 .setCellRenderer(AxonCellRenderer.getInstance())
-                .setTargets(creators.map { it.element })
+                .setTargets(NotNullLazyValue.createValue {
+                    val publisherResolver = element.project.getService(MessageCreationResolver::class.java)
+                    publisherResolver.getCreatorsForPayload(qualifiedName)
+                            .sortedWith(sortingByDisplayName())
+                            .map { it.element }
+                })
                 .setAlignment(GutterIconRenderer.Alignment.LEFT)
                 .setEmptyPopupText("No creators of this message payload were found")
                 .createLineMarkerInfo(element)

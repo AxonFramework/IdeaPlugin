@@ -69,6 +69,7 @@ fun areAssignable(project: Project, qualifiedNameA: String, qualifiedNameB: Stri
 
 fun Project.axonScope() = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScopes.projectProductionScope(this), JavaFileType.INSTANCE, KotlinFileType.INSTANCE)
 fun Project.allScope() = GlobalSearchScope.allScope(this)
+fun Project.javaFacade(): JavaPsiFacade = JavaPsiFacade.getInstance(this)
 
 /**
  * Convenience method to quickly create a cached value for a project based on PSI modifications.
