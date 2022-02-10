@@ -20,18 +20,23 @@ import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.handlers.types.CommandHandlerInterceptor
-import org.axonframework.intellij.ide.plugin.util.containingClassname
+import org.axonframework.intellij.ide.plugin.util.containingClassFqn
+import org.axonframework.intellij.ide.plugin.util.isAggregate
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 
 /**
- * Searches for any command interceptors.
+ * Searches for any command interceptors. Currently, limited to Aggregates only.
+ * Does not work for entities yet, this requires additional work.
  *
  * @see org.axonframework.intellij.ide.plugin.handlers.types.CommandHandlerInterceptor
  */
 class CommandHandlerInterceptorSearcher : AbstractHandlerSearcher(MessageHandlerType.COMMAND_INTERCEPTOR) {
     override fun createMessageHandler(method: PsiMethod): Handler? {
+        if (!method.containingClass.isAggregate()) {
+            return null
+        }
         val payloadType = method.resolvePayloadType()?.toQualifiedName() ?: return null
-        return CommandHandlerInterceptor(method, payloadType, method.containingClassname())
+        return CommandHandlerInterceptor(method, payloadType, method.containingClassFqn())
     }
 }

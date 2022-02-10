@@ -20,6 +20,7 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.openapi.editor.markup.GutterIconRenderer
+import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.util.creatorResolver
@@ -44,13 +45,15 @@ class ClassLineMarkerProvider : LineMarkerProvider {
         if (handlers.isEmpty()) {
             return null
         }
-        val publishers = element.creatorResolver().getCreatorsForPayload(qualifiedName)
 
-        val items = (handlers + publishers).sortedWith(sortingByDisplayName()).map { it.element }
         return NavigationGutterIconBuilder.create(AxonIcons.Publisher)
                 .setTooltipText("Navigate to message handlers and creations")
                 .setCellRenderer(AxonCellRenderer.getInstance())
-                .setTargets(items)
+                .setTargets(NotNullLazyValue.createValue {
+                    val publishers = element.creatorResolver().getCreatorsForPayload(qualifiedName)
+                    val allItems = handlers + publishers
+                    allItems.sortedWith(sortingByDisplayName()).map { it.element }
+                })
                 .setAlignment(GutterIconRenderer.Alignment.LEFT)
                 .createLineMarkerInfo(element)
     }

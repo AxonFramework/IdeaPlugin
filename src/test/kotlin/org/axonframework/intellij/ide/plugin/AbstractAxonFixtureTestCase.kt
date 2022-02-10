@@ -65,32 +65,35 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
             "org.axonframework.modelling.command.AggregateLifecycle",
             "org.axonframework.modelling.command.AggregateRoot",
             "org.axonframework.commandhandling.CommandHandler",
+            "org.axonframework.modelling.command.CommandHandlerInterceptor",
             "org.axonframework.modelling.command.TargetAggregateIdentifier",
+            "org.axonframework.modelling.command.AggregateLifecycle",
+            "org.axonframework.queryhandling.QueryHandler",
+            "org.axonframework.modelling.saga.SagaEventHandler",
     )
 
-    fun addJavaFile(name: String, text: String): VirtualFile {
-        return myFixture.addFileToProject(name, """
-package test;
-
-${autoImports.joinToString(separator = "\n") { "import $it;" }}
-
-${text.trimIndent()}
-        """.trimIndent()).virtualFile
-    }
-
-
-    fun addKotlinFile(name: String, text: String): VirtualFile {
-        return myFixture.addFileToProject(name, """
-package test
-
-${autoImports.joinToString(separator = "\n") { "import $it" }}
-
-${text.trimIndent()}
-        """.trimIndent()).virtualFile
+    /**
+     * Adds a file to the project with given name/path and content.
+     * You can skipp importing any Axon annotations defined in autoImports, they are added automagically.
+     *
+     * @see autoImports
+     */
+    fun addFile(name: String, text: String): VirtualFile {
+        val newLineChar = if (name.endsWith(".java")) ";" else ""
+        var content = ""
+        content += "package test$newLineChar\n\n"
+        autoImports.forEach { content += "import $it$newLineChar\n" }
+        content += ("\n" + text)
+        return myFixture.addFileToProject(name, content).virtualFile
     }
 
     private val offset = autoImports.size + 3
 
+    /**
+     * Retrieve marker options on a certain line number. The line number is the line number in the 'text' param you pass
+     * to the `addFile` method.
+     * The offset based on that is calculated automagically.
+     */
     fun getOptionsGivenByMarkerProviderAtCaretPosition(lineNum: Int, clazz: Class<out LineMarkerProvider>): List<OptionSummary> {
         myFixture.editor.caretModel.moveToLogicalPosition(LogicalPosition(offset + lineNum - 1, 0))
         val gutters = myFixture.findGuttersAtCaret()

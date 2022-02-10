@@ -14,12 +14,11 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin
+package org.axonframework.intellij.ide.plugin.markers
 
 import org.assertj.core.api.Assertions.assertThat
-import org.axonframework.intellij.ide.plugin.markers.ClassLineMarkerProvider
-import org.axonframework.intellij.ide.plugin.markers.HandlerMethodLineMarkerProvider
-import org.axonframework.intellij.ide.plugin.markers.PublishMethodLineMarkerProvider
+import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
+import org.axonframework.intellij.ide.plugin.AxonIcons
 
 /**
  * Tests whether line markers are shown on the appropriate language constructs.
@@ -73,46 +72,46 @@ class JavaLineMarkerTest : AbstractAxonFixtureTestCase() {
         )
     }
 
-    private fun addCommand() = addJavaFile("MyCommand.java", """
-            public class MyCommand {
-                public MyCommand(String id) {
-                    this.id = id
-                }
-                @TargetAggregateIdentifier
-                private String id;
-                
-                public String getId() {
-                    return this.id;
-                }
+    private fun addCommand() = this.addFile("MyCommand.java", """
+        public class MyCommand {
+            public MyCommand(String id) {
+                this.id = id
             }
-        """.trimIndent())
-
-    private fun addProducer() = addJavaFile("MyCreator.java", """
-            import test.MyCommand;
+            @TargetAggregateIdentifier
+            private String id;
             
-            public class MyCreator {
-                public void createCommand() {
-                    send(new MyCommand(""));
-                }
-                
-                private void send(Object obj) {
-                }
+            public String getId() {
+                return this.id;
             }
-        """.trimIndent())
+        }
+    """.trimIndent())
 
-    private fun addAggregate() = addJavaFile("MyAggregate.java", """
-            import test.MyCommand;
+    private fun addProducer() = this.addFile("MyCreator.java", """
+        import test.MyCommand;
+        
+        public class MyCreator {
+            public void createCommand() {
+                send(new MyCommand(""));
+            }
             
-            @AggregateRoot
-            public class MyAggregate {
-                private MyAggregate() {}
-
-                @TargetAggregateIdentifier
-                private String id;
-
-                @CommandHandler
-                public MyAggregate(MyCommand command) {
-                }
+            private void send(Object obj) {
             }
-        """.trimIndent())
+        }
+    """.trimIndent())
+
+    private fun addAggregate() = this.addFile("MyAggregate.java", """
+        import test.MyCommand;
+        
+        @AggregateRoot
+        public class MyAggregate {
+            private MyAggregate() {}
+
+            @TargetAggregateIdentifier
+            private String id;
+
+            @CommandHandler
+            public MyAggregate(MyCommand command) {
+            }
+        }
+    """.trimIndent())
 }

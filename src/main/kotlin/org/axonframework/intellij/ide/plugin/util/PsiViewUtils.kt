@@ -83,7 +83,7 @@ fun PsiElement.toContainerText(): String? {
     val creatorResolver = project.getService(MessageCreationResolver::class.java)
     val creator = creatorResolver.findCreatorByElement(this)
     if (creator != null) {
-        return creator.renderContainerText()
+        return creator.containerText
     }
     return null
 }
@@ -100,7 +100,7 @@ fun PsiElement.toIcon(): Icon {
     }
     val creator = project.getService(MessageCreationResolver::class.java).findCreatorByElement(this)
     if (creator != null) {
-        return creator.parentHandler?.getIcon() ?: creator.getIcon()
+        return creator.parentHandler?.getIcon() ?: creator.icon
     }
     return AxonIcons.Publisher
 }

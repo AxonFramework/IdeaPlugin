@@ -34,7 +34,9 @@ import javax.swing.Icon
  * @see MessageCreator
  * @see org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
  */
-data class DefaultMessageCreator(override val element: PsiElement, override val payload: String, override val parentHandler: Handler?) : MessageCreator {
+data class DefaultMessageCreator(override val element: PsiElement,
+                                 override val payload: String,
+                                 override val parentHandler: Handler?) : MessageCreator {
     /**
      * Renders the grey text next to the initial identifier.
      *
@@ -42,31 +44,19 @@ data class DefaultMessageCreator(override val element: PsiElement, override val 
      * an event is being applied to the source. We show a warning here that it's a side effect of it.
      *
      * If the parent handler is a Saga, add the Saga to qualify the event better.
-     *
-     * @return Container text used in a line marker popup.
      */
-    override fun renderContainerText(): String? {
-        if (parentHandler is EventSourcingHandler) {
-            return "Side effect of EventSourcingHandler"
-        }
-        if (parentHandler is SagaEventHandler) {
-            return "Saga ${parentHandler.processingGroup}"
-        }
-        return null
+    override val containerText = when (parentHandler) {
+        is EventSourcingHandler -> "Side effect of EventSourcingHandler"
+        is SagaEventHandler -> "Saga ${parentHandler.processingGroup}"
+        else -> null
     }
 
     /**
      * Returns the correct icon for the creator, based on the parent handler type.
-     *
-     * @return The correct icon to be used in a line marker popup
      */
-    override fun getIcon(): Icon {
-        if (parentHandler is CommandHandler || parentHandler is EventSourcingHandler) {
-            return AxonIcons.Model
-        }
-        if (parentHandler is SagaEventHandler) {
-            return AxonIcons.Saga
-        }
-        return AxonIcons.Publisher
+    override val icon: Icon = when (parentHandler) {
+        is CommandHandler, is EventSourcingHandler -> AxonIcons.Model
+        is SagaEventHandler -> AxonIcons.Saga
+        else -> AxonIcons.Publisher
     }
 }

@@ -74,8 +74,9 @@ class MessageCreationResolver(private val project: Project) {
     }
 
     private fun resolveCreatorForFqn(qualifiedName: String): List<MessageCreator> {
-        val classesForQualifiedName = handlerResolver.findAllHandlers()
+        val matchingHandlers = handlerResolver.findAllHandlers()
                 .map { it.payload }
+        val classesForQualifiedName = listOf(qualifiedName).plus(matchingHandlers)
                 .distinct()
                 .filter { areAssignable(project, qualifiedName, it) }
         return resolveCreatorsForFqns(classesForQualifiedName)

@@ -14,9 +14,10 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin
+package org.axonframework.intellij.ide.plugin.specifics
 
 import org.assertj.core.api.Assertions.assertThat
+import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 
 /**
@@ -25,7 +26,7 @@ import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 class ConstantsInAnnotationTest : AbstractAxonFixtureTestCase() {
 
     fun `test can handle kotlin to kotlin object constant references`() {
-        addKotlinFile("myfile.kt", """
+        addFile("myfile.kt", """
             object ProcessingGroupName {
                 const val SOME_PROJECTOR = "some-projector"
             }
@@ -48,14 +49,14 @@ class ConstantsInAnnotationTest : AbstractAxonFixtureTestCase() {
     }
 
     fun `test can handle java to kotlin object constant references`() {
-        addKotlinFile("myfile.kt", """
+        addFile("myfile.kt", """
             object ProcessingGroupName {
                 const val SOME_PROJECTOR = "some-projector"
             }
             
             data class SomeEvent(val data: String)
         """)
-        addJavaFile("EventHandler.java", """            
+        this.addFile("EventHandler.java", """            
             @ProcessingGroup(ProcessingGroupName.SOME_PROJECTOR)
             public class LevelOneProcessingGroupProcessor {
                 @EventHandler
@@ -73,13 +74,13 @@ class ConstantsInAnnotationTest : AbstractAxonFixtureTestCase() {
     }
 
     fun `test can handle kotlin to java object constant references`() {
-        addJavaFile("ProcessingGroupName.java", """
+        this.addFile("ProcessingGroupName.java", """
             public class ProcessingGroupName {
                 public static final String SOME_PROJECTOR = "some-projector";
             }
         """)
-        addKotlinFile("event.kt", "data class SomeEvent(val data: String)")
-        addKotlinFile("myfile.kt", """
+        addFile("event.kt", "data class SomeEvent(val data: String)")
+        addFile("myfile.kt", """
             @ProcessingGroup(ProcessingGroupName.SOME_PROJECTOR)
             class LevelOneProcessingGroupProcessor {
                 @EventHandler

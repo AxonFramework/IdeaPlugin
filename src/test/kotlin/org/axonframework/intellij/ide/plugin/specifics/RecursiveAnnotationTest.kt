@@ -14,9 +14,10 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin
+package org.axonframework.intellij.ide.plugin.specifics
 
 import org.assertj.core.api.Assertions.assertThat
+import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 
 /**
@@ -24,7 +25,7 @@ import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
  */
 class RecursiveAnnotationTest : AbstractAxonFixtureTestCase() {
     fun `test can handle ProcessingGroup annotation recursively - one deep in kotlin`() {
-        addKotlinFile("myfile.kt", """            
+        addFile("myfile.kt", """            
             @ProcessingGroup("processor-a")
             @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS)
             @Retention(AnnotationRetention.RUNTIME)
@@ -48,7 +49,7 @@ class RecursiveAnnotationTest : AbstractAxonFixtureTestCase() {
     }
 
     fun `test can handle ProcessingGroup annotation recursively - four deep in kotlin`() {
-        addKotlinFile("myfile.kt", """
+        addFile("myfile.kt", """
             package test
             
             import org.axonframework.config.ProcessingGroup

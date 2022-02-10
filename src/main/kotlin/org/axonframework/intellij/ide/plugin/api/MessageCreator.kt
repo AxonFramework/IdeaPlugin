@@ -44,16 +44,12 @@ interface MessageCreator : PsiElementWrapper {
 
     /**
      * Renders the grey text next to the initial identifier.
-     *
-     * @return Container text used in a line marker popup.
      */
-    fun renderContainerText(): String?
+    val containerText: String?
 
     /**
      * Returns the correct icon for the creator, based on the parent handler type.
-     *
-     * @return The correct icon to be used in a line marker popup
      */
-    fun getIcon(): Icon
+    val icon: Icon
 }
 

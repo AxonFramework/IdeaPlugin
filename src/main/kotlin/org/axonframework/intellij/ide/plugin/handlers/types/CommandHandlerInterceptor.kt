@@ -20,6 +20,7 @@ import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
+import org.axonframework.intellij.ide.plugin.util.toShortName
 import javax.swing.Icon
 
 /**
@@ -40,7 +41,7 @@ data class CommandHandlerInterceptor(
     }
 
     override fun renderContainerText(): String {
-        return componentName
+        return componentName.toShortName()
     }
 
     override fun getIcon(): Icon {

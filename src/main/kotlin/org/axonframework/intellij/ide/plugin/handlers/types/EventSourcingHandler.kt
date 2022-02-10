@@ -20,6 +20,7 @@ import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
+import org.axonframework.intellij.ide.plugin.util.toShortName
 
 /**
  * Represents a method being able to handle an event for sourcing an aggregate.
@@ -35,7 +36,7 @@ data class EventSourcingHandler(
     override val handlerType: MessageHandlerType = MessageHandlerType.EVENT_SOURCING
 
     override fun renderContainerText(): String {
-        return model
+        return model.toShortName()
     }
 
     override fun getIcon() = AxonIcons.Model
