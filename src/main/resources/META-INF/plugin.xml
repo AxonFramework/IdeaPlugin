@@ -19,13 +19,13 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.JavaPublishMethodLineMarkerProvider"/>
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.PublishMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.HandlerMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.ClassLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin"
-                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.KotlinPublishMethodLineMarkerProvider"/>
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.PublishMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.HandlerMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin"

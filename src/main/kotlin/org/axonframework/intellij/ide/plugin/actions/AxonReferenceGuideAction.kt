@@ -22,6 +22,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 
 /**
  * Action that can be invoked using the "Open Axon Reference Guide" in IntelliJ.
+ *
+ * Opens the reference guide.
  */
 class AxonReferenceGuideAction : AnAction() {
     override fun update(e: AnActionEvent) {

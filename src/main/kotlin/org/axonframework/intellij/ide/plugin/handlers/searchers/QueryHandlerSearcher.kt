@@ -23,6 +23,7 @@ import org.axonframework.intellij.ide.plugin.handlers.types.QueryHandler
 import org.axonframework.intellij.ide.plugin.util.findProcessingGroup
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
+
 /**
  * Searches for any query handlers.
  *

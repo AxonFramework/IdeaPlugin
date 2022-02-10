@@ -34,7 +34,10 @@ import org.jetbrains.kotlin.idea.debugger.getService
 
 /**
  * Action that can be invoked using the "Dump Axon Plugin Information" in IntelliJ.
- * Useful for debugging bug reports.
+ * It will open a new window with a JSON file (virtual, not on disk) that can be sent with a bug report.
+ *
+ * The JSON contains all information about what the plugin detects in terms of annotations, message handlers and
+ * creators, as well as the text it renders for them.
  *
  * Note: This will contain all commands and events of an application; might be sensitive.
  */
@@ -45,7 +48,6 @@ class DumpAxonInformationAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-
 
         val annotations = project.getService<AnnotationResolver>().getAllAnnotations().map {
             AnnotationInfo(it.key, it.value.mapNotNull { ann -> AnnotationWithParent(ann.psiClass.qualifiedName, ann.parent?.psiClass?.qualifiedName) })
@@ -67,19 +69,19 @@ class DumpAxonInformationAction : AnAction() {
 
     private fun Handler.toInfo() = HandlerInfo(handlerType, this::class.java.simpleName, payload, renderText(), renderContainerText())
 
-    data class AxonInfo(
+    private data class AxonInfo(
             val annotations: List<AnnotationInfo>,
             val handlers: List<HandlerInfo>,
             val creators: List<CreatorInfo>
     )
 
-    data class CreatorInfo(
+    private data class CreatorInfo(
             val payload: String,
             val parentHandler: HandlerInfo?,
             val containerText: String?,
     )
 
-    data class HandlerInfo(
+    private data class HandlerInfo(
             val handlerType: MessageHandlerType,
             val handlerClass: String,
             val payload: String,
@@ -87,12 +89,12 @@ class DumpAxonInformationAction : AnAction() {
             val containerText: String?,
     )
 
-    data class AnnotationInfo(
+    private data class AnnotationInfo(
             val type: AxonAnnotation,
             val annotations: List<AnnotationWithParent>
     )
 
-    data class AnnotationWithParent(
+    private data class AnnotationWithParent(
             val annotation: String?,
             val annotationParent: String?,
     )

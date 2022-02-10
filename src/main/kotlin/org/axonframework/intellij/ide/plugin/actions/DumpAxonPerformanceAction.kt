@@ -28,9 +28,13 @@ import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
 
 /**
  * Action that can be invoked using the "Dump Axon Plugin Performance" in IntelliJ.
- * Useful for debugging bug reports.
+ * It will open a new window with a JSON file (virtual, not on disk) that can be sent with a bug report.
+ *
+ * The JSON contains performance metrics based on the PerformanceRegistry
  *
  * Does not contain sensitive data
+ *
+ * @see org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
  */
 class DumpAxonPerformanceAction : AnAction() {
     override fun update(e: AnActionEvent) {

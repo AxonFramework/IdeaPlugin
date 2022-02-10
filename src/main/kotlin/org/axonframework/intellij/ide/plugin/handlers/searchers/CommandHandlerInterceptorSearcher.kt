@@ -23,6 +23,7 @@ import org.axonframework.intellij.ide.plugin.handlers.types.CommandHandlerInterc
 import org.axonframework.intellij.ide.plugin.util.containingClassname
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
+
 /**
  * Searches for any command interceptors.
  *

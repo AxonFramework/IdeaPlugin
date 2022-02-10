@@ -23,6 +23,7 @@ import org.axonframework.intellij.ide.plugin.handlers.types.EventSourcingHandler
 import org.axonframework.intellij.ide.plugin.util.containingClassname
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
+
 /**
  * Searches for any event handlers in aggregates that source the state of the aggregates.
  *
