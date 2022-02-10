@@ -6,6 +6,7 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.util.isAggregate
+import org.axonframework.intellij.ide.plugin.util.isAnnotated
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.toUElement
@@ -31,12 +32,12 @@ class AggregateAnnotator : Annotator {
                     .needsUpdateOnTyping()
                     .create()
         }
-        val isMissingFieldWithAnnotation = clazz.fields.none {
-            AxonAnnotation.AGGREGATE_IDENTIFIER.fieldIsAnnotated(it)
+        val isMissingFieldWithAnnotation = clazz.fields.none { uField ->
+            uField.isAnnotated(AxonAnnotation.ENTITY_ID)
         }
 
         if (isMissingFieldWithAnnotation) {
-            holder.newAnnotation(HighlightSeverity.ERROR, "Axon Framework requires a field annotated with @AggregateIdentifier in Aggregates.")
+            holder.newAnnotation(HighlightSeverity.WARNING, "Axon Framework requires a field annotated with @AggregateIdentifier (or another meta-annotation based on @EntityId) in Aggregates.")
                     .needsUpdateOnTyping()
                     .create()
         }

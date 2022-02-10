@@ -52,8 +52,8 @@ fun PsiModifierListOwner.hasAnnotation(annotation: AxonAnnotation): Boolean {
 }
 
 /**
- * Resolve the string attribute value of one of the Axon Annottions.
- * Since they are meta, the annotations can be annotated, which can in turb contain the value. So we have to do it
+ * Resolve the string attribute value of one of the Axon Annotations.
+ * Since they are meta, the annotations can be annotated, which can in turn contain the value. So we have to do it
  * the recursive way
  *
  * @param annotation Axon's annotation to target

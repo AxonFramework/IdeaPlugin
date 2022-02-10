@@ -6,8 +6,8 @@ import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
-import org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
-import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
+import org.axonframework.intellij.ide.plugin.util.creatorResolver
+import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.isAggregate
 import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 import org.jetbrains.uast.UClass
@@ -24,11 +24,11 @@ class ClassLineMarkerProvider : LineMarkerProvider {
         }
 
         val qualifiedName = uElement.qualifiedName ?: return null
-        val handlers = element.project.getService(MessageHandlerResolver::class.java).findHandlersForType(qualifiedName)
+        val handlers = element.handlerResolver().findHandlersForType(qualifiedName)
         if (handlers.isEmpty()) {
             return null
         }
-        val publishers = element.project.getService(MessageCreationResolver::class.java).getCreatorsForPayload(qualifiedName)
+        val publishers = element.creatorResolver().getCreatorsForPayload(qualifiedName)
 
         val items = (handlers + publishers).sortedWith(sortingByDisplayName()).map { it.element }
         return NavigationGutterIconBuilder.create(AxonIcons.Publisher)

@@ -11,9 +11,10 @@ import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.api.MessageType
 import org.axonframework.intellij.ide.plugin.handlers.types.CommandHandler
-import org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
+import org.axonframework.intellij.ide.plugin.util.annotationResolver
+import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
@@ -49,8 +50,7 @@ class HandlerMethodLineMarkerProvider : LineMarkerProvider {
 
 
         // Resolve what the handling type is of the annotation
-        val annotationResolver = element.project.getService(AnnotationResolver::class.java)
-        val handlerType = annotationResolver.getMessageTypeForAnnotation(annotationName) ?: return null
+        val handlerType = element.annotationResolver().getMessageTypeForAnnotation(annotationName) ?: return null
         val qualifiedName = method.javaPsi.resolvePayloadType()?.toQualifiedName() ?: return null
 
         if (handlerType == MessageHandlerType.COMMAND_INTERCEPTOR) {
@@ -84,10 +84,10 @@ class HandlerMethodLineMarkerProvider : LineMarkerProvider {
      * since if a CommandHandlerInterceptor is defined in the Aggregate, commands of entities can also be intercepted,
      */
     private fun createCommandInterceptorLineMarker(element: PsiElement, qualifiedName: String): RelatedItemLineMarkerInfo<PsiElement> {
-        val handlerResolver = element.project.getService(MessageHandlerResolver::class.java)
-        val handlers = handlerResolver.findHandlersForType(qualifiedName, MessageType.COMMAND)
+        val handlers = element.handlerResolver()
+                .findHandlersForType(qualifiedName, MessageType.COMMAND)
                 .filterIsInstance<CommandHandler>()
-                .filter { it.modelFqn == element.getContainingClass()?.getQualifiedName() }
+                .filter { it.componentName == element.getContainingClass()?.getQualifiedName() }
                 .sortedWith(sortingByDisplayName())
         return NavigationGutterIconBuilder.create(AxonIcons.Interceptor)
                 .setPopupTitle("Commands Intercepted")

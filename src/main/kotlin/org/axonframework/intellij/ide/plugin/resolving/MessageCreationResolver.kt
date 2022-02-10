@@ -1,7 +1,6 @@
 package org.axonframework.intellij.ide.plugin.resolving
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.util.CachedValue
@@ -9,10 +8,11 @@ import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageCreator
 import org.axonframework.intellij.ide.plugin.creators.DefaultMessageCreator
 import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
-import org.axonframework.intellij.ide.plugin.util.PerformanceSubject
 import org.axonframework.intellij.ide.plugin.util.areAssignable
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
+import org.axonframework.intellij.ide.plugin.util.handlerResolver
+import org.axonframework.intellij.ide.plugin.util.javaFacade
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.getParentOfType
 import org.jetbrains.uast.toUElement
@@ -26,15 +26,22 @@ import java.util.concurrent.ConcurrentHashMap
  * the PSI is modified (code is edited) or is collected by the garbage collector.
  */
 class MessageCreationResolver(private val project: Project) {
-    private val psiFacade = JavaPsiFacade.getInstance(project)
-    private val handlerResolver = project.getService(MessageHandlerResolver::class.java)
+    private val psiFacade = project.javaFacade()
+    private val handlerResolver = project.handlerResolver()
     private val constructorsByPayloadCache = ConcurrentHashMap<String, CachedValue<List<MessageCreator>>>()
 
-    fun getCreatorsForPayload(payloadQualifiedClassName: String): List<MessageCreator> {
-        val cache = constructorsByPayloadCache.getOrPut(payloadQualifiedClassName) {
+    /**
+     * Retrieves all MessageCreator instances for a given payload. Will cache results, so don't worry about
+     * calling it multiple times.
+     *
+     * @param payload qualified name of the payload
+     * @return all message creators for the given payload
+     */
+    fun getCreatorsForPayload(payload: String): List<MessageCreator> {
+        val cache = constructorsByPayloadCache.getOrPut(payload) {
             project.createCachedValue {
-                PerformanceRegistry.measure(PerformanceSubject.MessageCreationResolverResolve) {
-                    resolveCreatorForFqn(payloadQualifiedClassName)
+                PerformanceRegistry.measure("MessageCreationResolver.resolveCreatorForFqn") {
+                    resolveCreatorForFqn(payload)
                 }
             }
         }
@@ -52,7 +59,8 @@ class MessageCreationResolver(private val project: Project) {
 
     private fun resolveCreatorForFqn(qualifiedName: String): List<MessageCreator> {
         val classesForQualifiedName = handlerResolver.findAllHandlers()
-                .map { it.payloadFullyQualifiedName }.distinct()
+                .map { it.payload }
+                .distinct()
                 .filter { areAssignable(project, qualifiedName, it) }
         return resolveCreatorsForFqns(classesForQualifiedName)
     }
@@ -60,26 +68,29 @@ class MessageCreationResolver(private val project: Project) {
     /**
      * This action is VERY expensive. Should only be used if the user does not depend on it or is expected to wait.
      * For example, when creating an Event Modeling board based on this info.
+     *
+     * @return List of all message creators in an application
      */
     fun resolveAllCreators(): List<MessageCreator> {
         val handlers = handlerResolver.findAllHandlers()
-        val handlerTypes = handlers.map { it.payloadFullyQualifiedName }.distinct()
+        val handlerTypes = handlers.map { it.payload }.distinct()
 
         return resolveCreatorsForFqns(handlerTypes)
     }
 
     private fun resolveCreatorsForFqns(fqns: List<String>): List<MessageCreator> {
         return fqns.flatMap { typeFqn ->
-            val clazz = psiFacade.findClass(typeFqn, project.axonScope()) ?: return@flatMap emptyList()
-            clazz.constructors
-                    .flatMap { MethodReferencesSearch.search(it, project.axonScope(), true) }
-                    .flatMap { ref -> createCreators(ref.element, typeFqn) }
-                    .distinct()
+            psiFacade.findClasses(typeFqn, project.axonScope()).flatMap { clazz ->
+                clazz.constructors
+                        .flatMap { MethodReferencesSearch.search(it, project.axonScope(), true) }
+                        .flatMap { ref -> createCreators(ref.element, typeFqn) }
+                        .distinct()
+            }
         }
     }
 
     private fun createCreators(element: PsiElement, qualifiedName: String): List<MessageCreator> {
-        val parentHandlers = PerformanceRegistry.measure(PerformanceSubject.MessageCreationResolverFindParents) {
+        val parentHandlers = PerformanceRegistry.measure("MessageCreationResolver.findParentHandlers") {
             findParentHandlers(element)
         }
         if (parentHandlers.isEmpty()) {
@@ -103,7 +114,7 @@ class MessageCreationResolver(private val project: Project) {
             return listOf(parentHandler)
         }
 
-        return PerformanceRegistry.measure(PerformanceSubject.MessageCreationResolverFindParentsRecursive) {
+        return PerformanceRegistry.measure("MessageCreationResolver.findParentHandlers") {
             val references = MethodReferencesSearch.search(parent, element.project.axonScope(), true)
             references.flatMap { findParentHandlers(it.element, depth + 1) }
         }

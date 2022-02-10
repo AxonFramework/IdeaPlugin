@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassObjectAccessExpression
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
 import com.intellij.psi.impl.source.PsiClassReferenceType
@@ -16,6 +17,8 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver
+import org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
+import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.toUElement
@@ -39,7 +42,7 @@ fun PsiType?.toQualifiedName(): String? = this?.let {
  *
  * @return Payload Type
  */
-fun PsiMethod.resolvePayloadType(): PsiType? = PerformanceRegistry.measure(PerformanceSubject.UtilResolvePayloadType) {
+fun PsiMethod.resolvePayloadType(): PsiType? = PerformanceRegistry.measure("PsiMethod.resolvePayloadType") {
     val annotationResolver = this.project.getService(AnnotationResolver::class.java)
     val annotation = annotations.firstOrNull { it.qualifiedName != null && annotationResolver.getClassByAnnotationName(it.qualifiedName!!) != null }
     if (annotation != null) {
@@ -59,7 +62,7 @@ fun areAssignable(project: Project, qualifiedNameA: String, qualifiedNameB: Stri
     if (qualifiedNameA == qualifiedNameB) {
         return true
     }
-    return PerformanceRegistry.measure(PerformanceSubject.UtilCheckAssignableInheritors) {
+    return PerformanceRegistry.measure("areAssignable") {
         val classesA = JavaPsiFacade.getInstance(project).findClasses(qualifiedNameA, project.allScope())
         val classesB = JavaPsiFacade.getInstance(project).findClasses(qualifiedNameB, project.allScope())
 
@@ -67,9 +70,27 @@ fun areAssignable(project: Project, qualifiedNameA: String, qualifiedNameB: Stri
     }
 }
 
+/**
+ * Creates the default scope for our searches. This includes all production files of JAVA and Kotlin types.
+ * For now we don't search for references in tests to keep information concise and the plugin performing well.
+ */
 fun Project.axonScope() = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScopes.projectProductionScope(this), JavaFileType.INSTANCE, KotlinFileType.INSTANCE)
+
+/**
+ * The 'allScope' represents all java and kotlin files, including libraries. Used for searching Axon-specific classes.
+ */
 fun Project.allScope() = GlobalSearchScope.allScope(this)
+
+/**
+ * Quick method to retrieve a JavaPsiFacade instance.
+ */
 fun Project.javaFacade(): JavaPsiFacade = JavaPsiFacade.getInstance(this)
+fun Project.annotationResolver(): AnnotationResolver = getService(AnnotationResolver::class.java)
+fun PsiElement.annotationResolver(): AnnotationResolver = project.annotationResolver()
+fun Project.handlerResolver(): MessageHandlerResolver = getService(MessageHandlerResolver::class.java)
+fun PsiElement.handlerResolver(): MessageHandlerResolver = project.handlerResolver()
+fun Project.creatorResolver(): MessageCreationResolver = getService(MessageCreationResolver::class.java)
+fun PsiElement.creatorResolver(): MessageCreationResolver = project.creatorResolver()
 
 /**
  * Convenience method to quickly create a cached value for a project based on PSI modifications.

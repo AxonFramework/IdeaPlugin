@@ -6,12 +6,17 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
-import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
+import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 
-fun PsiElement.markerForQualifiedName(qualifiedName: String): RelatedItemLineMarkerInfo<PsiElement>? {
-    val repository = project.getService(MessageHandlerResolver::class.java)
-    val handlers = repository.findHandlersForType(qualifiedName)
+/**
+ * Creates a line marker containing the handlers for a given payload.
+ *
+ * @param payload payload represented by qualified name
+ * @return An Axon publisher line marker
+ */
+fun PsiElement.markerForQualifiedName(payload: String): RelatedItemLineMarkerInfo<PsiElement>? {
+    val handlers = handlerResolver().findHandlersForType(payload)
             .sortedWith(sortingByDisplayName())
     if (handlers.isEmpty()) {
         return null

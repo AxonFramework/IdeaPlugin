@@ -28,7 +28,7 @@ class RecursiveAnnotationTest : AbstractAxonFixtureTestCase() {
         val handlerResolver = myFixture.project.getService(MessageHandlerResolver::class.java)
 
         val handlers = handlerResolver.findAllHandlers()
-        assertThat(handlers).anyMatch { it.payloadFullyQualifiedName == "test.SomeEvent" && it.renderContainerText() == "processor-a" }
+        assertThat(handlers).anyMatch { it.payload == "test.SomeEvent" && it.renderContainerText() == "processor-a" }
     }
 
     fun `test can handle ProcessingGroup annotation recursively - four deep in kotlin`() {
@@ -72,6 +72,6 @@ class RecursiveAnnotationTest : AbstractAxonFixtureTestCase() {
         val handlerResolver = myFixture.project.getService(MessageHandlerResolver::class.java)
 
         val handlers = handlerResolver.findAllHandlers()
-        assertThat(handlers).anyMatch { it.payloadFullyQualifiedName == "test.SomeEvent" && it.renderContainerText() == "processor-b" }
+        assertThat(handlers).anyMatch { it.payload == "test.SomeEvent" && it.renderContainerText() == "processor-b" }
     }
 }

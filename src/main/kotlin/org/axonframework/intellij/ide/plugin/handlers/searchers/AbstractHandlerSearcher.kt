@@ -6,7 +6,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.searches.AnnotatedElementsSearch
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver
+import org.axonframework.intellij.ide.plugin.util.annotationResolver
 import org.axonframework.intellij.ide.plugin.util.axonScope
 
 /**
@@ -24,8 +24,24 @@ import org.axonframework.intellij.ide.plugin.util.axonScope
  * @see Handler
  */
 abstract class AbstractHandlerSearcher(private val handlerType: MessageHandlerType) {
-    abstract fun createMessageHandler(method: PsiMethod): Handler?
+    /**
+     * Method that should be implemented by HandlerSearchers, creating their representation of a `Handler` with
+     * possible additional information.
+     *
+     * @see Handler
+     *
+     * @return Handler implementation that represents the given method.
+     */
+    protected abstract fun createMessageHandler(method: PsiMethod): Handler?
 
+    /**
+     * Executes the actual search for handlers of a certain type. Does so based on the annotation provided and all
+     * annotations that are annotated by it.
+     *
+     * Can be overridden if different search behavior is wanted.
+     *
+     * @return List of found handlers for the annotation in the `MessageHandlerType`
+     */
     open fun search(project: Project): List<Handler> {
         val annotationClasses = findAllRelevantAnnotationClasses(project)
         val annotatedMethods = annotationClasses.flatMap {
@@ -35,7 +51,8 @@ abstract class AbstractHandlerSearcher(private val handlerType: MessageHandlerTy
     }
 
     private fun findAllRelevantAnnotationClasses(project: Project): List<PsiClass> {
-        return project.getService(AnnotationResolver::class.java).getAnnotationClassesForType(handlerType)
+        return project.annotationResolver()
+                .getAnnotationClassesForType(handlerType)
                 .map { it.psiClass }
     }
 }

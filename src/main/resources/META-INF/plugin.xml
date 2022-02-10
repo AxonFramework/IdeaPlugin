@@ -42,10 +42,6 @@
                    implementationClass="org.axonframework.intellij.ide.plugin.usage.AggregateAnnotator"/>
         <annotator language="kotlin"
                    implementationClass="org.axonframework.intellij.ide.plugin.usage.AggregateAnnotator"/>
-        <annotator language="JAVA"
-                   implementationClass="org.axonframework.intellij.ide.plugin.usage.CommandMessageAnnotator"/>
-        <annotator language="kotlin"
-                   implementationClass="org.axonframework.intellij.ide.plugin.usage.CommandMessageAnnotator"/>
     </extensions>
 
     <actions>

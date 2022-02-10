@@ -15,8 +15,7 @@ enum class AxonAnnotation(val annotationName: String) {
     SAGA_EVENT_HANDLER("org.axonframework.modelling.saga.SagaEventHandler"),
 
     AGGREGATE_ROOT("org.axonframework.modelling.command.AggregateRoot"),
-    AGGREGATE_IDENTIFIER("org.axonframework.modelling.command.AggregateIdentifier"),
-    TARGET_AGGREGATE_IDENTIFIER("org.axonframework.modelling.command.TargetAggregateIdentifier"),
+    ROUTING_KEY("org.axonframework.commandhandling.RoutingKey"),
     ENTITY_ID("org.axonframework.modelling.command.EntityId"),
     PROCESSING_GROUP("org.axonframework.config.ProcessingGroup")
     ;

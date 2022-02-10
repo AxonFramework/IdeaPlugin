@@ -7,12 +7,11 @@ import org.axonframework.intellij.ide.plugin.api.MessageType
 import org.axonframework.intellij.ide.plugin.handlers.searchers.AggregateConstructorSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerInterceptorSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerSearcher
-import org.axonframework.intellij.ide.plugin.handlers.searchers.EventProcessorHandlerSearcher
+import org.axonframework.intellij.ide.plugin.handlers.searchers.EventHandlerSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.EventSourcingHandlerSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.QueryHandlerSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.SagaEventHandlerSearcher
 import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
-import org.axonframework.intellij.ide.plugin.util.PerformanceSubject
 import org.axonframework.intellij.ide.plugin.util.areAssignable
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 
@@ -28,7 +27,7 @@ class MessageHandlerResolver(private val project: Project) {
     private val searchers = listOf(
             CommandHandlerInterceptorSearcher(),
             CommandHandlerSearcher(),
-            EventProcessorHandlerSearcher(),
+            EventHandlerSearcher(),
             EventSourcingHandlerSearcher(),
             QueryHandlerSearcher(),
             SagaEventHandlerSearcher(),
@@ -36,7 +35,7 @@ class MessageHandlerResolver(private val project: Project) {
     )
 
     private val handlerCache = project.createCachedValue {
-        PerformanceRegistry.measure(PerformanceSubject.MessageHandlerResolverResolve) {
+        PerformanceRegistry.measure("MessageHandlerResolver.executeFindMessageHandlers") {
             executeFindMessageHandlers()
         }
     }
@@ -44,7 +43,7 @@ class MessageHandlerResolver(private val project: Project) {
     fun findHandlersForType(qualifiedName: String, messageType: MessageType? = null): List<Handler> {
         return handlerCache.value
                 .filter { messageType == null || it.handlerType.messageType == messageType }
-                .filter { areAssignable(project, it.payloadFullyQualifiedName, qualifiedName) }
+                .filter { areAssignable(project, it.payload, qualifiedName) }
                 .filter { it.element.isValid }
     }
 

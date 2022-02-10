@@ -8,12 +8,26 @@ import org.axonframework.intellij.ide.plugin.util.toElementText
 import org.axonframework.intellij.ide.plugin.util.toIcon
 import javax.swing.Icon
 
-class AxonCellRenderer : PsiElementListCellRenderer<PsiElement>() {
+/**
+ * Renders the listed items in line markers. The texts and icons are provided by the implementations of the `Handler`
+ * and `MessageCreator` classes.
+ *
+ * Singleton instance. Please call `AxonCellRenderer.getInstance()` to get the instance.
+ *
+ * @see org.axonframework.intellij.ide.plugin.api.Handler
+ * @see org.axonframework.intellij.ide.plugin.api.MessageCreator
+ */
+class AxonCellRenderer private constructor() : PsiElementListCellRenderer<PsiElement>() {
     companion object {
         private val renderer = lazy { AxonCellRenderer() }
         fun getInstance() = renderer.value
     }
 
+    /**
+     * Renders the text in the line marker popup. Contains the name of the item
+     *
+     * @return PSI element text
+     */
     override fun getElementText(element: PsiElement): String = element.toElementText()
 
     /**
@@ -27,5 +41,10 @@ class AxonCellRenderer : PsiElementListCellRenderer<PsiElement>() {
         return ICON_FLAG_VISIBILITY
     }
 
+    /**
+     * Instructs the list which icon to show
+     *
+     * @return PSI element icon
+     */
     override fun getIcon(element: PsiElement): Icon = element.toIcon()
 }

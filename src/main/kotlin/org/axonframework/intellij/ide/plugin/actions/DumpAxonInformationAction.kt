@@ -38,7 +38,7 @@ class DumpAxonInformationAction : AnAction() {
             it.toInfo()
         }
         val creators = project.getService<MessageCreationResolver>().resolveAllCreators().map {
-            CreatorInfo(it.payloadFullyQualifiedName, it.parentHandler?.toInfo(), it.renderContainerText())
+            CreatorInfo(it.payload, it.parentHandler?.toInfo(), it.renderContainerText())
         }
 
         val info = AxonInfo(annotations, handlers, creators)
@@ -49,7 +49,7 @@ class DumpAxonInformationAction : AnAction() {
         )
     }
 
-    private fun Handler.toInfo() = HandlerInfo(handlerType, this::class.java.simpleName, payloadFullyQualifiedName, renderText(), renderContainerText())
+    private fun Handler.toInfo() = HandlerInfo(handlerType, this::class.java.simpleName, payload, renderText(), renderContainerText())
 
     data class AxonInfo(
             val annotations: List<AnnotationInfo>,
