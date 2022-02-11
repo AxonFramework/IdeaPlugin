@@ -79,7 +79,7 @@ fun areAssignable(project: Project, qualifiedNameA: String, qualifiedNameB: Stri
         return true
     }
     return PerformanceRegistry.measure("areAssignable") {
-        val classesA = JavaPsiFacade.getInstance(project).findClasses(qualifiedNameA, project.allScope())
+        val classesA = JavaPsiFacade.getInstance(project).findClasses(qualifiedNameA, project.axonScope())
 
         classesA.any { a -> a.supers.any { b -> b.qualifiedName == qualifiedNameB } }
     }
