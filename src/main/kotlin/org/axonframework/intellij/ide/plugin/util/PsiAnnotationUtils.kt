@@ -18,13 +18,13 @@ package org.axonframework.intellij.ide.plugin.util
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiAnnotationMemberValue
-import com.intellij.psi.PsiBinaryExpression
-import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.PsiModifierListOwner
-import com.intellij.psi.PsiReferenceExpression
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver
 import org.axonframework.intellij.ide.plugin.resolving.ResolvedAnnotation
+import org.jetbrains.uast.UExpression
+import org.jetbrains.uast.getParentOfType
+import org.jetbrains.uast.toUElement
 
 /**
  * Find the most specific annotation of a specific type on a PsiElement.
@@ -89,24 +89,5 @@ fun PsiModifierListOwner.resolveAnnotationStringValue(annotation: AxonAnnotation
 }
 
 private fun resolveAttributeStringValue(attribute: PsiAnnotationMemberValue?): String? {
-    // Is a direct value, @ProcessingGroup("MY_GROUP")
-    if (attribute is PsiLiteralExpression) {
-        // Kotlin will return null here. Known limitation for now.
-        return attribute.value as String?
-    }
-
-    // Is a binary expression, so a combination of two things. Since the attribute value is a string,
-    // can only be a + operator.  e.g.  @ProcessingGroup(SomeClass.SOME_CONSTANT + "MyAddition")
-    if (attribute is PsiBinaryExpression) {
-        return resolveAttributeStringValue(attribute.lOperand) + resolveAttributeStringValue(attribute.rOperand)
-    }
-    // It references another value (e.g. @ProcessingGroup(SomeClass.SOME_CONSTANT).
-    // References a String -> return the reference directly
-    if (attribute is PsiReferenceExpression) {
-        val resolvedElement = attribute.references[0].resolve() ?: return null
-        val firstRelevantChild = resolvedElement.children.firstOrNull { it is PsiLiteralExpression || it is PsiReferenceExpression || it is PsiBinaryExpression }
-                ?: return attribute.references[0].canonicalText
-        return resolveAttributeStringValue(firstRelevantChild as PsiAnnotationMemberValue)
-    }
-    return null
+    return attribute?.toUElement()?.getParentOfType(UExpression::class.java)?.evaluate() as String? ?: return null
 }

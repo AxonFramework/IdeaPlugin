@@ -70,6 +70,7 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
             "org.axonframework.modelling.command.AggregateLifecycle",
             "org.axonframework.queryhandling.QueryHandler",
             "org.axonframework.modelling.saga.SagaEventHandler",
+            "org.axonframework.deadline.annotation.DeadlineHandler"
     )
 
     /**

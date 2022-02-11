@@ -16,9 +16,6 @@
 
 package org.axonframework.intellij.ide.plugin.api
 
-import com.intellij.psi.PsiField
-import org.jetbrains.uast.UField
-
 /**
  * Contains used Axon annotations during analysis of the source code with their fully qualified name.
  */
@@ -29,14 +26,11 @@ enum class AxonAnnotation(val annotationName: String) {
     QUERY_HANDLER("org.axonframework.queryhandling.QueryHandler"),
     COMMAND_HANDLER_INTERCEPTOR("org.axonframework.modelling.command.CommandHandlerInterceptor"),
     SAGA_EVENT_HANDLER("org.axonframework.modelling.saga.SagaEventHandler"),
+    DEADLINE_HANDLER("org.axonframework.deadline.annotation.DeadlineHandler"),
 
     AGGREGATE_ROOT("org.axonframework.modelling.command.AggregateRoot"),
     ROUTING_KEY("org.axonframework.commandhandling.RoutingKey"),
     ENTITY_ID("org.axonframework.modelling.command.EntityId"),
     PROCESSING_GROUP("org.axonframework.config.ProcessingGroup")
     ;
-
-    fun fieldIsAnnotated(field: UField): Boolean {
-        return (field.javaPsi as PsiField).hasAnnotation(annotationName)
-    }
 }

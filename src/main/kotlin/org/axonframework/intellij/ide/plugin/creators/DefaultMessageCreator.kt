@@ -21,8 +21,10 @@ import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageCreator
 import org.axonframework.intellij.ide.plugin.handlers.types.CommandHandler
+import org.axonframework.intellij.ide.plugin.handlers.types.DeadlineHandler
 import org.axonframework.intellij.ide.plugin.handlers.types.EventSourcingHandler
 import org.axonframework.intellij.ide.plugin.handlers.types.SagaEventHandler
+import org.axonframework.intellij.ide.plugin.util.toShortName
 import javax.swing.Icon
 
 /**
@@ -35,7 +37,8 @@ import javax.swing.Icon
  * @see org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
  */
 data class DefaultMessageCreator(override val element: PsiElement,
-                                 override val payload: String,
+                                 override val payload: String?,
+                                 override val name: String?,
                                  override val parentHandler: Handler?) : MessageCreator {
     /**
      * Renders the grey text next to the initial identifier.
@@ -48,6 +51,7 @@ data class DefaultMessageCreator(override val element: PsiElement,
     override val containerText = when (parentHandler) {
         is EventSourcingHandler -> "Side effect of EventSourcingHandler"
         is SagaEventHandler -> "Saga ${parentHandler.processingGroup}"
+        is DeadlineHandler -> "Deadline: ${parentHandler.deadlineName.toShortName()}"
         else -> null
     }
 
@@ -57,6 +61,7 @@ data class DefaultMessageCreator(override val element: PsiElement,
     override val icon: Icon = when (parentHandler) {
         is CommandHandler, is EventSourcingHandler -> AxonIcons.Model
         is SagaEventHandler -> AxonIcons.Saga
+        is DeadlineHandler -> AxonIcons.DeadlineHandler
         else -> AxonIcons.Publisher
     }
 }

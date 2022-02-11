@@ -154,4 +154,28 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
             it.containerText == null
         }
     }
+
+    fun `test can find dispatch of deadline with payload`() {
+        addFile("MyComponent.kt", """
+            import org.axonframework.deadline.DeadlineManager
+            import java.time.Instant
+            
+            data class MyCommand(@TargetAggregateIdentifier id: String)
+            data class MyDeadlineEvent(id: String)
+            
+            @AggregateRoot
+            class MyAggregate {                
+                @CommandHandler
+                fun handle(command: MyCommand, deadlineManager: DeadlineManager) {
+                    deadlineManager.schedule(Instant.now(), "my-awesome-deadline", MyDeadlineEvent("")) 
+                }
+            }            
+        """.trimIndent())
+        val creators = project.creatorResolver().getCreatorsForPayload("my-awesome-deadline")
+        Assertions.assertThat(creators).anyMatch {
+            it.payload == "test.MyDeadlineEvent" &&
+                    it.element.toElementText() == "MyAggregate.handle"
+            it.containerText == null
+        }
+    }
 }

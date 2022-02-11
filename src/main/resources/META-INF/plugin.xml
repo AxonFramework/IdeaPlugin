@@ -21,6 +21,8 @@
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.PublishMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.DeadlineNameMethodLineMarker"/>
+        <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.HandlerMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.ClassLineMarkerProvider"/>
@@ -30,6 +32,8 @@
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.HandlerMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.ClassLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="kotlin"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.DeadlineNameMethodLineMarker"/>
 
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver"/>
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver"/>

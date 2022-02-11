@@ -23,6 +23,7 @@ import org.axonframework.intellij.ide.plugin.api.MessageType
 import org.axonframework.intellij.ide.plugin.handlers.searchers.AggregateConstructorSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerInterceptorSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerSearcher
+import org.axonframework.intellij.ide.plugin.handlers.searchers.DeadlineHandlerSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.EventHandlerSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.EventSourcingHandlerSearcher
 import org.axonframework.intellij.ide.plugin.handlers.searchers.QueryHandlerSearcher
@@ -47,7 +48,8 @@ class MessageHandlerResolver(private val project: Project) {
             EventSourcingHandlerSearcher(),
             QueryHandlerSearcher(),
             SagaEventHandlerSearcher(),
-            AggregateConstructorSearcher()
+            AggregateConstructorSearcher(),
+            DeadlineHandlerSearcher(),
     )
 
     private val handlerCache = project.createCachedValue {

@@ -24,6 +24,7 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
+import org.axonframework.intellij.ide.plugin.handlers.types.DeadlineHandler
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
@@ -60,6 +61,8 @@ class PublishMethodLineMarkerProvider : LineMarkerProvider {
         } ?: return null
 
         val handlers = element.handlerResolver().findHandlersForType(payload)
+                // Hide DeadlineHandlers here. These are handled by a more specific LineMarkerProvider
+                .filter { it !is DeadlineHandler }
                 .sortedWith(sortingByDisplayName())
         if (handlers.isEmpty()) {
             return null
@@ -91,9 +94,9 @@ class PublishMethodLineMarkerProvider : LineMarkerProvider {
         val uElementParent = element.parent.parent.toUElement()
         val isConstructor = uElementParent is UCallExpression && uElementParent.kind == UastCallKind.CONSTRUCTOR_CALL
         val isClassReference = uElementParent is UTypeReferenceExpression && uElementParent.uastParent is UClassLiteralExpression && uElementParent.getParentOfType<UAnnotation>() == null
-        if (!isConstructor && !isClassReference) {
-            return null
+        if (isConstructor || isClassReference) {
+            return referenceExpression.getQualifiedName()
         }
-        return referenceExpression.getQualifiedName()
+        return null
     }
 }

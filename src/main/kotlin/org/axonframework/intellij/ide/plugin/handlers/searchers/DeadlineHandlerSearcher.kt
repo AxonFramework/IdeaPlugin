@@ -18,21 +18,23 @@ package org.axonframework.intellij.ide.plugin.handlers.searchers
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
+import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.handlers.types.QueryHandler
-import org.axonframework.intellij.ide.plugin.util.findProcessingGroup
+import org.axonframework.intellij.ide.plugin.handlers.types.DeadlineHandler
+import org.axonframework.intellij.ide.plugin.util.resolveAnnotationStringValue
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 
 /**
- * Searches for any query handlers.
+ * Searches for any handlers that can handle deadlines.
  *
- * @see org.axonframework.intellij.ide.plugin.handlers.types.QueryHandler
+ * @see org.axonframework.intellij.ide.plugin.handlers.types.EventHandler
  */
-class QueryHandlerSearcher : AbstractHandlerSearcher(MessageHandlerType.QUERY) {
+class DeadlineHandlerSearcher : AbstractHandlerSearcher(MessageHandlerType.DEADLINE) {
     override fun createMessageHandler(method: PsiMethod, annotation: PsiClass?): Handler? {
         val payloadType = method.resolvePayloadType()?.toQualifiedName() ?: return null
-        return QueryHandler(method, payloadType, method.findProcessingGroup())
+        val deadlineName = method.resolveAnnotationStringValue(AxonAnnotation.DEADLINE_HANDLER, "deadlineName")
+        return DeadlineHandler(method, payloadType, deadlineName ?: payloadType)
     }
 }

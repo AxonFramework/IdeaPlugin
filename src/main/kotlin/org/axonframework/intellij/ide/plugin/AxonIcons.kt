@@ -31,4 +31,6 @@ object AxonIcons {
     val Saga = IconLoader.getIcon("/icons/saga.svg", AxonIcons::class.java)
     val Model = IconLoader.getIcon("/icons/model.svg", AxonIcons::class.java)
     val Interceptor = IconLoader.getIcon("/icons/interceptor.svg", AxonIcons::class.java)
+    val DeadlinePublisher = IconLoader.getIcon("/icons/deadline_publish.svg", AxonIcons::class.java)
+    val DeadlineHandler = IconLoader.getIcon("/icons/deadline_handler.svg", AxonIcons::class.java)
 }

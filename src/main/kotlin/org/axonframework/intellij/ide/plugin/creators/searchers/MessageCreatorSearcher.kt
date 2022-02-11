@@ -14,15 +14,9 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.api
+package org.axonframework.intellij.ide.plugin.creators.searchers
 
-/**
- * The type of the message being handled. This is not an exhaustive list of the message types supported by
- * Axon Framework, but this is an exhaustive list of the message types supported by the IntelliJ plugin.
- */
-enum class MessageType {
-    COMMAND,
-    EVENT,
-    QUERY,
-    DEADLINE,
+interface MessageCreatorSearcher {
+    fun findByPayload(payload: String): List<CreatorSearchResult>
+    fun findAll(): List<CreatorSearchResult>
 }

@@ -21,9 +21,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassObjectAccessExpression
+import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
+import com.intellij.psi.PsiWildcardType
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.impl.source.PsiImmediateClassType
 import com.intellij.psi.search.GlobalSearchScope
@@ -48,6 +50,7 @@ fun PsiType?.toQualifiedName(): String? = this?.let {
         is PsiClassReferenceType -> this.resolve()?.qualifiedName
         // Class<SomeClass> object. Extract the <SomeClass> and call this method recursively to resolve it
         is PsiImmediateClassType -> (this.parameters.first() as PsiClassReferenceType).toQualifiedName()
+        is PsiWildcardType -> "java.lang.Object"
         else -> throw IllegalArgumentException("Can not handle psiType of type " + this::class.qualifiedName)
     }
 }
@@ -67,7 +70,13 @@ fun PsiMethod.resolvePayloadType(): PsiType? = PerformanceRegistry.measure("PsiM
             return@measure value.type
         }
     }
-    toUElement(UMethod::class.java)?.uastParameters?.getOrNull(0)?.typeReference?.type
+    val type = toUElement(UMethod::class.java)?.uastParameters?.getOrNull(0)?.typeReference?.type ?: return@measure null
+    if (type is PsiClassType && type.hasParameters()) {
+        // For example, CommandMessage<Class>
+        type.parameters[0]
+    } else {
+        type
+    }
 }
 
 /**

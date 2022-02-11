@@ -48,7 +48,7 @@ abstract class AbstractHandlerSearcher(private val handlerType: MessageHandlerTy
      *
      * @return Handler implementation that represents the given method.
      */
-    protected abstract fun createMessageHandler(method: PsiMethod): Handler?
+    protected abstract fun createMessageHandler(method: PsiMethod, annotation: PsiClass?): Handler?
 
     /**
      * Executes the actual search for handlers of a certain type. Does so based on the annotation provided and all
@@ -60,10 +60,12 @@ abstract class AbstractHandlerSearcher(private val handlerType: MessageHandlerTy
      */
     open fun search(project: Project): List<Handler> {
         val annotationClasses = findAllRelevantAnnotationClasses(project)
-        val annotatedMethods = annotationClasses.flatMap {
+        val annotatedMethods = annotationClasses.associateWith {
             AnnotatedElementsSearch.searchPsiMethods(it, project.axonScope()).findAll()
         }
-        return annotatedMethods.mapNotNull { this.createMessageHandler(it) }.distinct()
+        return annotatedMethods.flatMap {
+            it.value.mapNotNull { method -> this.createMessageHandler(method, it.key) }
+        }.distinct()
     }
 
     private fun findAllRelevantAnnotationClasses(project: Project): List<PsiClass> {

@@ -33,7 +33,12 @@ interface MessageCreator : PsiElementWrapper {
     /**
      * Fully qualified name of the payload being created.
      */
-    val payload: String
+    val payload: String?
+
+    /**
+     * Name of the creator. For example, the deadline's name
+     */
+    val name: String?
 
     /**
      * The parent handler that published the message. For example, if this MessageCreator represents an event

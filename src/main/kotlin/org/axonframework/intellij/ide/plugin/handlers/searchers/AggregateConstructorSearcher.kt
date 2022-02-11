@@ -17,6 +17,7 @@
 package org.axonframework.intellij.ide.plugin.handlers.searchers
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.searches.AnnotatedElementsSearch
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
@@ -51,10 +52,10 @@ class AggregateConstructorSearcher : AbstractHandlerSearcher(MessageHandlerType.
         return AnnotatedElementsSearch.searchPsiClasses(annotation.psiClass, project.axonScope()).findAll()
                 .flatMap { it.constructors.toList() }
                 .filter { !it.hasAnnotation(MessageHandlerType.COMMAND.annotationName) && it.hasParameters() }
-                .mapNotNull { createMessageHandler(it) }
+                .mapNotNull { createMessageHandler(it, null) }
     }
 
-    override fun createMessageHandler(method: PsiMethod): Handler {
+    override fun createMessageHandler(method: PsiMethod, annotation: PsiClass?): Handler? {
         return AggregateConstructor(method, method.containingClass?.qualifiedName!!)
     }
 }

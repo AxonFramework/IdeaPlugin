@@ -94,6 +94,6 @@ class ConstantsInAnnotationTest : AbstractAxonFixtureTestCase() {
         val handlers = resolver.findAllHandlers()
         // Will just return the package name because kotlin will return null resolving the value
         // At least it won't crash, but this would be something to improve in the future.
-        assertThat(handlers).anyMatch { it.payload == "test.SomeEvent" && it.renderContainerText() == "test" }
+        assertThat(handlers).anyMatch { it.payload == "test.SomeEvent" && it.renderContainerText() == "some-projector" }
     }
 }
