@@ -37,8 +37,7 @@ import javax.swing.Icon
  * @see org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
  */
 data class DefaultMessageCreator(override val element: PsiElement,
-                                 override val payload: String?,
-                                 override val name: String?,
+                                 override val payload: String,
                                  override val parentHandler: Handler?) : MessageCreator {
     /**
      * Renders the grey text next to the initial identifier.
@@ -51,7 +50,7 @@ data class DefaultMessageCreator(override val element: PsiElement,
     override val containerText = when (parentHandler) {
         is EventSourcingHandler -> "Side effect of EventSourcingHandler"
         is SagaEventHandler -> "Saga ${parentHandler.processingGroup}"
-        is DeadlineHandler -> "Deadline: ${parentHandler.deadlineName.toShortName()}"
+        is DeadlineHandler -> "Deadline ${parentHandler.deadlineName.toShortName()}"
         else -> null
     }
 

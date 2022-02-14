@@ -24,8 +24,8 @@ import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.javaFacade
 
 class ConstructorMessageCreatorSearcher(val project: Project) : MessageCreatorSearcher {
-    val handlerResolver = project.handlerResolver()
-    val psiFacade = project.javaFacade()
+    private val handlerResolver = project.handlerResolver()
+    private val psiFacade = project.javaFacade()
 
     override fun findByPayload(payload: String): List<CreatorSearchResult> {
         val matchingHandlers = handlerResolver.findAllHandlers()
@@ -47,7 +47,7 @@ class ConstructorMessageCreatorSearcher(val project: Project) : MessageCreatorSe
             psiFacade.findClasses(typeFqn, project.axonScope()).flatMap { clazz ->
                 clazz.constructors
                         .flatMap { MethodReferencesSearch.search(it, project.axonScope(), true) }
-                        .map { ref -> CreatorSearchResult(typeFqn, null, ref.element) }
+                        .map { ref -> CreatorSearchResult(typeFqn, ref.element) }
                         .distinct()
             }
         }

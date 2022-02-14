@@ -37,7 +37,6 @@ import org.axonframework.intellij.ide.plugin.util.resolveAnnotationStringValue
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
-import org.jetbrains.kotlin.j2k.getContainingClass
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.UIdentifier
@@ -62,7 +61,7 @@ import javax.swing.Icon
  */
 class HandlerMethodLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
-        val (handlerType, qualifiedName) = getInfoForAnnotatedFunction(element)
+        val (handlerType, payload) = getInfoForAnnotatedFunction(element)
                 ?: getInfoForNonAnnotatedFunction(element) ?: return null
 
         if (handlerType == MessageHandlerType.DEADLINE) {
@@ -70,20 +69,24 @@ class HandlerMethodLineMarkerProvider : LineMarkerProvider {
             val method = element.toUElement()?.getParentOfType<UAnnotation>()?.getContainingUMethod()
             return createPayloadCreatorLineMarker(element, listOfNotNull(
                     method?.resolveAnnotationStringValue(AxonAnnotation.DEADLINE_HANDLER, "deadlineName"),
-                    qualifiedName
-            ), AxonIcons.DeadlinePublisher)
+                    payload
+            ), AxonIcons.DeadlineHandler)
+        }
+
+        if (payload == null) {
+            return null
         }
 
         if (handlerType == MessageHandlerType.COMMAND_INTERCEPTOR) {
             // Special case, show all command handlers that it intercepts
-            return createCommandInterceptorLineMarker(element, qualifiedName)
+            return createCommandInterceptorLineMarker(element, payload)
         }
 
         // Generic, shows all constructors of the payload type
-        return createPayloadCreatorLineMarker(element, listOf(qualifiedName), AxonIcons.Handler)
+        return createPayloadCreatorLineMarker(element, listOf(payload), AxonIcons.Handler)
     }
 
-    private fun getInfoForAnnotatedFunction(element: PsiElement): Pair<MessageHandlerType, String>? {
+    private fun getInfoForAnnotatedFunction(element: PsiElement): Pair<MessageHandlerType, String?>? {
         val uElement = element.toUElementOfType<UIdentifier>() ?: return null
         val uAnnotation = uElement.getParentOfType<UAnnotation>() ?: return null
         if (uElement.getParentOfType<UNamedExpression>() != null) {
@@ -94,7 +97,7 @@ class HandlerMethodLineMarkerProvider : LineMarkerProvider {
         val annotationName = uAnnotation.qualifiedName ?: return null
         val method = uAnnotation.getContainingUMethod() ?: return null
         val handlerType = element.annotationResolver().getMessageTypeForAnnotation(annotationName) ?: return null
-        val qualifiedName = method.javaPsi.resolvePayloadType()?.toQualifiedName() ?: return null
+        val qualifiedName = method.javaPsi.resolvePayloadType()?.toQualifiedName()
         return Pair(handlerType, qualifiedName)
     }
 
@@ -143,7 +146,7 @@ class HandlerMethodLineMarkerProvider : LineMarkerProvider {
         val handlers = element.handlerResolver()
                 .findHandlersForType(qualifiedName, MessageType.COMMAND)
                 .filterIsInstance<CommandHandler>()
-                .filter { it.componentName == element.getContainingClass()?.getQualifiedName() }
+                .filter { it.componentName == element.toUElement()?.getContainingUClass()?.qualifiedName }
                 .sortedWith(sortingByDisplayName())
         return NavigationGutterIconBuilder.create(AxonIcons.Interceptor)
                 .setPopupTitle("Commands Intercepted")

@@ -31,14 +31,10 @@ interface MessageCreator : PsiElementWrapper {
     override val element: PsiElement
 
     /**
-     * Fully qualified name of the payload being created.
+     * The name of the payload being created. For deadlines, this is the deadlineName. For all other messages,
+     * it's the payload type.
      */
-    val payload: String?
-
-    /**
-     * Name of the creator. For example, the deadline's name
-     */
-    val name: String?
+    val payload: String
 
     /**
      * The parent handler that published the message. For example, if this MessageCreator represents an event

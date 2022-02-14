@@ -91,9 +91,9 @@ class MessageCreationResolver(private val project: Project) {
             findParentHandlers(element.element)
         }
         if (parentHandlers.isEmpty()) {
-            return listOf(DefaultMessageCreator(element.element, element.payload, element.name, null))
+            return listOf(DefaultMessageCreator(element.element, element.payload, null))
         }
-        return parentHandlers.map { DefaultMessageCreator(element.element, element.payload, element.name, it) }
+        return parentHandlers.map { DefaultMessageCreator(element.element, element.payload, it) }
     }
 
     /**

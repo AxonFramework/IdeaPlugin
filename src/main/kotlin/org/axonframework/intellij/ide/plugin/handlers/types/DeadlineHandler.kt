@@ -23,7 +23,6 @@ import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 
 /**
  * Represents a method being able to a deadline message. Invoked when a deadline expires.
- * The payload is the name given to the deadline.
  *
  * @See org.axonframework.intellij.ide.plugin.handlers.searchers.DeadlineHandlerSearcher
  */
@@ -34,8 +33,12 @@ data class DeadlineHandler(
 ) : Handler {
     override val handlerType: MessageHandlerType = MessageHandlerType.DEADLINE
 
-    override fun renderContainerText(): String {
+    override fun renderText(): String {
         return deadlineName
+    }
+
+    override fun renderContainerText(): String? {
+        return null
     }
 
     override fun getIcon() = AxonIcons.DeadlineHandler

@@ -35,10 +35,12 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver
+import org.axonframework.intellij.ide.plugin.resolving.DeadlineManagerResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.UastErrorType
 import org.jetbrains.uast.toUElement
 
 /**
@@ -51,7 +53,8 @@ fun PsiType?.toQualifiedName(): String? = this?.let {
         // Class<SomeClass> object. Extract the <SomeClass> and call this method recursively to resolve it
         is PsiImmediateClassType -> (this.parameters.first() as PsiClassReferenceType).toQualifiedName()
         is PsiWildcardType -> "java.lang.Object"
-        else -> throw IllegalArgumentException("Can not handle psiType of type " + this::class.qualifiedName)
+        is UastErrorType -> null
+        else -> throw IllegalArgumentException("Can not handle psiType of type " + this::class.qualifiedName + ". Its text is: " + canonicalText)
     }
 }
 
@@ -115,6 +118,8 @@ fun Project.handlerResolver(): MessageHandlerResolver = getService(MessageHandle
 fun PsiElement.handlerResolver(): MessageHandlerResolver = project.handlerResolver()
 fun Project.creatorResolver(): MessageCreationResolver = getService(MessageCreationResolver::class.java)
 fun PsiElement.creatorResolver(): MessageCreationResolver = project.creatorResolver()
+fun Project.deadlineResolver(): DeadlineManagerResolver = getService(DeadlineManagerResolver::class.java)
+fun PsiElement.deadlineResolver(): DeadlineManagerResolver = project.deadlineResolver()
 
 /**
  * Convenience method to quickly create a cached value for a project based on PSI modifications.

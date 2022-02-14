@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.handlers.searchers
+package org.axonframework.intellij.ide.plugin.deadline
 
 import org.assertj.core.api.Assertions
 import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
@@ -57,6 +57,25 @@ class DeadlineHandlerSearcherTest : AbstractAxonFixtureTestCase() {
                 .filterIsInstance<DeadlineHandler>()
         Assertions.assertThat(handlers).anyMatch {
             it.payload == "test.MyDeadlinePayload" && it.deadlineName == "MY_AWESOME_DEADLINE" && it.element.name == "handle"
+        }
+    }
+
+    fun `test can find deadline handler with name without payload`() {
+        addFile("MyAggregate.kt", """
+            class MyDeadlinePayload
+            
+            @AggregateRoot
+            class MyAggregate {
+                @DeadlineHandler(deadlineName = "MY_AWESOME_DEADLINE")
+                fun handle() {
+                    
+                }
+            }
+        """.trimIndent())
+        val handlers = project.handlerResolver().findAllHandlers()
+                .filterIsInstance<DeadlineHandler>()
+        Assertions.assertThat(handlers).anyMatch {
+            it.payload == "java.lang.Object" && it.deadlineName == "MY_AWESOME_DEADLINE" && it.element.name == "handle"
         }
     }
 

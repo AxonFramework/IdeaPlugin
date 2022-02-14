@@ -45,6 +45,15 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
         PsiTestUtil.addLibrary(module, PathUtil.getJarPathForClass(EventHandler::class.java))
         PsiTestUtil.addLibrary(module, PathUtil.getJarPathForClass(AggregateMember::class.java))
         PsiTestUtil.addLibrary(module, PathUtil.getJarPathForClass(EventSourcingHandler::class.java))
+
+        /* Mock the Instant class, or some tests won't run */
+        addFile("Instant.java", """
+            public class Instant {
+                public static Instant now() {
+                    return null;
+                }
+            }
+        """.trimIndent(), "java.time")
     }
 
     override fun getTestDataPath(): String {
@@ -70,7 +79,8 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
             "org.axonframework.modelling.command.AggregateLifecycle",
             "org.axonframework.queryhandling.QueryHandler",
             "org.axonframework.modelling.saga.SagaEventHandler",
-            "org.axonframework.deadline.annotation.DeadlineHandler"
+            "org.axonframework.deadline.annotation.DeadlineHandler",
+            "org.axonframework.deadline.DeadlineManager",
     )
 
     /**
@@ -79,10 +89,10 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
      *
      * @see autoImports
      */
-    fun addFile(name: String, text: String): VirtualFile {
+    fun addFile(name: String, text: String, pckg: String = "test"): VirtualFile {
         val newLineChar = if (name.endsWith(".java")) ";" else ""
         var content = ""
-        content += "package test$newLineChar\n\n"
+        content += "package $pckg$newLineChar\n\n"
         autoImports.forEach { content += "import $it$newLineChar\n" }
         content += ("\n" + text)
         return myFixture.addFileToProject(name, content).virtualFile

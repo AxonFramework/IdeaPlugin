@@ -70,7 +70,7 @@ class ConstantsInAnnotationTest : AbstractAxonFixtureTestCase() {
         val handlers = resolver.findAllHandlers()
         // Java can't reach kotlin constant declarations somehow. For now the fallback is to show the text, can be improved in the future
         // Ideally, we would test for "some-projector" here.
-        assertThat(handlers).anyMatch { it.payload == "test.SomeEvent" && it.renderContainerText() == "ProcessingGroupName.SOME_PROJECTOR" }
+        assertThat(handlers).anyMatch { it.payload == "test.SomeEvent" && it.renderContainerText() == "some-projector" }
     }
 
     fun `test can handle kotlin to java object constant references`() {
@@ -94,6 +94,6 @@ class ConstantsInAnnotationTest : AbstractAxonFixtureTestCase() {
         val handlers = resolver.findAllHandlers()
         // Will just return the package name because kotlin will return null resolving the value
         // At least it won't crash, but this would be something to improve in the future.
-        assertThat(handlers).anyMatch { it.payload == "test.SomeEvent" && it.renderContainerText() == "some-projector" }
+        assertThat(handlers).anyMatch { it.payload == "test.SomeEvent" && it.renderContainerText() == "test" }
     }
 }

@@ -19,7 +19,6 @@ package org.axonframework.intellij.ide.plugin.creators.searchers
 import com.intellij.psi.PsiElement
 
 data class CreatorSearchResult(
-        val payload: String?,
-        val name: String?,
+        val payload: String,
         val element: PsiElement,
 )
