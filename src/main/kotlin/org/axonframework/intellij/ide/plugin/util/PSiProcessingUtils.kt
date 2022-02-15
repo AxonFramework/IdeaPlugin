@@ -23,6 +23,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassObjectAccessExpression
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiJvmModifiersOwner
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiWildcardType
@@ -131,3 +132,12 @@ fun <T> Project.createCachedValue(supplier: () -> T) = CachedValuesManager.getMa
 fun PsiClass?.isAggregate() = this?.hasAnnotation(AxonAnnotation.AGGREGATE_ROOT) == true
 
 fun PsiClass?.isEntity() = this?.allFields?.any { it.hasAnnotation(AxonAnnotation.ENTITY_ID.annotationName) } == true
+
+/**
+ * Checks whether the element is annotated with one of axon's annotations
+ */
+fun PsiJvmModifiersOwner.isAnnotated(axonAnnotation: AxonAnnotation): Boolean {
+    return annotationResolver().getAnnotationClasses(axonAnnotation).any { annotationClass ->
+        hasAnnotation(annotationClass.qualifiedName)
+    }
+}

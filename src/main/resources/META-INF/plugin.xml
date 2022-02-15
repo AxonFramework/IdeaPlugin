@@ -35,6 +35,7 @@
         <codeInsight.lineMarkerProvider language="kotlin"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.DeadlinePublisherLineMarkerProvider"/>
 
+        <!-- Project services -->
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver"/>
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver"/>
         <projectService
@@ -42,12 +43,30 @@
         <projectService
                 serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver"/>
 
+        <!-- Usage providers -->
         <implicitUsageProvider implementation="org.axonframework.intellij.ide.plugin.usage.AxonImplicitUsageProvider"/>
 
-        <annotator language="JAVA"
-                   implementationClass="org.axonframework.intellij.ide.plugin.usage.AggregateAnnotator"/>
-        <annotator language="kotlin"
-                   implementationClass="org.axonframework.intellij.ide.plugin.usage.AggregateAnnotator"/>
+        <!-- Java inspections -->
+        <localInspection displayName="Aggregate has an identifier" shortName="JavaAggregateIdInspection"
+                         groupName="Axon Framework usage" language="JAVA"
+                         implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.JavaAggregateIdInspection"
+                         enabledByDefault="true"/>
+        <localInspection displayName="Aggregate has no-argument constructor"
+                         shortName="JavaAggregateConstructorInspection" groupName="Axon Framework usage"
+                         language="JAVA"
+                         implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.JavaAggregateConstructorInspection"
+                         enabledByDefault="true"/>
+
+        <!-- Kotlin inspections -->
+        <localInspection displayName="Aggregate has an identifier" shortName="KotlinAggregateIdInspection"
+                         groupName="Axon Framework usage" language="kotlin"
+                         implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.KotlinAggregateIdInspection"
+                         enabledByDefault="true"/>
+        <localInspection displayName="Aggregate has no-argument constructor"
+                         shortName="KotlinAggregateConstructorInspection" groupName="Axon Framework usage"
+                         language="kotlin"
+                         implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.KotlinAggregateConstructorInspection"
+                         enabledByDefault="true"/>
     </extensions>
 
     <actions>
