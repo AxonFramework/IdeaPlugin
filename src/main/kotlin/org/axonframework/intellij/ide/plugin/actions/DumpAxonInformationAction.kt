@@ -27,9 +27,11 @@ import com.intellij.testFramework.LightVirtualFile
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
+import org.axonframework.intellij.ide.plugin.api.Model
 import org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
+import org.axonframework.intellij.ide.plugin.util.aggregateResolver
 import org.jetbrains.kotlin.idea.debugger.getService
 
 /**
@@ -59,7 +61,7 @@ class DumpAxonInformationAction : AnAction() {
             CreatorInfo(it.payload, it.parentHandler?.toInfo(), it.containerText)
         }
 
-        val info = AxonInfo(annotations, handlers, creators)
+        val info = AxonInfo(annotations, handlers, creators, project.aggregateResolver().getModels())
         val dump = ObjectMapper().findAndRegisterModules().enable(SerializationFeature.INDENT_OUTPUT).writeValueAsString(info)
         FileEditorManager.getInstance(project).openEditor(
                 OpenFileDescriptor(project, LightVirtualFile("axon-dump.json", JsonLanguage.INSTANCE, dump)),
@@ -72,7 +74,8 @@ class DumpAxonInformationAction : AnAction() {
     private data class AxonInfo(
             val annotations: List<AnnotationInfo>,
             val handlers: List<HandlerInfo>,
-            val creators: List<CreatorInfo>
+            val creators: List<CreatorInfo>,
+            val models: List<Model>,
     )
 
     private data class CreatorInfo(

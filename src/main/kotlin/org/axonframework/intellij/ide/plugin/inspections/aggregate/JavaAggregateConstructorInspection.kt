@@ -17,7 +17,6 @@
 package org.axonframework.intellij.ide.plugin.inspections.aggregate
 
 import com.intellij.codeInsight.daemon.impl.actions.SuppressFix
-import com.intellij.codeInsight.daemon.impl.quickfix.AddConstructorFix
 import com.intellij.codeInspection.AbstractBaseJavaLocalInspectionTool
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.ProblemDescriptor
@@ -46,7 +45,6 @@ class JavaAggregateConstructorInspection : AbstractBaseJavaLocalInspectionTool()
                             ProblemHighlightType.ERROR,
                             isOnTheFly,
                             SuppressFix(shortName),
-                            AddConstructorFix(aClass, emptyList())
                     )
             )
         }

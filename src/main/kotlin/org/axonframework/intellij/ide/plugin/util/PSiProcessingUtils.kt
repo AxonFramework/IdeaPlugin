@@ -25,6 +25,7 @@ import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJvmModifiersOwner
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiPrimitiveType
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiWildcardType
 import com.intellij.psi.impl.source.PsiClassReferenceType
@@ -35,6 +36,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
+import org.axonframework.intellij.ide.plugin.resolving.AggregateStructureResolver
 import org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver
 import org.axonframework.intellij.ide.plugin.resolving.DeadlineManagerResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
@@ -52,9 +54,10 @@ fun PsiType?.toQualifiedName(): String? = this?.let {
     return when (this) {
         is PsiClassReferenceType -> this.resolve()?.qualifiedName
         // Class<SomeClass> object. Extract the <SomeClass> and call this method recursively to resolve it
-        is PsiImmediateClassType -> (this.parameters.first() as PsiClassReferenceType).toQualifiedName()
+        is PsiImmediateClassType -> (this.parameters.firstOrNull() as PsiClassType?)?.toQualifiedName()
         is PsiWildcardType -> "java.lang.Object"
         is UastErrorType -> null
+        is PsiPrimitiveType -> null
         else -> throw IllegalArgumentException("Can not handle psiType of type " + this::class.qualifiedName + ". Its text is: " + canonicalText)
     }
 }
@@ -113,6 +116,7 @@ fun Project.allScope() = GlobalSearchScope.allScope(this)
  * Quick method to retrieve a JavaPsiFacade instance.
  */
 fun Project.javaFacade(): JavaPsiFacade = JavaPsiFacade.getInstance(this)
+fun PsiElement.javaFacade(): JavaPsiFacade = project.javaFacade()
 fun Project.annotationResolver(): AnnotationResolver = getService(AnnotationResolver::class.java)
 fun PsiElement.annotationResolver(): AnnotationResolver = project.annotationResolver()
 fun Project.handlerResolver(): MessageHandlerResolver = getService(MessageHandlerResolver::class.java)
@@ -121,6 +125,8 @@ fun Project.creatorResolver(): MessageCreationResolver = getService(MessageCreat
 fun PsiElement.creatorResolver(): MessageCreationResolver = project.creatorResolver()
 fun Project.deadlineResolver(): DeadlineManagerResolver = getService(DeadlineManagerResolver::class.java)
 fun PsiElement.deadlineResolver(): DeadlineManagerResolver = project.deadlineResolver()
+fun Project.aggregateResolver(): AggregateStructureResolver = getService(AggregateStructureResolver::class.java)
+fun PsiElement.aggregateResolver(): AggregateStructureResolver = project.aggregateResolver()
 
 /**
  * Convenience method to quickly create a cached value for a project based on PSI modifications.
@@ -130,8 +136,6 @@ fun <T> Project.createCachedValue(supplier: () -> T) = CachedValuesManager.getMa
 }
 
 fun PsiClass?.isAggregate() = this?.hasAnnotation(AxonAnnotation.AGGREGATE_ROOT) == true
-
-fun PsiClass?.isEntity() = this?.allFields?.any { it.hasAnnotation(AxonAnnotation.ENTITY_ID.annotationName) } == true
 
 /**
  * Checks whether the element is annotated with one of axon's annotations

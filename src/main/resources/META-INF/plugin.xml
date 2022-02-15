@@ -36,6 +36,8 @@
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.DeadlinePublisherLineMarkerProvider"/>
 
         <!-- Project services -->
+        <projectService
+                serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.AggregateStructureResolver"/>
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver"/>
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver"/>
         <projectService
@@ -55,6 +57,11 @@
                          shortName="JavaAggregateConstructorInspection" groupName="Axon Framework usage"
                          language="JAVA"
                          implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.JavaAggregateConstructorInspection"
+                         enabledByDefault="true"/>
+        <localInspection displayName="Aggregate members have an ID"
+                         shortName="JavaAggregateMemberRoutingKeyInspection" groupName="Axon Framework usage"
+                         language="JAVA"
+                         implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.JavaAggregateMemberRoutingKeyInspection"
                          enabledByDefault="true"/>
 
         <!-- Kotlin inspections -->

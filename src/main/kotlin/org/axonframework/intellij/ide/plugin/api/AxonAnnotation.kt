@@ -29,6 +29,7 @@ enum class AxonAnnotation(val annotationName: String) {
     DEADLINE_HANDLER("org.axonframework.deadline.annotation.DeadlineHandler"),
 
     AGGREGATE_ROOT("org.axonframework.modelling.command.AggregateRoot"),
+    AGGREGATE_MEMBER("org.axonframework.modelling.command.AggregateMember"),
     ROUTING_KEY("org.axonframework.commandhandling.RoutingKey"),
     ENTITY_ID("org.axonframework.modelling.command.EntityId"),
     PROCESSING_GROUP("org.axonframework.config.ProcessingGroup")

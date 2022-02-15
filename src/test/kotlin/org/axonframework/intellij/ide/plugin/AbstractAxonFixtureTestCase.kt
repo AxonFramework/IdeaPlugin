@@ -79,6 +79,7 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
             "org.axonframework.modelling.command.TargetAggregateIdentifier",
             "org.axonframework.modelling.command.AggregateIdentifier",
             "org.axonframework.modelling.command.EntityId",
+            "org.axonframework.modelling.command.AggregateMember",
             "org.axonframework.queryhandling.QueryHandler",
             "org.axonframework.modelling.saga.SagaEventHandler",
             "org.axonframework.deadline.annotation.DeadlineHandler",

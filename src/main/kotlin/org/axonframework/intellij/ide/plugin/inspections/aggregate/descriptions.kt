@@ -29,3 +29,10 @@ const val emptyConstructorDescription = "<html>" +
         "Axon Framework requires an empty constructor to construct the aggregate instance before replaying the events on it. " +
         "Also see <a href=\"https://docs.axoniq.io/reference-guide/axon-framework/axon-framework-commands/modeling/aggregate\"> the reference guide</a> for more information." +
         "</html>"
+
+const val missingEntityIdStaticDescription = "Inspects aggregate classes to check whether entities have a field or method with an @EntityId annotation. This is required for Axon Framework."
+
+const val missingEntityIdDescription = "<html>" +
+        "Axon Framework requires a field or method annotated with @EntityId in aggregate members of collection types to be able to route messages to it. " +
+        "Also see <a href=\"https://docs.axoniq.io/reference-guide/axon-framework/axon-framework-commands/modeling/multi-entity-aggregates\"> the reference guide</a> for more information." +
+        "</html>"
