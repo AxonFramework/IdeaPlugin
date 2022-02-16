@@ -22,7 +22,10 @@ import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.daemon.impl.LineMarkersPass
 import com.intellij.openapi.editor.LogicalPosition
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.pom.java.LanguageLevel
+import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
@@ -61,7 +64,11 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        return JAVA_11
+        return object : ProjectDescriptor(LanguageLevel.JDK_11) {
+            override fun getSdk(): Sdk {
+                return IdeaTestUtil.createMockJdk("java 11", "jdk/mockJDK-11")
+            }
+        }
     }
 
     /**
