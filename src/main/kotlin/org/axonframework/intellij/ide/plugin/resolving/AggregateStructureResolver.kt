@@ -93,8 +93,8 @@ class AggregateStructureResolver(private val project: Project) {
     }
 
     private fun PsiType.isCollection() = this is PsiClassType && (isMap() || isList() || isCollection())
-    private fun PsiClassType.isMap() = isOfType("java.util.Map")
-    private fun PsiClassType.isList() = isOfType("java.util.List")
-    private fun PsiClassType.isCollection() = isOfType("java.util.Collection")
+    private fun PsiClassType.isMap() = isOfType("java.util.Map") || isOfType("kotlin.collections.Map")
+    private fun PsiClassType.isList() = isOfType("java.util.List") || isOfType("kotlin.collections.List")
+    private fun PsiClassType.isCollection() = isOfType("java.util.Collection") || isOfType("kotlin.collections.Collection")
     private fun PsiClassType.isOfType(type: String) = toQualifiedName() == type || superTypes.any { it.toQualifiedName() == type }
 }

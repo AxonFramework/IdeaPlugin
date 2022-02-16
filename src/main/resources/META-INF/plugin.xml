@@ -74,6 +74,11 @@
                          language="kotlin"
                          implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.KotlinAggregateConstructorInspection"
                          enabledByDefault="true"/>
+        <localInspection displayName="Aggregate members have an ID"
+                         shortName="KotlinAggregateMemberRoutingKeyInspection" groupName="Axon Framework usage"
+                         language="JAVA"
+                         implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.KotlinAggregateMemberRoutingKeyInspection"
+                         enabledByDefault="true"/>
     </extensions>
 
     <actions>
