@@ -40,6 +40,18 @@ import org.axonframework.modelling.command.AggregateMember
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import javax.swing.Icon
 
+/**
+ * Mother test class which all Axon tests should inherit from. Does the following:
+ * - Adds Axon libraries
+ * - Configures the correct Mock JDK
+ * - Adds the addFile method which adds a java or kotlin file
+ * - The addFile method adds a lot of imports automatically
+ * - Adds utility methods to retrieve line markers
+ *
+ * All code line numbers start at 1. The line numbers follow the lines in the snippets of `addFile` method.
+ * An offset for imports and such is automatically calculated and applied to it.
+ *
+ */
 abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase() {
     override fun setUp() {
         super.setUp()
@@ -75,22 +87,22 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
      * Automatically added to source files in testcases, for convenience
      */
     private val autoImports = listOf(
-            "org.axonframework.config.ProcessingGroup",
-            "org.axonframework.eventhandling.EventHandler",
-            "org.axonframework.eventsourcing.EventSourcingHandler",
-            "org.axonframework.modelling.command.AggregateLifecycle",
-            "org.axonframework.modelling.command.AggregateRoot",
-            "org.axonframework.commandhandling.CommandHandler",
-            "org.axonframework.commandhandling.RoutingKey",
-            "org.axonframework.modelling.command.CommandHandlerInterceptor",
-            "org.axonframework.modelling.command.TargetAggregateIdentifier",
-            "org.axonframework.modelling.command.AggregateIdentifier",
-            "org.axonframework.modelling.command.EntityId",
-            "org.axonframework.modelling.command.AggregateMember",
-            "org.axonframework.queryhandling.QueryHandler",
-            "org.axonframework.modelling.saga.SagaEventHandler",
-            "org.axonframework.deadline.annotation.DeadlineHandler",
-            "org.axonframework.deadline.DeadlineManager",
+        "org.axonframework.config.ProcessingGroup",
+        "org.axonframework.eventhandling.EventHandler",
+        "org.axonframework.eventsourcing.EventSourcingHandler",
+        "org.axonframework.modelling.command.AggregateLifecycle",
+        "org.axonframework.modelling.command.AggregateRoot",
+        "org.axonframework.commandhandling.CommandHandler",
+        "org.axonframework.commandhandling.RoutingKey",
+        "org.axonframework.modelling.command.CommandHandlerInterceptor",
+        "org.axonframework.modelling.command.TargetAggregateIdentifier",
+        "org.axonframework.modelling.command.AggregateIdentifier",
+        "org.axonframework.modelling.command.EntityId",
+        "org.axonframework.modelling.command.AggregateMember",
+        "org.axonframework.queryhandling.QueryHandler",
+        "org.axonframework.modelling.saga.SagaEventHandler",
+        "org.axonframework.deadline.annotation.DeadlineHandler",
+        "org.axonframework.deadline.DeadlineManager",
     )
 
     /**
@@ -119,7 +131,7 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
         myFixture.editor.caretModel.moveToLogicalPosition(LogicalPosition(offset + lineNum - 1, 0))
         val gutters = myFixture.findGuttersAtCaret()
         val marker = gutters.firstNotNullResult { getHandlerMethodMakerProviders(it, clazz) }
-                ?: throw IllegalStateException("No gutter found")
+            ?: throw IllegalStateException("No gutter found")
         val items = marker.createGotoRelatedItems()
         return items.map {
             val element = it.element!!
@@ -132,15 +144,15 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
         val element = renderer.lineMarkerInfo.element!!
         val project = element.project
         val provider = LineMarkersPass.getMarkerProviders(element.containingFile.language, project)
-                .filterIsInstance(clazz)
-                .firstOrNull() ?: return null
+            .filterIsInstance(clazz)
+            .firstOrNull() ?: return null
 
         return provider.getLineMarkerInfo(element) as RelatedItemLineMarkerInfo?
     }
 
     data class OptionSummary(
-            val text: String,
-            val containerText: String?,
-            val icon: Icon
+        val text: String,
+        val containerText: String?,
+        val icon: Icon
     )
 }

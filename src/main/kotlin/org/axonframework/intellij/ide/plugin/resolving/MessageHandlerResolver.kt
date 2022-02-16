@@ -48,8 +48,8 @@ class MessageHandlerResolver(private val project: Project) {
             EventSourcingHandlerSearcher(),
             QueryHandlerSearcher(),
             SagaEventHandlerSearcher(),
-            AggregateConstructorSearcher(),
-            DeadlineHandlerSearcher(),
+        AggregateConstructorSearcher(),
+        DeadlineHandlerSearcher(),
     )
 
     private val handlerCache = project.createCachedValue {
@@ -58,11 +58,24 @@ class MessageHandlerResolver(private val project: Project) {
         }
     }
 
-    fun findHandlersForType(qualifiedName: String, messageType: MessageType? = null): List<Handler> {
+    /**
+     * finds handlers for a certain payload. Can be reversed, in the case of interceptors.
+     */
+    fun findHandlersForType(
+        qualifiedName: String,
+        messageType: MessageType? = null,
+        reverseAssign: Boolean = false
+    ): List<Handler> {
         return handlerCache.value
-                .filter { messageType == null || it.handlerType.messageType == messageType }
-                .filter { areAssignable(project, it.payload, qualifiedName) }
-                .filter { it.element.isValid }
+            .filter { messageType == null || it.handlerType.messageType == messageType }
+            .filter {
+                if (reverseAssign) areAssignable(project, qualifiedName, it.payload) else areAssignable(
+                    project,
+                    it.payload,
+                    qualifiedName
+                )
+            }
+            .filter { it.element.isValid }
     }
 
     fun findAllHandlers(): List<Handler> = handlerCache.value

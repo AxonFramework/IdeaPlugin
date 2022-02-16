@@ -37,7 +37,7 @@ data class CommandHandlerInterceptor(
     override val handlerType: MessageHandlerType = MessageHandlerType.COMMAND_INTERCEPTOR
 
     override fun renderText(): String {
-        return "Command Interceptor of $componentName"
+        return "Command Interceptor ${element.name}"
     }
 
     override fun renderContainerText(): String {

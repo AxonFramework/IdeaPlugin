@@ -48,6 +48,11 @@ class AggregateStructureResolver(private val project: Project) {
         return getFlattendedModelsAndEntities().firstOrNull { it.name == name }
     }
 
+    fun getMemberWithSubEntities(name: String): List<Model> {
+        val member = getMemberForName(name) ?: return emptyList()
+        return member.flatten()
+    }
+
     private fun Model.flatten() = listOf(this) + children.map { it.member }
 
     private fun resolve(): List<Model> = PerformanceRegistry.measure("AggregateStructureResolver.resolve") {

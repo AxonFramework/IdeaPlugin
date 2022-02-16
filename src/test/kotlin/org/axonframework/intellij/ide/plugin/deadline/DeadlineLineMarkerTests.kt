@@ -19,8 +19,8 @@ package org.axonframework.intellij.ide.plugin.deadline
 import org.assertj.core.api.Assertions.assertThat
 import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
 import org.axonframework.intellij.ide.plugin.AxonIcons
-import org.axonframework.intellij.ide.plugin.markers.DeadlinePublisherLineMarkerProvider
-import org.axonframework.intellij.ide.plugin.markers.HandlerMethodLineMarkerProvider
+import org.axonframework.intellij.ide.plugin.markers.handlers.DeadlineHandlerMethodLineMarkerProvider
+import org.axonframework.intellij.ide.plugin.markers.publishers.DeadlinePublisherLineMarkerProvider
 
 class DeadlineLineMarkerTests : AbstractAxonFixtureTestCase() {
     fun `test creates correct line markers in kotlin`() {
@@ -42,7 +42,8 @@ class DeadlineLineMarkerTests : AbstractAxonFixtureTestCase() {
             }
         """.trimIndent())
         myFixture.openFileInEditor(file)
-        val options = getOptionsGivenByMarkerProviderAtCaretPosition(12, HandlerMethodLineMarkerProvider::class.java)
+        val options =
+            getOptionsGivenByMarkerProviderAtCaretPosition(12, DeadlineHandlerMethodLineMarkerProvider::class.java)
         assertThat(options).anyMatch {
             it.text == "MyCommand" && it.icon == AxonIcons.Model
         }

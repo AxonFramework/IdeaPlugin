@@ -19,6 +19,8 @@ package org.axonframework.intellij.ide.plugin.markers
 import org.assertj.core.api.Assertions.assertThat
 import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
 import org.axonframework.intellij.ide.plugin.AxonIcons
+import org.axonframework.intellij.ide.plugin.markers.handlers.CommonHandlerMethodLineMarkerProvider
+import org.axonframework.intellij.ide.plugin.markers.publishers.PublishMethodLineMarkerProvider
 
 /**
  * Tests whether line markers are shown on the appropriate language constructs.
@@ -31,7 +33,8 @@ class JavaLineMarkerTest : AbstractAxonFixtureTestCase() {
         val aggregate = addAggregate()
         myFixture.openFileInEditor(aggregate)
 
-        val options = getOptionsGivenByMarkerProviderAtCaretPosition(10, HandlerMethodLineMarkerProvider::class.java)
+        val options =
+            getOptionsGivenByMarkerProviderAtCaretPosition(10, CommonHandlerMethodLineMarkerProvider::class.java)
         assertThat(options).isEmpty()
     }
 
@@ -41,7 +44,8 @@ class JavaLineMarkerTest : AbstractAxonFixtureTestCase() {
         val aggregate = addAggregate()
         myFixture.openFileInEditor(aggregate)
 
-        val options = getOptionsGivenByMarkerProviderAtCaretPosition(10, HandlerMethodLineMarkerProvider::class.java)
+        val options =
+            getOptionsGivenByMarkerProviderAtCaretPosition(10, CommonHandlerMethodLineMarkerProvider::class.java)
         assertThat(options).containsExactly(
                 OptionSummary("MyCreator.createCommand", null, AxonIcons.Publisher)
         )

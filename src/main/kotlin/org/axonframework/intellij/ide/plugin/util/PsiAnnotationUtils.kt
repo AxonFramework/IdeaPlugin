@@ -85,7 +85,7 @@ fun PsiModifierListOwner.resolveAnnotationStringValue(annotation: AxonAnnotation
     // Note: resolveAnnotationType() does not work with kotlin code somehow. Resolve class by qualified name
     val qualifiedName = relevantAnnotation.qualifiedName ?: return null
     val annClass = project.javaFacade().findClass(qualifiedName, project.allScope()) ?: return null
-    return annClass.resolveAnnotationStringValue(annotation, attributeName)
+    return annClass.resolveAnnotationStringValue(annotation, attributeName)?.ifEmpty { null }
 }
 
 private fun resolveAttributeStringValue(attribute: PsiAnnotationMemberValue?): String? {

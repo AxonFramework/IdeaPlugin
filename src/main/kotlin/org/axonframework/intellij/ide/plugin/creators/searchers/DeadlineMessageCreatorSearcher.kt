@@ -21,9 +21,11 @@ import com.intellij.psi.search.searches.MethodReferencesSearch
 import org.axonframework.intellij.ide.plugin.util.allScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 import org.axonframework.intellij.ide.plugin.util.deadlineResolver
+import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.evaluateString
 import org.jetbrains.uast.getParentOfType
+import org.jetbrains.uast.sourcePsiElement
 import org.jetbrains.uast.toUElement
 
 /**
@@ -37,8 +39,6 @@ class DeadlineMessageCreatorSearcher(val project: Project) : MessageCreatorSearc
     }
 
     override fun findByPayload(payload: String): List<CreatorSearchResult> {
-        // Fallback, find the deadlines by payload.
-        // The implementor has made its own abstraction which we cannot resolve.
         return findAll().filter { it.payload == payload }
     }
 
@@ -46,24 +46,50 @@ class DeadlineMessageCreatorSearcher(val project: Project) : MessageCreatorSearc
         return cache.value
     }
 
+    /**
+     * Finds all method invocations of deadline creation.
+     * Attempts to register two handlers per invocation:
+     * - One based on deadlineName (specified in annotation)
+     * - One based on payloadType (if any)
+     *
+     * This way, we can always match correctly.
+     */
     private fun findAllCreators(): List<CreatorSearchResult> {
         val methods = project.deadlineResolver().getAllScheduleMethods()
         val references = methods
-                .flatMap { method ->
-                    MethodReferencesSearch.search(method, project.allScope(), true)
-                            .findAll()
-                }
-        return references.mapNotNull {
-            val parentCallExpression = it?.element?.toUElement()?.getParentOfType(UCallExpression::class.java)
-                    ?: return@mapNotNull null
-            // Find the first string argument and register it as the deadline's name
-            // We cannot look it up by argument index here, since Kotlin is being nasty with it. Revisit this later.
-            val deadlineName = parentCallExpression.valueArguments
-                    .firstOrNull { argument ->
-                        argument.getExpressionType()?.canonicalText == "java.lang.String"
-                    }?.evaluateString()
-                    ?: return@mapNotNull null
-            CreatorSearchResult(deadlineName, it.element)
-        }.distinct()
+            .flatMap { method ->
+                MethodReferencesSearch.search(method, project.allScope(), true)
+                    .findAll()
+            }
+        return references
+            .mapNotNull { it?.element?.toUElement()?.getParentOfType(UCallExpression::class.java) }
+            .flatMap { parentCallExpression ->
+                listOfNotNull(
+                    createCreatorBasedOnDeadlineName(parentCallExpression),
+                    createCreatorBasedOnPayloadType(parentCallExpression)
+                )
+            }.distinct()
+    }
+
+    /**
+     * Searches for the deadline name arguments. This is the first String argument.
+     */
+    private fun createCreatorBasedOnDeadlineName(callExpression: UCallExpression): CreatorSearchResult? {
+        val argument =
+            callExpression.valueArguments.firstOrNull { it.getExpressionType().toQualifiedName() == "java.lang.String" }
+        val deadlineName = argument?.evaluateString() ?: return null
+        return CreatorSearchResult(deadlineName, callExpression.sourcePsiElement!!)
+    }
+
+    /**
+     * Searches for the payload arguments. This is the first argument that is not belonging to java (such as Instant or String).
+     *
+     */
+    private fun createCreatorBasedOnPayloadType(callExpression: UCallExpression): CreatorSearchResult? {
+        val argument = callExpression.valueArguments.firstOrNull {
+            it.getExpressionType().toQualifiedName()?.startsWith("java") != true
+        } ?: return null
+        val deadlineType = argument.getExpressionType()?.toQualifiedName() ?: return null
+        return CreatorSearchResult(deadlineType, callExpression.sourcePsiElement!!)
     }
 }

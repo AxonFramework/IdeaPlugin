@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.markers
+package org.axonframework.intellij.ide.plugin.markers.publishers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
@@ -24,10 +24,12 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
+import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
+import org.axonframework.intellij.ide.plugin.handlers.types.CommandHandlerInterceptor
 import org.axonframework.intellij.ide.plugin.handlers.types.DeadlineHandler
+import org.axonframework.intellij.ide.plugin.markers.AxonCellRenderer
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
-import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.uast.UAnnotation
@@ -60,20 +62,22 @@ class PublishMethodLineMarkerProvider : LineMarkerProvider {
             else -> null
         } ?: return null
 
-        val handlers = element.handlerResolver().findHandlersForType(payload)
-                // Hide DeadlineHandlers here. These are handled by a more specific LineMarkerProvider
-                .filter { it !is DeadlineHandler }
-                .sortedWith(sortingByDisplayName())
+        val allHandlers = element.handlerResolver().findHandlersForType(payload)
+            // Hide DeadlineHandlers here. These are handled by a more specific LineMarkerProvider
+            .filter { it !is DeadlineHandler }
+        val isCommand = allHandlers.all { it.handlerType == MessageHandlerType.COMMAND }
+        val handlers =
+            allHandlers.filter { it !is CommandHandlerInterceptor || isCommand } // Only show interceptors when is a command
         if (handlers.isEmpty()) {
             return null
         }
         return NavigationGutterIconBuilder.create(AxonIcons.Publisher)
-                .setPopupTitle("Axon Message Handlers")
-                .setTooltipText("Navigate to Axon message handlers")
-                .setCellRenderer(AxonCellRenderer.getInstance())
-                .setAlignment(GutterIconRenderer.Alignment.LEFT)
-                .setTargets(NotNullLazyValue.createValue { handlers.map { it.element } })
-                .createLineMarkerInfo(element)
+            .setPopupTitle("Axon Message Handlers")
+            .setTooltipText("Navigate to Axon message handlers")
+            .setCellRenderer(AxonCellRenderer.getInstance())
+            .setAlignment(GutterIconRenderer.Alignment.LEFT)
+            .setTargets(NotNullLazyValue.createValue { handlers.map { it.element } })
+            .createLineMarkerInfo(element)
     }
 
     private fun qualifiedNameForKotlin(element: PsiElement): String? {

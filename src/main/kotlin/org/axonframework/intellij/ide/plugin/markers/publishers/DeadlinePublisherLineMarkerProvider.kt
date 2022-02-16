@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.markers
+package org.axonframework.intellij.ide.plugin.markers.publishers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
@@ -27,6 +27,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.handlers.types.DeadlineHandler
+import org.axonframework.intellij.ide.plugin.markers.AxonCellRenderer
 import org.axonframework.intellij.ide.plugin.util.deadlineResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.jetbrains.kotlin.idea.KotlinFileType
