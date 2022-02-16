@@ -1,14 +1,13 @@
 <idea-plugin require-restart="false">
-    <id>org.axonframework.intellij.axonplugin</id>
+    <id>io.axoniq.ide.intellij</id>
     <name>Axon Framework</name>
     <version>${project.version}</version>
-    <vendor url="https://axoniq.io/">Axon Framework</vendor>
+    <vendor url="https://axoniq.io/">AxonIQ</vendor>
 
     <description>
         This plugin helps to navigate from and to the axon framework event handler annotations. Axon Framework helps
         build scalable, extensible and maintainable applications by supporting developers apply the Command Query
         Responsibility Segregation (CQRS) architectural pattern.
-        Please report issues at https://github.com/AxonFramework/IdeaPlugin/issues
     </description>
 
     <depends>com.intellij.modules.platform</depends>

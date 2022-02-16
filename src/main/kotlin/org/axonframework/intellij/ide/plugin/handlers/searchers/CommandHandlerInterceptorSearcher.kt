@@ -28,7 +28,6 @@ import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 
 /**
  * Searches for any command interceptors. Currently, limited to Aggregates only.
- * Does not work for entities yet, this requires additional work.
  *
  * @see org.axonframework.intellij.ide.plugin.handlers.types.CommandHandlerInterceptor
  */
@@ -37,7 +36,7 @@ class CommandHandlerInterceptorSearcher : AbstractHandlerSearcher(MessageHandler
         if (!method.containingClass.isAggregate()) {
             return null
         }
-        val payloadType = method.resolvePayloadType()?.toQualifiedName() ?: return null
+        val payloadType = method.resolvePayloadType()?.toQualifiedName() ?: "java.lang.Object"
         return CommandHandlerInterceptor(method, payloadType, method.containingClassFqn())
     }
 }

@@ -30,34 +30,31 @@ class JavaLineMarkerTest : AbstractAxonFixtureTestCase() {
 
     fun `test shows handler method marker when there are no creators, and will show marker at class`() {
         addCommand()
-        val aggregate = addAggregate()
-        myFixture.openFileInEditor(aggregate)
+        addAggregate(true)
 
         val options =
-            getOptionsGivenByMarkerProviderAtCaretPosition(10, CommonHandlerMethodLineMarkerProvider::class.java)
+            getLineMarkers(CommonHandlerMethodLineMarkerProvider::class.java)
         assertThat(options).isEmpty()
     }
 
     fun `test shows handler method marker with options when there are creators`() {
         addCommand()
         addProducer()
-        val aggregate = addAggregate()
-        myFixture.openFileInEditor(aggregate)
+        addAggregate(true)
 
         val options =
-            getOptionsGivenByMarkerProviderAtCaretPosition(10, CommonHandlerMethodLineMarkerProvider::class.java)
+            getLineMarkers(CommonHandlerMethodLineMarkerProvider::class.java)
         assertThat(options).containsExactly(
                 OptionSummary("MyCreator.createCommand", null, AxonIcons.Publisher)
         )
     }
 
     fun `test shows gutter icon for class of command with correct options`() {
-        val command = addCommand()
+        addCommand(true)
         addProducer()
         addAggregate()
-        myFixture.openFileInEditor(command)
 
-        val options = getOptionsGivenByMarkerProviderAtCaretPosition(1, ClassLineMarkerProvider::class.java)
+        val options = getLineMarkers(ClassLineMarkerProvider::class.java)
         assertThat(options).containsExactly(
                 OptionSummary("MyCommand", "MyAggregate", AxonIcons.Model),
                 OptionSummary("MyCreator.createCommand", null, AxonIcons.Publisher)
@@ -66,18 +63,18 @@ class JavaLineMarkerTest : AbstractAxonFixtureTestCase() {
 
     fun `test shows gutter icon for creator of command`() {
         addCommand()
-        val producer = addProducer()
+        addProducer(true)
         addAggregate()
-        myFixture.openFileInEditor(producer)
 
-        val options = getOptionsGivenByMarkerProviderAtCaretPosition(5, PublishMethodLineMarkerProvider::class.java)
+        val options = getLineMarkers(PublishMethodLineMarkerProvider::class.java)
         assertThat(options).containsExactly(
-                OptionSummary("MyCommand", "MyAggregate", AxonIcons.Model),
+            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Model),
         )
     }
 
-    private fun addCommand() = this.addFile("MyCommand.java", """
-        public class MyCommand {
+    private fun addCommand(open: Boolean = false) = this.addFile(
+        "MyCommand.java", """
+        public class MyCommand {<caret>
             public MyCommand(String id) {
                 this.id = id
             }
@@ -88,22 +85,26 @@ class JavaLineMarkerTest : AbstractAxonFixtureTestCase() {
                 return this.id;
             }
         }
-    """.trimIndent())
+    """.trimIndent(), open = open
+    )
 
-    private fun addProducer() = this.addFile("MyCreator.java", """
+    private fun addProducer(open: Boolean = false) = this.addFile(
+        "MyCreator.java", """
         import test.MyCommand;
         
         public class MyCreator {
             public void createCommand() {
-                send(new MyCommand(""));
+                send(new MyCommand(""));<caret>
             }
             
             private void send(Object obj) {
             }
         }
-    """.trimIndent())
+    """.trimIndent(), open = open
+    )
 
-    private fun addAggregate() = this.addFile("MyAggregate.java", """
+    private fun addAggregate(open: Boolean = false) = this.addFile(
+        "MyAggregate.java", """
         import test.MyCommand;
         
         @AggregateRoot
@@ -113,9 +114,10 @@ class JavaLineMarkerTest : AbstractAxonFixtureTestCase() {
             @TargetAggregateIdentifier
             private String id;
 
-            @CommandHandler
+            @CommandHandler<caret>
             public MyAggregate(MyCommand command) {
             }
         }
-    """.trimIndent())
+    """.trimIndent(), open = open
+    )
 }

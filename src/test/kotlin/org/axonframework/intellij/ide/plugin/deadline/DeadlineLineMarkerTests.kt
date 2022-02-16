@@ -23,8 +23,9 @@ import org.axonframework.intellij.ide.plugin.markers.handlers.DeadlineHandlerMet
 import org.axonframework.intellij.ide.plugin.markers.publishers.DeadlinePublisherLineMarkerProvider
 
 class DeadlineLineMarkerTests : AbstractAxonFixtureTestCase() {
-    fun `test creates correct line markers in kotlin`() {
-        val file = addFile("MyAggregate.kt", """      
+    fun `test creates correct handler line marker`() {
+        addFile(
+            "MyAggregate.kt", """      
             import java.time.Instant
             
             class MyCommand
@@ -36,18 +37,39 @@ class DeadlineLineMarkerTests : AbstractAxonFixtureTestCase() {
                     deadlineManager.schedule(Instant.now(), "my_special_deadline")
                 }
                 
+                @DeadlineHandler<caret>("my_special_deadline")
+                fun handle() {
+                }
+            }1
+        """.trimIndent(), open = true
+        )
+        val options = getLineMarkers(DeadlineHandlerMethodLineMarkerProvider::class.java)
+        assertThat(options).anyMatch {
+            it.text == "MyCommand" && it.icon == AxonIcons.Model
+        }
+    }
+
+    fun `test creates correct publisher line marker`() {
+        addFile(
+            "MyAggregate.kt", """      
+            import java.time.Instant
+            
+            class MyCommand
+            
+            @AggregateRoot
+            class MyAggregate {
+                @CommandHandler
+                fun handle(command: MyCommand, deadlineManager: DeadlineManager) {
+                    deadlineManager.schedule(Instant.now(), "my_special_deadline")<caret>
+                }
+                
                 @DeadlineHandler("my_special_deadline")
                 fun handle() {
                 }
             }
-        """.trimIndent())
-        myFixture.openFileInEditor(file)
-        val options =
-            getOptionsGivenByMarkerProviderAtCaretPosition(12, DeadlineHandlerMethodLineMarkerProvider::class.java)
-        assertThat(options).anyMatch {
-            it.text == "MyCommand" && it.icon == AxonIcons.Model
-        }
-        val optionsForPublisher = getOptionsGivenByMarkerProviderAtCaretPosition(9, DeadlinePublisherLineMarkerProvider::class.java)
+        """.trimIndent(), open = true
+        )
+        val optionsForPublisher = getLineMarkers(DeadlinePublisherLineMarkerProvider::class.java)
         assertThat(optionsForPublisher).anyMatch {
             it.text == "my_special_deadline" && it.icon == AxonIcons.DeadlineHandler
         }

@@ -21,7 +21,6 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.daemon.impl.LineMarkersPass
-import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.java.LanguageLevel
@@ -48,8 +47,6 @@ import javax.swing.Icon
  * - The addFile method adds a lot of imports automatically
  * - Adds utility methods to retrieve line markers
  *
- * All code line numbers start at 1. The line numbers follow the lines in the snippets of `addFile` method.
- * An offset for imports and such is automatically calculated and applied to it.
  *
  */
 abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase() {
@@ -62,13 +59,15 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
         PsiTestUtil.addLibrary(module, PathUtil.getJarPathForClass(EventSourcingHandler::class.java))
 
         /* Mock the Instant class, or some tests won't run */
-        addFile("Instant.java", """
+        addFile(
+            "Instant.java", """
             public class Instant {
                 public static Instant now() {
                     return null;
                 }
             }
-        """.trimIndent(), "java.time")
+        """.trimIndent(), "java.time"
+        )
     }
 
     override fun getTestDataPath(): String {
@@ -111,24 +110,34 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
      *
      * @see autoImports
      */
-    fun addFile(name: String, text: String, pckg: String = "test"): VirtualFile {
+    fun addFile(name: String, text: String, pckg: String = "test", open: Boolean = false): VirtualFile {
         val newLineChar = if (name.endsWith(".java")) ";" else ""
         var content = ""
         content += "package $pckg$newLineChar\n\n"
         autoImports.forEach { content += "import $it$newLineChar\n" }
         content += ("\n" + text)
-        return myFixture.addFileToProject(name, content).virtualFile
+        // Save <caret> position
+        val caretPosition = content.indexOf("<caret>")
+        content = content.replace("<caret>", "")
+        // Add file and optionally open it
+        val file = myFixture.addFileToProject(name, content).virtualFile
+        if (open) {
+            // Move cursor to <caret> position. For some reason, the IDEA test won't do it,
+            // while it is documented it should. Just do it ourselves.
+            myFixture.openFileInEditor(file)
+            if (caretPosition != -1) {
+                myFixture.editor.caretModel.moveToOffset(caretPosition)
+            }
+        }
+        return file
     }
 
-    private val offset = autoImports.size + 3
-
     /**
-     * Retrieve marker options on a certain line number. The line number is the line number in the 'text' param you pass
-     * to the `addFile` method.
-     * The offset based on that is calculated automagically.
+     * Retrieve marker options on the current line. You can set the caretr position using `<caret>` in the files
      */
-    fun getOptionsGivenByMarkerProviderAtCaretPosition(lineNum: Int, clazz: Class<out LineMarkerProvider>): List<OptionSummary> {
-        myFixture.editor.caretModel.moveToLogicalPosition(LogicalPosition(offset + lineNum - 1, 0))
+    fun getLineMarkers(
+        clazz: Class<out LineMarkerProvider>
+    ): List<OptionSummary> {
         val gutters = myFixture.findGuttersAtCaret()
         val marker = gutters.firstNotNullResult { getHandlerMethodMakerProviders(it, clazz) }
             ?: throw IllegalStateException("No gutter found")
@@ -139,7 +148,15 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
         }
     }
 
-    private fun getHandlerMethodMakerProviders(gutter: GutterMark, clazz: Class<out LineMarkerProvider>): RelatedItemLineMarkerInfo<*>? {
+    fun areNoLineMarkers(clazz: Class<out LineMarkerProvider>): Boolean {
+        val gutters = myFixture.findGuttersAtCaret()
+        return gutters.all { getHandlerMethodMakerProviders(it, clazz) == null }
+    }
+
+    private fun getHandlerMethodMakerProviders(
+        gutter: GutterMark,
+        clazz: Class<out LineMarkerProvider>
+    ): RelatedItemLineMarkerInfo<*>? {
         val renderer = gutter as? LineMarkerInfo.LineMarkerGutterIconRenderer<*> ?: return null
         val element = renderer.lineMarkerInfo.element!!
         val project = element.project

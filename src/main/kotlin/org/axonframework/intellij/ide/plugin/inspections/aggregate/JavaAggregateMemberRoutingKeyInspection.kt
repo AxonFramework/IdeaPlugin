@@ -46,15 +46,16 @@ import org.axonframework.intellij.ide.plugin.util.aggregateResolver
  */
 class JavaAggregateMemberRoutingKeyInspection : AbstractBaseJavaLocalInspectionTool() {
     override fun checkClass(aClass: PsiClass, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
-        val member = aClass.aggregateResolver().getMemberForName(aClass.qualifiedName!!) ?: return null
+        val name = aClass.qualifiedName ?: return null
+        val member = aClass.aggregateResolver().getMemberForName(name) ?: return null
         return member.children.filter { it.isCollection && !it.member.entityIdPresent }.map { child ->
             val classField = aClass.fields.first { it.name == child.fieldName }
             manager.createProblemDescriptor(
-                    classField,
-                    classField.identifyingElement!!.textRangeInParent,
-                    missingEntityIdDescription,
-                    ProblemHighlightType.WARNING,
-                    isOnTheFly,
+                classField,
+                classField.identifyingElement!!.textRangeInParent,
+                missingEntityIdDescription,
+                ProblemHighlightType.WARNING,
+                isOnTheFly,
             )
 
         }.toTypedArray()
