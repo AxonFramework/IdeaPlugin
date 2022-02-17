@@ -37,7 +37,7 @@ class CommonHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvider(
     override fun createLineMarker(
         element: PsiElement,
         handlerType: MessageHandlerType,
-        payload: String?
+        payload: String?,
     ): LineMarkerInfo<*>? {
         if (handlerType == MessageHandlerType.DEADLINE || handlerType == MessageHandlerType.COMMAND_INTERCEPTOR || payload == null) {
             return null
@@ -53,7 +53,7 @@ class CommonHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvider(
         val icon = if (interceptingElements.isEmpty()) AxonIcons.Handler else AxonIcons.HandlerIntercepted
         return NavigationGutterIconBuilder.create(icon)
             .setPopupTitle("Payload Creators")
-            .setTooltipText("Navigate to creation of message payload")
+            .setTooltipText("Navigate to creators of $payload")
             .setCellRenderer(AxonCellRenderer.getInstance())
             .setTargets(NotNullLazyValue.createValue {
                 val creatingElements = element.creatorResolver().getCreatorsForPayload(payload)

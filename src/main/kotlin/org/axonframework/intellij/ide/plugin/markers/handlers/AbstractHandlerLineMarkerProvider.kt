@@ -22,14 +22,11 @@ import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry.measure
 import org.axonframework.intellij.ide.plugin.util.annotationResolver
-import org.axonframework.intellij.ide.plugin.util.isAggregate
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.UIdentifier
-import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UNamedExpression
-import org.jetbrains.uast.getContainingUClass
 import org.jetbrains.uast.getContainingUMethod
 import org.jetbrains.uast.getParentOfType
 import org.jetbrains.uast.toUElementOfType
@@ -41,17 +38,17 @@ import org.jetbrains.uast.toUElementOfType
  */
 abstract class AbstractHandlerLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
-        val (handlerType, payload) = measure("getInfoForAnnotatedFunction") { getInfoForAnnotatedFunction(element) }
-            ?: measure("getInfoForNonAnnotatedFunction") { getInfoForNonAnnotatedFunction(element) }
-            ?: return null
-
-        return createLineMarker(element, handlerType, payload)
+        val info = measure("getInfoForAnnotatedFunction") { getInfoForAnnotatedFunction(element) }
+        if (info != null) {
+            return createLineMarker(element, info.first, info.second)
+        }
+        return null
     }
 
     protected abstract fun createLineMarker(
         element: PsiElement,
         handlerType: MessageHandlerType,
-        payload: String?
+        payload: String?,
     ): LineMarkerInfo<*>?
 
     private fun getInfoForAnnotatedFunction(element: PsiElement): Pair<MessageHandlerType, String?>? {
@@ -67,15 +64,5 @@ abstract class AbstractHandlerLineMarkerProvider : LineMarkerProvider {
         val handlerType = element.annotationResolver().getMessageTypeForAnnotation(annotationName) ?: return null
         val qualifiedName = method.javaPsi.resolvePayloadType()?.toQualifiedName()
         return Pair(handlerType, qualifiedName)
-    }
-
-    private fun getInfoForNonAnnotatedFunction(element: PsiElement): Pair<MessageHandlerType, String>? {
-        val uElement = element.toUElementOfType<UIdentifier>() ?: return null
-        val method = uElement.uastParent as? UMethod ?: return null
-        if (method.isConstructor && method.uastParameters.isNotEmpty() && method.getContainingUClass().isAggregate()) {
-            val qualifiedName = method.getContainingUClass()?.qualifiedName ?: return null
-            return Pair(MessageHandlerType.COMMAND, qualifiedName)
-        }
-        return null
     }
 }

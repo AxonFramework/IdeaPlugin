@@ -18,7 +18,7 @@ package org.axonframework.intellij.ide.plugin.creators.searchers
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.searches.MethodReferencesSearch
-import org.axonframework.intellij.ide.plugin.util.allScope
+import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 import org.axonframework.intellij.ide.plugin.util.deadlineResolver
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
@@ -58,7 +58,7 @@ class DeadlineMessageCreatorSearcher(val project: Project) : MessageCreatorSearc
         val methods = project.deadlineResolver().getAllScheduleMethods()
         val references = methods
             .flatMap { method ->
-                MethodReferencesSearch.search(method, project.allScope(), true)
+                MethodReferencesSearch.search(method, project.axonScope(), true)
                     .findAll()
             }
         return references

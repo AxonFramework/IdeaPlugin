@@ -43,7 +43,7 @@ class CommandInterceptorLineMarkerProvider : AbstractHandlerLineMarkerProvider()
     override fun createLineMarker(
         element: PsiElement,
         handlerType: MessageHandlerType,
-        payload: String?
+        payload: String?,
     ): LineMarkerInfo<*>? {
         if (handlerType != MessageHandlerType.COMMAND_INTERCEPTOR) {
             return null
