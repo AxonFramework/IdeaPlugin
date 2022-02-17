@@ -53,23 +53,34 @@ import org.axonframework.intellij.ide.plugin.util.javaFacade
 class DeadlineManagerResolver(val project: Project) {
     private val libraryCache = LibraryDeadlineCache()
     private val deadlineScheduleCache = project.createCachedValue {
-        PerformanceRegistry.measure("DeadlineManagerResolver.computeDeadlineManagers") { computeDeadlineManagers() }
+        PerformanceRegistry.measure("DeadlineManagerResolver.computeSchedule") { computeDeadlineScheduleMethods() }
+    }
+    private val cancelCache = project.createCachedValue {
+        PerformanceRegistry.measure("DeadlineManagerResolver.computeCancel") { computeDeadlineCancelMethods() }
     }
 
+    fun getAllReferencedMethods(): List<PsiMethod> = deadlineScheduleCache.value + cancelCache.value
     fun getAllScheduleMethods(): List<PsiMethod> = deadlineScheduleCache.value
+    fun getAllCancelMethods(): List<PsiMethod> = cancelCache.value
 
     /**
      * Computes the actual annotations, based on the ones found in libraries.
      *
      * @return the annotations in the library cache and any specific in the current source code (axonScope)
      */
-    private fun computeDeadlineManagers(): List<PsiMethod> {
-        val libAnnotations = libraryCache.getMethods()
-        return (libAnnotations + scanForManagers(project.axonScope()))
+    private fun computeDeadlineScheduleMethods(): List<PsiMethod> {
+        val libAnnotations = libraryCache.getScheduleMethods()
+        return (libAnnotations + scanForSchedulers(project.axonScope()))
             .distinct()
     }
 
-    private fun scanForManagers(scope: GlobalSearchScope): List<PsiMethod> {
+    private fun computeDeadlineCancelMethods(): List<PsiMethod> {
+        val libAnnotations = libraryCache.getCancelMethods()
+        return (libAnnotations + scanForCancelMethods(project.axonScope()))
+            .distinct()
+    }
+
+    private fun scanForSchedulers(scope: GlobalSearchScope): List<PsiMethod> {
         val deadlineManager =
             project.javaFacade().findClass("org.axonframework.deadline.DeadlineManager", project.allScope())
                 ?: return emptyList()
@@ -77,6 +88,17 @@ class DeadlineManagerResolver(val project: Project) {
         return (listOf(deadlineManager) + inheritors)
             .flatMap { it.methods.toList() }
             .filter { it.name.startsWith("schedule", ignoreCase = true) }
+            .filter { getDeadlineParameterIndex(it) != null }
+    }
+
+    private fun scanForCancelMethods(scope: GlobalSearchScope): List<PsiMethod> {
+        val deadlineManager =
+            project.javaFacade().findClass("org.axonframework.deadline.DeadlineManager", project.allScope())
+                ?: return emptyList()
+        val inheritors = ClassInheritorsSearch.search(deadlineManager, scope, true)
+        return (listOf(deadlineManager) + inheritors)
+            .flatMap { it.methods.toList() }
+            .filter { it.name.startsWith("cancel", ignoreCase = true) }
             .filter { getDeadlineParameterIndex(it) != null }
     }
 
@@ -94,7 +116,8 @@ class DeadlineManagerResolver(val project: Project) {
     private inner class LibraryDeadlineCache {
         // Set to false if libraries are updated
         private var libraryInitialized: Boolean = false
-        private var libraryMethods: List<PsiMethod> = listOf()
+        private var scheduleMethods: List<PsiMethod> = listOf()
+        private var cancelMethods: List<PsiMethod> = listOf()
 
         init {
             // Listen to root changes, and invalidate library scanning
@@ -109,7 +132,8 @@ class DeadlineManagerResolver(val project: Project) {
         /**
          * Get all annotations in the library cache. If the cache is out-of-date, executes a scan.
          */
-        fun getMethods(): List<PsiMethod> = retrieveWithInitialization { libraryMethods }
+        fun getScheduleMethods(): List<PsiMethod> = retrieveWithInitialization { scheduleMethods }
+        fun getCancelMethods(): List<PsiMethod> = retrieveWithInitialization { cancelMethods }
 
         private fun <T> retrieveWithInitialization(block: () -> T): T {
             if (!libraryInitialized) {
@@ -120,7 +144,8 @@ class DeadlineManagerResolver(val project: Project) {
 
         private fun updateLibraryAnnotations() =
             PerformanceRegistry.measure("DeadlineManagerResolver.libraryManagers") {
-                libraryMethods = scanForManagers(project.allScope())
+                scheduleMethods = scanForSchedulers(project.allScope())
+                cancelMethods = scanForCancelMethods(project.allScope())
                 libraryInitialized = true
             }
     }

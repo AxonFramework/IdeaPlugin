@@ -55,13 +55,12 @@ class DeadlineMessageCreatorSearcher(val project: Project) : MessageCreatorSearc
      * This way, we can always match correctly.
      */
     private fun findAllCreators(): List<CreatorSearchResult> {
-        val methods = project.deadlineResolver().getAllScheduleMethods()
-        val references = methods
+        val scheduleReferences = project.deadlineResolver().getAllScheduleMethods()
             .flatMap { method ->
                 MethodReferencesSearch.search(method, project.axonScope(), true)
                     .findAll()
             }
-        return references
+        val schedulers = scheduleReferences
             .mapNotNull { it?.element?.toUElement()?.getParentOfType(UCallExpression::class.java) }
             .flatMap { parentCallExpression ->
                 listOfNotNull(
@@ -69,6 +68,21 @@ class DeadlineMessageCreatorSearcher(val project: Project) : MessageCreatorSearc
                     createCreatorBasedOnPayloadType(parentCallExpression)
                 )
             }.distinct()
+
+        val cancelReferences = project.deadlineResolver().getAllCancelMethods()
+            .flatMap { method ->
+                MethodReferencesSearch.search(method, project.axonScope(), true)
+                    .findAll()
+            }
+        val cancelers = cancelReferences
+            .mapNotNull { it?.element?.toUElement()?.getParentOfType(UCallExpression::class.java) }
+            .flatMap { parentCallExpression ->
+                listOfNotNull(
+                    createCreatorBasedOnDeadlineName(parentCallExpression)
+                )
+            }.distinct()
+
+        return schedulers + cancelers
     }
 
     /**

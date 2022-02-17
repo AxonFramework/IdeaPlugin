@@ -79,7 +79,7 @@ class DeadlinePublisherLineMarkerProvider : LineMarkerProvider {
         }
         val parent = PsiTreeUtil.findFirstParent(element) { it is KtNameReferenceExpression } ?: return null
         val methodCall = element.toUElement()?.getParentOfType<UCallExpression>() ?: return null
-        val methods = element.deadlineResolver().getAllScheduleMethods()
+        val methods = element.deadlineResolver().getAllReferencedMethods()
         val matchingMethods = methods.filter { method ->
             parent.references.any { reference ->
                 reference.isReferenceTo(method)
@@ -97,7 +97,7 @@ class DeadlinePublisherLineMarkerProvider : LineMarkerProvider {
             ?.getParentOfType(UCallExpression::class.java, true, USimpleNameReferenceExpression::class.java)
             ?: return null
         val referencedMethod = methodCall.resolve() ?: return null
-        val methods = element.deadlineResolver().getAllScheduleMethods()
+        val methods = element.deadlineResolver().getAllReferencedMethods()
         if (methods.contains(referencedMethod)) {
             val parameterIndex = element.deadlineResolver().getDeadlineParameterIndex(referencedMethod) ?: return null
             return methodCall.valueArguments[parameterIndex].evaluateString()
