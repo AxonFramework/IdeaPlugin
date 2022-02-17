@@ -45,7 +45,11 @@ import org.axonframework.intellij.ide.plugin.util.aggregateResolver
  * The warning can be suppressed via the normal IntelliJ actions
  */
 class JavaAggregateMemberRoutingKeyInspection : AbstractBaseJavaLocalInspectionTool() {
-    override fun checkClass(aClass: PsiClass, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
+    override fun checkClass(
+        aClass: PsiClass,
+        manager: InspectionManager,
+        isOnTheFly: Boolean
+    ): Array<ProblemDescriptor>? {
         val name = aClass.qualifiedName ?: return null
         val member = aClass.aggregateResolver().getMemberForName(name) ?: return null
         return member.children.filter { it.isCollection && !it.member.entityIdPresent }.map { child ->

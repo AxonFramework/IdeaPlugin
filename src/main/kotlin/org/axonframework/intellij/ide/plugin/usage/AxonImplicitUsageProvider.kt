@@ -37,8 +37,8 @@ import org.jetbrains.uast.toUElement
  */
 class AxonImplicitUsageProvider : ImplicitUsageProvider {
     private val fieldAnnotations = listOf(
-            AxonAnnotation.ROUTING_KEY,
-            AxonAnnotation.ENTITY_ID,
+        AxonAnnotation.ROUTING_KEY,
+        AxonAnnotation.ENTITY_ID,
     )
 
     override fun isImplicitUsage(element: PsiElement): Boolean {
@@ -58,7 +58,9 @@ class AxonImplicitUsageProvider : ImplicitUsageProvider {
         return false
     }
 
-    private fun UMethod.isEmptyConstructorOfAggregate() = isConstructor && uastParameters.isEmpty() && getUastParentOfType(UClass::class.java).isAggregate()
+    private fun UMethod.isEmptyConstructorOfAggregate() = isConstructor
+            && uastParameters.isEmpty()
+            && getUastParentOfType(UClass::class.java).isAggregate()
 
     override fun isImplicitRead(element: PsiElement): Boolean {
         val uastElement = element.toUElement()

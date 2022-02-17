@@ -24,15 +24,18 @@ class KotlinAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCas
     override fun setUp() {
         super.setUp()
 
-        addFile("MyEntityWithMissingKey.kt", """
+        addFile(
+            "MyEntityWithMissingKey.kt", """
             class MyEntityWithMissingKey {
             
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     fun `test should detect missing entity id in aggregate member when is in List`() {
-        val file = addFile("MyAggregate.kt", """
+        val file = addFile(
+            "MyAggregate.kt", """
             import test.MyEntityWithMissingKey
             import kotlin.collections.List
             
@@ -41,7 +44,8 @@ class KotlinAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCas
                 @AggregateMember
                 private lateinit var entities: List<MyEntityWithMissingKey>
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(KotlinAggregateMemberRoutingKeyInspection())
         myFixture.openFileInEditor(file)
@@ -52,16 +56,19 @@ class KotlinAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCas
     }
 
     fun `test should not detect missing entity id when actually has entity id`() {
-        addFile("MyEntityWithId.kt", """
+        addFile(
+            "MyEntityWithId.kt", """
             import java.lang.String
             
             class MyEntityWithId {
                 @EntityId
                 lateinit var id: String;
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
-        val file = addFile("MyAggregate.kt", """
+        val file = addFile(
+            "MyAggregate.kt", """
             import test.MyEntityWithId
             import java.util.List
             
@@ -70,7 +77,8 @@ class KotlinAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCas
                 @AggregateMember
                 private lateinit var entities: List<MyEntityWithId>
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(KotlinAggregateMemberRoutingKeyInspection())
         myFixture.openFileInEditor(file)
@@ -81,7 +89,8 @@ class KotlinAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCas
     }
 
     fun `test should not detect missing entity id if not in collection`() {
-        val file = addFile("MyAggregate.kt", """
+        val file = addFile(
+            "MyAggregate.kt", """
             import test.MyEntityWithMissingKey
             
             @AggregateRoot
@@ -89,7 +98,8 @@ class KotlinAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCas
                 @AggregateMember
                 private val entity: MyEntityWithMissingKey = MyEntityWithMissingKey()
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(KotlinAggregateMemberRoutingKeyInspection())
         myFixture.openFileInEditor(file)
@@ -100,7 +110,8 @@ class KotlinAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCas
     }
 
     fun `test should detect missing entity id in aggregate member when is in Collection`() {
-        val file = addFile("MyAggregate.kt", """
+        val file = addFile(
+            "MyAggregate.kt", """
             import test.MyEntityWithMissingKey
             import kotlin.collections.Collection
             
@@ -109,7 +120,8 @@ class KotlinAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCas
                 @AggregateMember
                 private lateinit var entities: Collection<MyEntityWithMissingKey>;
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(KotlinAggregateMemberRoutingKeyInspection())
         myFixture.openFileInEditor(file)
@@ -120,7 +132,8 @@ class KotlinAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCas
     }
 
     fun `test should detect missing entity id in aggregate member when is in Map`() {
-        val file = addFile("MyAggregate.kt", """
+        val file = addFile(
+            "MyAggregate.kt", """
             import test.MyEntityWithMissingKey
             import kotlin.collections.Map
             import java.lang.String
@@ -130,7 +143,8 @@ class KotlinAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCas
                 @AggregateMember
                 private lateinit var entities: Map<String, MyEntityWithMissingKey>;
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(KotlinAggregateMemberRoutingKeyInspection())
         myFixture.openFileInEditor(file)
@@ -142,7 +156,8 @@ class KotlinAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCas
 
 
     fun `test should detect problem in entities themselves`() {
-        val file = addFile("MyMiddleEntity.kt", """
+        val file = addFile(
+            "MyMiddleEntity.kt", """
             import test.MyEntityWithMissingKey
             import java.util.Map
             import java.lang.String
@@ -154,9 +169,11 @@ class KotlinAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCas
                 @AggregateMember
                 private lateinit var entitiesInEntity: Map<String, MyEntityWithMissingKey>
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
-        addFile("MyAggregate.kt", """
+        addFile(
+            "MyAggregate.kt", """
             import test.MyMiddleEntity
             import java.util.Map
             import java.lang.String
@@ -166,7 +183,8 @@ class KotlinAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCas
                 @AggregateMember
                 private lateinit var entities: Map<String, MyMiddleEntity>
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(KotlinAggregateMemberRoutingKeyInspection())
         myFixture.openFileInEditor(file)

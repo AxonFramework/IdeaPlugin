@@ -30,8 +30,8 @@ import javax.swing.Icon
  * @see org.axonframework.intellij.ide.plugin.handlers.searchers.AggregateConstructorSearcher
  */
 data class AggregateConstructor(
-        override val element: PsiMethod,
-        override val payload: String,
+    override val element: PsiMethod,
+    override val payload: String,
 ) : Handler {
     override val handlerType: MessageHandlerType = MessageHandlerType.COMMAND
 

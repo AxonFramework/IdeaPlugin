@@ -24,8 +24,8 @@ package org.axonframework.intellij.ide.plugin.api
  * All custom annotations annotated with one of the annotations in this enum are supported.
  */
 enum class MessageHandlerType(
-        val annotation: AxonAnnotation,
-        val messageType: MessageType,
+    val annotation: AxonAnnotation,
+    val messageType: MessageType,
 ) {
     COMMAND(AxonAnnotation.COMMAND_HANDLER, MessageType.COMMAND),
     EVENT(AxonAnnotation.EVENT_HANDLER, MessageType.EVENT),

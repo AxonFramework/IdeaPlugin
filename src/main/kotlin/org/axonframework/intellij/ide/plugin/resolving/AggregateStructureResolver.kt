@@ -66,17 +66,19 @@ class AggregateStructureResolver(private val project: Project) {
             return null
         }
         val children = clazz.fields.toList()
-                .filter { it.isAnnotated(AxonAnnotation.AGGREGATE_MEMBER) }
-                .mapNotNull { field ->
-                    val isCollection = field.type.isCollection()
-                    val psiType = if (isCollection) deriveTypeFromCollection(field.type) else field.type
-                    val qualifiedName = psiType.toQualifiedName() ?: return@mapNotNull null
-                    val targetClass = clazz.javaFacade().findClass(qualifiedName, clazz.project.axonScope())
-                            ?: return@mapNotNull null
-                    val modelMember = inspect(targetClass) ?: return@mapNotNull null
-                    ModelChild(field.name, modelMember, isCollection)
-                }
-        val entityIdPresent = clazz.fields.any { it.isAnnotated(AxonAnnotation.ENTITY_ID) } || clazz.methods.any { it.isAnnotated(AxonAnnotation.ENTITY_ID) }
+            .filter { it.isAnnotated(AxonAnnotation.AGGREGATE_MEMBER) }
+            .mapNotNull { field ->
+                val isCollection = field.type.isCollection()
+                val psiType = if (isCollection) deriveTypeFromCollection(field.type) else field.type
+                val qualifiedName = psiType.toQualifiedName() ?: return@mapNotNull null
+                val targetClass = clazz.javaFacade().findClass(qualifiedName, clazz.project.axonScope())
+                    ?: return@mapNotNull null
+                val modelMember = inspect(targetClass) ?: return@mapNotNull null
+                ModelChild(field.name, modelMember, isCollection)
+            }
+        val entityIdPresent = clazz.fields.any { it.isAnnotated(AxonAnnotation.ENTITY_ID) } || clazz.methods.any {
+            it.isAnnotated(AxonAnnotation.ENTITY_ID)
+        }
         return Model(clazz.qualifiedName!!, entityIdPresent, children)
     }
 
@@ -101,5 +103,6 @@ class AggregateStructureResolver(private val project: Project) {
     private fun PsiClassType.isMap() = isOfType("java.util.Map") || isOfType("kotlin.collections.Map")
     private fun PsiClassType.isList() = isOfType("java.util.List") || isOfType("kotlin.collections.List")
     private fun PsiClassType.isCollection() = isOfType("java.util.Collection") || isOfType("kotlin.collections.Collection")
+
     private fun PsiClassType.isOfType(type: String) = toQualifiedName() == type || superTypes.any { it.toQualifiedName() == type }
 }

@@ -29,10 +29,10 @@ class ConstructorMessageCreatorSearcher(val project: Project) : MessageCreatorSe
 
     override fun findByPayload(payload: String): List<CreatorSearchResult> {
         val matchingHandlers = handlerResolver.findAllHandlers()
-                .map { it.payload }
-                .filter { areAssignable(project, payload, it) }
+            .map { it.payload }
+            .filter { areAssignable(project, payload, it) }
         val classesForQualifiedName = listOf(payload).plus(matchingHandlers)
-                .distinct()
+            .distinct()
         return resolveCreatorsForFqns(classesForQualifiedName)
     }
 
@@ -46,9 +46,9 @@ class ConstructorMessageCreatorSearcher(val project: Project) : MessageCreatorSe
         return fqns.flatMap { typeFqn ->
             psiFacade.findClasses(typeFqn, project.axonScope()).flatMap { clazz ->
                 clazz.constructors
-                        .flatMap { MethodReferencesSearch.search(it, project.axonScope(), true) }
-                        .map { ref -> CreatorSearchResult(typeFqn, ref.element) }
-                        .distinct()
+                    .flatMap { MethodReferencesSearch.search(it, project.axonScope(), true) }
+                    .map { ref -> CreatorSearchResult(typeFqn, ref.element) }
+                    .distinct()
             }
         }
     }

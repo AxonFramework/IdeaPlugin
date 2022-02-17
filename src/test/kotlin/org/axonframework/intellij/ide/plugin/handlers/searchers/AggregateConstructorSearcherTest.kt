@@ -24,7 +24,8 @@ import org.axonframework.intellij.ide.plugin.util.handlerResolver
 class AggregateConstructorSearcherTest : AbstractAxonFixtureTestCase() {
 
     fun `test can resolve aggregate constructor without command handler annotation with aggregate as payload`() {
-        addFile("MyAggregate.kt", """
+        addFile(
+            "MyAggregate.kt", """
             data class MyCommand(@TargetAggregateIdentifier id: String)
             
             @AggregateRoot
@@ -33,16 +34,18 @@ class AggregateConstructorSearcherTest : AbstractAxonFixtureTestCase() {
                     
                 }
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
         val handlers = project.handlerResolver().findAllHandlers()
-                .filterIsInstance<AggregateConstructor>()
+            .filterIsInstance<AggregateConstructor>()
         Assertions.assertThat(handlers).anyMatch {
             it.payload == "test.MyAggregate" && it.element.name == "MyAggregate"
         }
     }
 
     fun `test will not resolve default constructor`() {
-        addFile("MyAggregate.kt", """
+        addFile(
+            "MyAggregate.kt", """
             data class MyCommand(@TargetAggregateIdentifier id: String)
             
             @AggregateRoot
@@ -51,9 +54,10 @@ class AggregateConstructorSearcherTest : AbstractAxonFixtureTestCase() {
                     
                 }
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
         val handlers = project.handlerResolver().findAllHandlers()
-                .filterIsInstance<AggregateConstructor>()
+            .filterIsInstance<AggregateConstructor>()
         Assertions.assertThat(handlers).isEmpty()
     }
 }

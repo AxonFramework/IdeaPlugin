@@ -34,7 +34,10 @@ import org.jetbrains.uast.toUElement
  * @param annotation Axon's annotation to check
  * @param condition Optional condition to check relevant, e.g. for presence of payloadType
  */
-fun PsiModifierListOwner.resolveAnnotation(annotation: AxonAnnotation, condition: (PsiAnnotation) -> Boolean = { true }): PsiAnnotation? {
+fun PsiModifierListOwner.resolveAnnotation(
+    annotation: AxonAnnotation,
+    condition: (PsiAnnotation) -> Boolean = { true }
+): PsiAnnotation? {
     val annotationResolver = project.getService(AnnotationResolver::class.java)
     val annotations = annotationResolver.getAnnotationClasses(annotation)
     val mostGenericAnnotation = annotations.firstOrNull { it.parent == null } ?: return null
@@ -50,8 +53,9 @@ fun PsiModifierListOwner.resolveAnnotation(annotation: AxonAnnotation, condition
             }
         }
 
-        return this.annotations.filter { it.hasQualifiedName(currentAnnotation.qualifiedName) }
-                .firstOrNull(condition)
+        return this.annotations
+            .filter { it.hasQualifiedName(currentAnnotation.qualifiedName) }
+            .firstOrNull(condition)
     }
 
     return recursivelyResolveChild(mostGenericAnnotation)

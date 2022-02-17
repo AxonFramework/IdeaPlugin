@@ -44,8 +44,8 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class MessageCreationResolver(private val project: Project) {
     private val searchers = listOf(
-            ConstructorMessageCreatorSearcher(project),
-            DeadlineMessageCreatorSearcher(project),
+        ConstructorMessageCreatorSearcher(project),
+        DeadlineMessageCreatorSearcher(project),
     )
     private val handlerResolver = project.handlerResolver()
     private val constructorsByPayloadCache = ConcurrentHashMap<String, CachedValue<List<MessageCreator>>>()
@@ -71,8 +71,8 @@ class MessageCreationResolver(private val project: Project) {
      */
     fun findCreatorByElement(element: PsiElement): MessageCreator? {
         return constructorsByPayloadCache.values.filter { it.hasUpToDateValue() }
-                .flatMap { it.value }
-                .firstOrNull { it.element == element }
+            .flatMap { it.value }
+            .firstOrNull { it.element == element }
     }
 
     /**
@@ -83,7 +83,7 @@ class MessageCreationResolver(private val project: Project) {
      */
     fun resolveAllCreators(): List<MessageCreator> {
         return searchers.flatMap { it.findAll() }
-                .flatMap { createCreators(it) }
+            .flatMap { createCreators(it) }
     }
 
     private fun createCreators(element: CreatorSearchResult): List<MessageCreator> {

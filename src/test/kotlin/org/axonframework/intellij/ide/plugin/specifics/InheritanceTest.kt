@@ -23,7 +23,8 @@ import org.axonframework.intellij.ide.plugin.util.creatorResolver
 class InheritanceTest : AbstractAxonFixtureTestCase() {
 
     fun `test recognizes creators of message while handler is of generic type`() {
-        addFile("myfile.kt", """
+        addFile(
+            "myfile.kt", """
             interface MyCommandInterface
             
             data class MyCommand(id: String): MyCommandInterface
@@ -42,7 +43,8 @@ class InheritanceTest : AbstractAxonFixtureTestCase() {
                      MyCommand("")
                 }
             }
-        """)
+        """
+        )
 
         val creators = project.creatorResolver().getCreatorsForPayload("test.MyCommand")
         assertThat(creators).anyMatch { it.payload == "test.MyCommand" }

@@ -22,11 +22,13 @@ import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
 
 class JavaAggregateIdInspectionTest : AbstractAxonFixtureTestCase() {
     fun `test should detect missing identifier`() {
-        val file = addFile("MyAggregate.java", """
+        val file = addFile(
+            "MyAggregate.java", """
             @AggregateRoot
             public class MyAggregate {
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(JavaAggregateIdInspection())
         myFixture.openFileInEditor(file)
@@ -37,10 +39,12 @@ class JavaAggregateIdInspectionTest : AbstractAxonFixtureTestCase() {
     }
 
     fun `test should not detect missing identifier if not an aggregate`() {
-        val file = addFile("MyAggregate.java", """
+        val file = addFile(
+            "MyAggregate.java", """
             public class MyAggregate {
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(JavaAggregateIdInspection())
         myFixture.openFileInEditor(file)
@@ -51,13 +55,15 @@ class JavaAggregateIdInspectionTest : AbstractAxonFixtureTestCase() {
     }
 
     fun `test should not detect when aggregate has an identifier`() {
-        val file = addFile("MyAggregate.java", """            
+        val file = addFile(
+            "MyAggregate.java", """            
             @AggregateRoot
             public class MyAggregate {
                 @AggregateIdentifier
                 String myIdentifier;
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(JavaAggregateIdInspection())
         myFixture.openFileInEditor(file)
@@ -66,13 +72,15 @@ class JavaAggregateIdInspectionTest : AbstractAxonFixtureTestCase() {
     }
 
     fun `test should also allow EntityId annotation`() {
-        val file = addFile("MyAggregate.java", """            
+        val file = addFile(
+            "MyAggregate.java", """            
             @AggregateRoot
             public class MyAggregate {
                 @EntityId
                 String myIdentifier;
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(JavaAggregateIdInspection())
         myFixture.openFileInEditor(file)

@@ -45,7 +45,7 @@ class JavaLineMarkerTest : AbstractAxonFixtureTestCase() {
         val options =
             getLineMarkers(CommonHandlerMethodLineMarkerProvider::class.java)
         assertThat(options).containsExactly(
-                OptionSummary("MyCreator.createCommand", null, AxonIcons.Publisher)
+            OptionSummary("MyCreator.createCommand", null, AxonIcons.Publisher)
         )
     }
 
@@ -56,8 +56,8 @@ class JavaLineMarkerTest : AbstractAxonFixtureTestCase() {
 
         val options = getLineMarkers(ClassLineMarkerProvider::class.java)
         assertThat(options).containsExactly(
-                OptionSummary("MyCommand", "MyAggregate", AxonIcons.Model),
-                OptionSummary("MyCreator.createCommand", null, AxonIcons.Publisher)
+            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Model),
+            OptionSummary("MyCreator.createCommand", null, AxonIcons.Publisher)
         )
     }
 

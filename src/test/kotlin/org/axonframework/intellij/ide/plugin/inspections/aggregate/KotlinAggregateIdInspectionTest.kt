@@ -22,11 +22,13 @@ import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
 
 class KotlinAggregateIdInspectionTest : AbstractAxonFixtureTestCase() {
     fun `test should detect missing identifier`() {
-        val file = addFile("MyAggregate.kt", """
+        val file = addFile(
+            "MyAggregate.kt", """
             @AggregateRoot
             class MyAggregate {
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(KotlinAggregateIdInspection())
         myFixture.openFileInEditor(file)
@@ -37,10 +39,12 @@ class KotlinAggregateIdInspectionTest : AbstractAxonFixtureTestCase() {
     }
 
     fun `test should detect missing identifier when is not an aggregate`() {
-        val file = addFile("MyAggregate.kt", """
+        val file = addFile(
+            "MyAggregate.kt", """
             class MyAggregate {
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(KotlinAggregateConstructorInspection())
         myFixture.openFileInEditor(file)
@@ -51,13 +55,15 @@ class KotlinAggregateIdInspectionTest : AbstractAxonFixtureTestCase() {
     }
 
     fun `test should not detect when aggregate has an identifier`() {
-        val file = addFile("MyAggregate.kt", """            
+        val file = addFile(
+            "MyAggregate.kt", """            
             @AggregateRoot
             public class MyAggregate {
                 @AggregateIdentifier
                 var myIdentifier: String
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(KotlinAggregateIdInspection())
         myFixture.openFileInEditor(file)
@@ -66,13 +72,15 @@ class KotlinAggregateIdInspectionTest : AbstractAxonFixtureTestCase() {
     }
 
     fun `test should also allow EntityId annotation`() {
-        val file = addFile("MyAggregate.java", """            
+        val file = addFile(
+            "MyAggregate.java", """            
             @AggregateRoot
             class MyAggregate {
                 @EntityId
                 myIdentifier: String;
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(KotlinAggregateIdInspection())
         myFixture.openFileInEditor(file)

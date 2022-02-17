@@ -23,7 +23,7 @@ package org.axonframework.intellij.ide.plugin.util
  * @see PerformanceRegistry
  */
 data class PerformanceMeasurement(
-        val name: String,
+    val name: String,
 ) {
     var min: Long = Long.MAX_VALUE
     var max: Long = 0

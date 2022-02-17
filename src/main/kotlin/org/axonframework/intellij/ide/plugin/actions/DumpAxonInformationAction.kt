@@ -52,7 +52,16 @@ class DumpAxonInformationAction : AnAction() {
         val project = e.project ?: return
 
         val annotations = project.getService<AnnotationResolver>().getAllAnnotations().map {
-            AnnotationInfo(it.key, it.value.mapNotNull { ann -> AnnotationWithParent(ann.psiClass.qualifiedName, ann.parent?.psiClass?.qualifiedName) })
+            val children = it.value.map { ann ->
+                AnnotationWithParent(
+                    ann.psiClass.qualifiedName,
+                    ann.parent?.psiClass?.qualifiedName
+                )
+            }
+            AnnotationInfo(
+                it.key,
+                children
+            )
         }
         val handlers = project.getService<MessageHandlerResolver>().findAllHandlers().map {
             it.toInfo()
@@ -62,43 +71,45 @@ class DumpAxonInformationAction : AnAction() {
         }
 
         val info = AxonInfo(annotations, handlers, creators, project.aggregateResolver().getModels())
-        val dump = ObjectMapper().findAndRegisterModules().enable(SerializationFeature.INDENT_OUTPUT).writeValueAsString(info)
+        val mapper = ObjectMapper().findAndRegisterModules().enable(SerializationFeature.INDENT_OUTPUT)
+        val dump = mapper.writeValueAsString(info)
         FileEditorManager.getInstance(project).openEditor(
-                OpenFileDescriptor(project, LightVirtualFile("axon-dump.json", JsonLanguage.INSTANCE, dump)),
-                true
+            OpenFileDescriptor(project, LightVirtualFile("axon-dump.json", JsonLanguage.INSTANCE, dump)),
+            true
         )
     }
 
-    private fun Handler.toInfo() = HandlerInfo(handlerType, this::class.java.simpleName, payload, renderText(), renderContainerText())
+    private fun Handler.toInfo() =
+        HandlerInfo(handlerType, this::class.java.simpleName, payload, renderText(), renderContainerText())
 
     private data class AxonInfo(
-            val annotations: List<AnnotationInfo>,
-            val handlers: List<HandlerInfo>,
-            val creators: List<CreatorInfo>,
-            val models: List<Model>,
+        val annotations: List<AnnotationInfo>,
+        val handlers: List<HandlerInfo>,
+        val creators: List<CreatorInfo>,
+        val models: List<Model>,
     )
 
     private data class CreatorInfo(
-            val payload: String,
-            val parentHandler: HandlerInfo?,
-            val containerText: String?,
+        val payload: String,
+        val parentHandler: HandlerInfo?,
+        val containerText: String?,
     )
 
     private data class HandlerInfo(
-            val handlerType: MessageHandlerType,
-            val handlerClass: String,
-            val payload: String,
-            val renderText: String,
-            val containerText: String?,
+        val handlerType: MessageHandlerType,
+        val handlerClass: String,
+        val payload: String,
+        val renderText: String,
+        val containerText: String?,
     )
 
     private data class AnnotationInfo(
-            val type: AxonAnnotation,
-            val annotations: List<AnnotationWithParent>
+        val type: AxonAnnotation,
+        val annotations: List<AnnotationWithParent>
     )
 
     private data class AnnotationWithParent(
-            val annotation: String?,
-            val annotationParent: String?,
+        val annotation: String?,
+        val annotationParent: String?,
     )
 }

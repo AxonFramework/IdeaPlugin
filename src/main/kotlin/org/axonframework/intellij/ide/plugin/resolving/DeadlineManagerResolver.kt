@@ -66,23 +66,24 @@ class DeadlineManagerResolver(val project: Project) {
     private fun computeDeadlineManagers(): List<PsiMethod> {
         val libAnnotations = libraryCache.getMethods()
         return (libAnnotations + scanForManagers(project.axonScope()))
-                .distinct()
+            .distinct()
     }
 
     private fun scanForManagers(scope: GlobalSearchScope): List<PsiMethod> {
-        val deadlineManager = project.javaFacade().findClass("org.axonframework.deadline.DeadlineManager", project.allScope())
+        val deadlineManager =
+            project.javaFacade().findClass("org.axonframework.deadline.DeadlineManager", project.allScope())
                 ?: return emptyList()
         val inheritors = ClassInheritorsSearch.search(deadlineManager, scope, true)
         return (listOf(deadlineManager) + inheritors)
-                .flatMap { it.methods.toList() }
-                .filter { it.name.contains("schedule") }
-                .filter { getDeadlineParameterIndex(it) != null }
+            .flatMap { it.methods.toList() }
+            .filter { it.name.contains("schedule") }
+            .filter { getDeadlineParameterIndex(it) != null }
     }
 
     fun getDeadlineParameterIndex(method: PsiMethod): Int? {
         val matchingParam = method.parameterList.parameters
-                .firstOrNull { p -> p.name == "deadlineName" && p.type.canonicalText == "java.lang.String" }
-                ?: return null
+            .firstOrNull { p -> p.name == "deadlineName" && p.type.canonicalText == "java.lang.String" }
+            ?: return null
         return method.parameterList.getParameterIndex(matchingParam)
     }
 
@@ -117,9 +118,10 @@ class DeadlineManagerResolver(val project: Project) {
             return block.invoke()
         }
 
-        private fun updateLibraryAnnotations() = PerformanceRegistry.measure("DeadlineManagerResolver.libraryManagers") {
-            libraryMethods = scanForManagers(project.allScope())
-            libraryInitialized = true
-        }
+        private fun updateLibraryAnnotations() =
+            PerformanceRegistry.measure("DeadlineManagerResolver.libraryManagers") {
+                libraryMethods = scanForManagers(project.allScope())
+                libraryInitialized = true
+            }
     }
 }

@@ -31,20 +31,24 @@ import org.axonframework.intellij.ide.plugin.util.isAnnotated
  * The warning can be suppressed via the normal IntelliJ actions
  */
 class JavaAggregateIdInspection : AbstractBaseJavaLocalInspectionTool() {
-    override fun checkClass(aClass: PsiClass, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
+    override fun checkClass(
+        aClass: PsiClass,
+        manager: InspectionManager,
+        isOnTheFly: Boolean
+    ): Array<ProblemDescriptor>? {
         if (!aClass.isAggregate()) {
             return emptyArray()
         }
         val isMissingFieldWithAnnotation = aClass.fields.none { field -> field.isAnnotated(AxonAnnotation.ENTITY_ID) }
         if (isMissingFieldWithAnnotation) {
             return arrayOf(
-                    manager.createProblemDescriptor(
-                            aClass,
-                            aClass.identifyingElement!!.textRangeInParent,
-                            aggregateIdDescription,
-                            ProblemHighlightType.WARNING,
-                            isOnTheFly,
-                    )
+                manager.createProblemDescriptor(
+                    aClass,
+                    aClass.identifyingElement!!.textRangeInParent,
+                    aggregateIdDescription,
+                    ProblemHighlightType.WARNING,
+                    isOnTheFly,
+                )
             )
         }
         return emptyArray()

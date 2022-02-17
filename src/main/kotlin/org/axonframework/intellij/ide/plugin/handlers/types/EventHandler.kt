@@ -33,9 +33,9 @@ import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
  * @see EventSourcingHandler
  */
 data class EventHandler(
-        override val element: PsiMethod,
-        override val payload: String,
-        val processingGroup: String,
+    override val element: PsiMethod,
+    override val payload: String,
+    val processingGroup: String,
 ) : Handler {
     override val handlerType: MessageHandlerType = MessageHandlerType.EVENT
 

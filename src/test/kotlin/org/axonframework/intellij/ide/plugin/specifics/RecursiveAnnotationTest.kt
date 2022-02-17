@@ -25,7 +25,8 @@ import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
  */
 class RecursiveAnnotationTest : AbstractAxonFixtureTestCase() {
     fun `test can handle ProcessingGroup annotation recursively - one deep in kotlin`() {
-        addFile("myfile.kt", """            
+        addFile(
+            "myfile.kt", """            
             @ProcessingGroup("processor-a")
             @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS)
             @Retention(AnnotationRetention.RUNTIME)
@@ -41,7 +42,8 @@ class RecursiveAnnotationTest : AbstractAxonFixtureTestCase() {
                 }
             }
 
-        """)
+        """
+        )
         val handlerResolver = myFixture.project.getService(MessageHandlerResolver::class.java)
 
         val handlers = handlerResolver.findAllHandlers()
@@ -49,7 +51,8 @@ class RecursiveAnnotationTest : AbstractAxonFixtureTestCase() {
     }
 
     fun `test can handle ProcessingGroup annotation recursively - four deep in kotlin`() {
-        addFile("myfile.kt", """
+        addFile(
+            "myfile.kt", """
             package test
             
             import org.axonframework.config.ProcessingGroup
@@ -85,7 +88,8 @@ class RecursiveAnnotationTest : AbstractAxonFixtureTestCase() {
                 }
             }
 
-        """)
+        """
+        )
         val handlerResolver = myFixture.project.getService(MessageHandlerResolver::class.java)
 
         val handlers = handlerResolver.findAllHandlers()

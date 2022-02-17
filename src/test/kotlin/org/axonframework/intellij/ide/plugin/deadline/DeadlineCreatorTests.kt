@@ -22,7 +22,8 @@ import org.axonframework.intellij.ide.plugin.util.creatorResolver
 
 class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
     fun `test can find creator of deadline based on the default Axon interface in kotlin`() {
-        val file = addFile("MyAggregate.kt", """      
+        val file = addFile(
+            "MyAggregate.kt", """      
             import java.time.Instant
             
             class MyCommand
@@ -38,7 +39,8 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
                 fun handle() {
                 }
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
         myFixture.openFileInEditor(file)
         val creators = project.creatorResolver().resolveAllCreators()
         assertThat(creators).anyMatch {
@@ -47,14 +49,17 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
     }
 
     fun `test can find creator of deadline based on custom manager in kotlin`() {
-        addFile("MyDeadlineManager.kt", """
+        addFile(
+            "MyDeadlineManager.kt", """
             class MyDeadlineManager : DeadlineManager {
                 fun scheduleInMyOwnVeryInterestingWay(deadlineName: String) {
                     
                 }
             }
-        """.trimIndent())
-        val file = addFile("MyAggregate.kt", """      
+        """.trimIndent()
+        )
+        val file = addFile(
+            "MyAggregate.kt", """      
             import test.MyDeadlineManager
             
             class MyCommand
@@ -70,7 +75,8 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
                 fun handle() {
                 }
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
         myFixture.openFileInEditor(file)
         val creators = project.creatorResolver().resolveAllCreators()
         assertThat(creators).anyMatch {
@@ -79,7 +85,8 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
     }
 
     fun `test can find creator of deadline based on the default Axon interface in java`() {
-        val file = addFile("MyAggregate.java", """      
+        val file = addFile(
+            "MyAggregate.java", """      
             import test.MyCommand;
             import java.time.Instant;
             
@@ -94,11 +101,14 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
                 public void handle() { 
                 }
             }
-        """.trimIndent())
-        addFile("MyCommand.java", """
+        """.trimIndent()
+        )
+        addFile(
+            "MyCommand.java", """
             class MyCommand {
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
         myFixture.openFileInEditor(file)
         val creators = project.creatorResolver().resolveAllCreators()
         assertThat(creators).anyMatch {

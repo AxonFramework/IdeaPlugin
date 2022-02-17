@@ -30,9 +30,9 @@ import javax.swing.Icon
  * @See org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerSearcher
  */
 data class CommandHandler(
-        override val element: PsiMethod,
-        override val payload: String,
-        val componentName: String,
+    override val element: PsiMethod,
+    override val payload: String,
+    val componentName: String,
 ) : Handler {
     override val handlerType: MessageHandlerType = MessageHandlerType.COMMAND
     override fun renderContainerText(): String {

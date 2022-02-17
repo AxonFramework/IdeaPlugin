@@ -48,10 +48,10 @@ class KotlinAggregateConstructorInspection : AbstractKotlinInspection() {
                 val isMissingEmptyConstructor = element.allConstructors.none { it.valueParameters.isEmpty() }
                 if (isMissingEmptyConstructor) {
                     holder.registerProblem(
-                            element,
-                            emptyConstructorDescription,
-                            ProblemHighlightType.WARNING,
-                            element.identifyingElement!!.textRangeInParent,
+                        element,
+                        emptyConstructorDescription,
+                        ProblemHighlightType.WARNING,
+                        element.identifyingElement!!.textRangeInParent,
                     )
                 }
             }

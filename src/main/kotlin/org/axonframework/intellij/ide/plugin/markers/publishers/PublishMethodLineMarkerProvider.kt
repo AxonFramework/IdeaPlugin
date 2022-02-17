@@ -97,7 +97,9 @@ class PublishMethodLineMarkerProvider : LineMarkerProvider {
         val referenceExpression = getUParentForIdentifier(element) as? USimpleNameReferenceExpression ?: return null
         val uElementParent = element.parent.parent.toUElement()
         val isConstructor = uElementParent is UCallExpression && uElementParent.kind == UastCallKind.CONSTRUCTOR_CALL
-        val isClassReference = uElementParent is UTypeReferenceExpression && uElementParent.uastParent is UClassLiteralExpression && uElementParent.getParentOfType<UAnnotation>() == null
+        val isClassReference = uElementParent is UTypeReferenceExpression
+                && uElementParent.uastParent is UClassLiteralExpression
+                && uElementParent.getParentOfType<UAnnotation>() == null
         if (isConstructor || isClassReference) {
             return referenceExpression.getQualifiedName()
         }

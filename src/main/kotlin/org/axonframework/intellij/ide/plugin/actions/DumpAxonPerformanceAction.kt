@@ -44,10 +44,11 @@ class DumpAxonPerformanceAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
 
-        val dump = ObjectMapper().findAndRegisterModules().enable(SerializationFeature.INDENT_OUTPUT).writeValueAsString(PerformanceRegistry.getMeasurements())
+        val mapper = ObjectMapper().findAndRegisterModules().enable(SerializationFeature.INDENT_OUTPUT)
+        val dump = mapper.writeValueAsString(PerformanceRegistry.getMeasurements())
         FileEditorManager.getInstance(project).openEditor(
-                OpenFileDescriptor(project, LightVirtualFile("axon-performance.json", JsonLanguage.INSTANCE, dump)),
-                true
+            OpenFileDescriptor(project, LightVirtualFile("axon-performance.json", JsonLanguage.INSTANCE, dump)),
+            true
         )
     }
 }

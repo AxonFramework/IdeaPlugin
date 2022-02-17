@@ -24,7 +24,8 @@ import org.axonframework.intellij.ide.plugin.util.handlerResolver
 class CommandHandlerSearcherTest : AbstractAxonFixtureTestCase() {
 
     fun `test can resolve constructor command handler in aggregate`() {
-        addFile("MyAggregate.kt", """
+        addFile(
+            "MyAggregate.kt", """
             data class MyCommand(@TargetAggregateIdentifier id: String)
             
             @AggregateRoot
@@ -34,16 +35,18 @@ class CommandHandlerSearcherTest : AbstractAxonFixtureTestCase() {
                     
                 }
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
         val handlers = project.handlerResolver().findAllHandlers()
-                .filterIsInstance<CommandHandler>()
+            .filterIsInstance<CommandHandler>()
         Assertions.assertThat(handlers).anyMatch {
             it.payload == "test.MyCommand" && it.componentName == "test.MyAggregate" && it.element.name == "MyAggregate"
         }
     }
 
     fun `test can resolve normal command handler in aggregate`() {
-        addFile("MyAggregate.kt", """
+        addFile(
+            "MyAggregate.kt", """
             data class MyCommand(@TargetAggregateIdentifier id: String)
             
             @AggregateRoot
@@ -53,16 +56,18 @@ class CommandHandlerSearcherTest : AbstractAxonFixtureTestCase() {
                     
                 }
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
         val handlers = project.handlerResolver().findAllHandlers()
-                .filterIsInstance<CommandHandler>()
+            .filterIsInstance<CommandHandler>()
         Assertions.assertThat(handlers).anyMatch {
             it.payload == "test.MyCommand" && it.componentName == "test.MyAggregate" && it.element.name == "handle"
         }
     }
 
     fun `test can resolve command handler outside aggregate`() {
-        addFile("MyAggregate.kt", """
+        addFile(
+            "MyAggregate.kt", """
             data class MyCommand(id: String)
             
             class MyComponent {
@@ -71,9 +76,10 @@ class CommandHandlerSearcherTest : AbstractAxonFixtureTestCase() {
                     
                 }
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
         val handlers = project.handlerResolver().findAllHandlers()
-                .filterIsInstance<CommandHandler>()
+            .filterIsInstance<CommandHandler>()
         Assertions.assertThat(handlers).anyMatch {
             it.payload == "test.MyCommand" && it.componentName == "test.MyComponent" && it.element.name == "handle"
         }

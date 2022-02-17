@@ -28,9 +28,9 @@ import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
  * @See org.axonframework.intellij.ide.plugin.handlers.searchers.QueryHandlerSearcher
  */
 data class QueryHandler(
-        override val element: PsiMethod,
-        override val payload: String,
-        val componentName: String,
+    override val element: PsiMethod,
+    override val payload: String,
+    val componentName: String,
 ) : Handler {
     override val handlerType: MessageHandlerType = MessageHandlerType.QUERY
 

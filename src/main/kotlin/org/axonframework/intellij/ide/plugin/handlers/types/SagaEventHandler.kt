@@ -28,9 +28,9 @@ import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
  * @See org.axonframework.intellij.ide.plugin.handlers.searchers.SagaEventHandlerSearcher
  */
 data class SagaEventHandler(
-        override val element: PsiMethod,
-        override val payload: String,
-        val processingGroup: String,
+    override val element: PsiMethod,
+    override val payload: String,
+    val processingGroup: String,
 ) : Handler {
     override val handlerType: MessageHandlerType = MessageHandlerType.SAGA
 

@@ -27,9 +27,9 @@ import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
  * @See org.axonframework.intellij.ide.plugin.handlers.searchers.DeadlineHandlerSearcher
  */
 data class DeadlineHandler(
-        override val element: PsiMethod,
-        override val payload: String,
-        val deadlineName: String,
+    override val element: PsiMethod,
+    override val payload: String,
+    val deadlineName: String,
 ) : Handler {
     override val handlerType: MessageHandlerType = MessageHandlerType.DEADLINE
 

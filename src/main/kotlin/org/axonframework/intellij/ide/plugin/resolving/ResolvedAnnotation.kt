@@ -24,8 +24,8 @@ import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
  * Contains a hierarchy, the parent annotation is included for these purposes.
  */
 data class ResolvedAnnotation(
-        val axonAnnotation: AxonAnnotation,
-        val psiClass: PsiClass,
-        val parent: ResolvedAnnotation?,
-        val qualifiedName: String = psiClass.qualifiedName!!
+    val axonAnnotation: AxonAnnotation,
+    val psiClass: PsiClass,
+    val parent: ResolvedAnnotation?,
+    val qualifiedName: String = psiClass.qualifiedName!!
 )

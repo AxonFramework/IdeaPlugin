@@ -17,7 +17,7 @@
 package org.axonframework.intellij.ide.plugin.api
 
 data class ModelChild(
-        val fieldName: String,
-        val member: Model,
-        val isCollection: Boolean
+    val fieldName: String,
+    val member: Model,
+    val isCollection: Boolean
 )

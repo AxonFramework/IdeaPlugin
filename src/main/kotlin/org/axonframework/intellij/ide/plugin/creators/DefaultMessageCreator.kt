@@ -36,9 +36,11 @@ import javax.swing.Icon
  * @see MessageCreator
  * @see org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
  */
-data class DefaultMessageCreator(override val element: PsiElement,
-                                 override val payload: String,
-                                 override val parentHandler: Handler?) : MessageCreator {
+data class DefaultMessageCreator(
+    override val element: PsiElement,
+    override val payload: String,
+    override val parentHandler: Handler?
+) : MessageCreator {
     /**
      * Renders the grey text next to the initial identifier.
      *

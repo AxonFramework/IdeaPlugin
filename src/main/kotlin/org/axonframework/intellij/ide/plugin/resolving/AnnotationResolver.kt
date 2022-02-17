@@ -66,7 +66,7 @@ class AnnotationResolver(val project: Project) {
      */
     fun getAnnotationClasses(axonAnnotation: AxonAnnotation): List<ResolvedAnnotation> {
         return annotationCache.value[axonAnnotation]
-                ?: emptyList()
+            ?: emptyList()
     }
 
     /**
@@ -77,9 +77,9 @@ class AnnotationResolver(val project: Project) {
      */
     fun getMessageTypeForAnnotation(qualifiedName: String): MessageHandlerType? {
         val annotation = annotationCache.value.entries
-                .firstOrNull { it.value.any { annClass -> annClass.psiClass.qualifiedName == qualifiedName } }
-                ?.key
-                ?: return null
+            .firstOrNull { it.value.any { annClass -> annClass.psiClass.qualifiedName == qualifiedName } }
+            ?.key
+            ?: return null
         return MessageHandlerType.values().firstOrNull { it.annotation == annotation }
     }
 
@@ -90,7 +90,8 @@ class AnnotationResolver(val project: Project) {
      * @return The resolved PsiClass
      */
     fun getClassByAnnotationName(qualifiedName: String): ResolvedAnnotation? {
-        return annotationCache.value.entries.flatMap { it.value }.firstOrNull { it.psiClass.qualifiedName == qualifiedName }
+        return annotationCache.value.entries.flatMap { it.value }
+            .firstOrNull { it.psiClass.qualifiedName == qualifiedName }
     }
 
     /**
@@ -119,16 +120,20 @@ class AnnotationResolver(val project: Project) {
 
     private fun scanAnnotation(annotation: AxonAnnotation, scope: GlobalSearchScope): List<ResolvedAnnotation> {
         val clazz = project.javaFacade().findClass(annotation.annotationName, scope)
-                ?: return listOf()
+            ?: return listOf()
         val start = ResolvedAnnotation(annotation, clazz, null)
         return scanDescendants(annotation, start, scope)
     }
 
-    private fun scanDescendants(annotation: AxonAnnotation, parent: ResolvedAnnotation, scope: GlobalSearchScope): List<ResolvedAnnotation> {
+    private fun scanDescendants(
+        annotation: AxonAnnotation,
+        parent: ResolvedAnnotation,
+        scope: GlobalSearchScope
+    ): List<ResolvedAnnotation> {
         return listOf(parent) + AnnotatedElementsSearch.searchPsiClasses(parent.psiClass, scope).findAll()
-                .filter { it.isAnnotationType }
-                .filter { ht -> !MessageHandlerType.exists(ht.qualifiedName) }
-                .flatMap { scanDescendants(annotation, ResolvedAnnotation(annotation, it, parent), scope) }
+            .filter { it.isAnnotationType }
+            .filter { ht -> !MessageHandlerType.exists(ht.qualifiedName) }
+            .flatMap { scanDescendants(annotation, ResolvedAnnotation(annotation, it, parent), scope) }
     }
 
     /**

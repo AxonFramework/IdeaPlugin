@@ -23,7 +23,8 @@ import org.axonframework.intellij.ide.plugin.util.handlerResolver
 
 class EventSourcingHandlerSearcherTest : AbstractAxonFixtureTestCase() {
     fun `test can find event sourcing handler in class`() {
-        addFile("MyComponent.kt", """
+        addFile(
+            "MyComponent.kt", """
             data class MyEvent(id: String)
             
             @AggregateRoot
@@ -33,9 +34,10 @@ class EventSourcingHandlerSearcherTest : AbstractAxonFixtureTestCase() {
                     
                 }
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
         val handlers = project.handlerResolver().findAllHandlers()
-                .filterIsInstance<EventSourcingHandler>()
+            .filterIsInstance<EventSourcingHandler>()
         Assertions.assertThat(handlers).anyMatch {
             it.payload == "test.MyEvent" && it.model == "test.MyAggregate" && it.element.name == "handleMySpecialEvent"
         }

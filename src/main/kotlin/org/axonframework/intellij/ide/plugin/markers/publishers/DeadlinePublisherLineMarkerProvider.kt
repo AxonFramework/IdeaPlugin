@@ -57,19 +57,19 @@ class DeadlinePublisherLineMarkerProvider : LineMarkerProvider {
         } ?: return null
 
         val handlers = element.project.handlerResolver().findAllHandlers()
-                .filterIsInstance<DeadlineHandler>()
-                .filter { it.deadlineName == deadlineName }
+            .filterIsInstance<DeadlineHandler>()
+            .filter { it.deadlineName == deadlineName }
         if (handlers.isEmpty()) {
             return null
         }
 
         return NavigationGutterIconBuilder.create(AxonIcons.DeadlinePublisher)
-                .setPopupTitle("Axon Deadline Handlers")
-                .setTooltipText("Navigate to Axon deadline handlers")
-                .setCellRenderer(AxonCellRenderer.getInstance())
-                .setAlignment(GutterIconRenderer.Alignment.LEFT)
-                .setTargets(NotNullLazyValue.createValue { handlers.map { it.element } })
-                .createLineMarkerInfo(element)
+            .setPopupTitle("Axon Deadline Handlers")
+            .setTooltipText("Navigate to Axon deadline handlers")
+            .setCellRenderer(AxonCellRenderer.getInstance())
+            .setAlignment(GutterIconRenderer.Alignment.LEFT)
+            .setTargets(NotNullLazyValue.createValue { handlers.map { it.element } })
+            .createLineMarkerInfo(element)
     }
 
     /*
@@ -96,9 +96,9 @@ class DeadlinePublisherLineMarkerProvider : LineMarkerProvider {
     }
 
     private fun getDeadlineNameForJava(element: PsiElement): String? {
-        val identifier = element.toUElementOfType<UIdentifier>() ?: return null
-        val methodCall = identifier.getParentOfType(UCallExpression::class.java, true, USimpleNameReferenceExpression::class.java)
-                ?: return null
+        val methodCall = element.toUElementOfType<UIdentifier>()
+            ?.getParentOfType(UCallExpression::class.java, true, USimpleNameReferenceExpression::class.java)
+            ?: return null
         val referencedMethod = methodCall.resolve() ?: return null
         val methods = element.deadlineResolver().getAllScheduleMethods()
         if (methods.contains(referencedMethod)) {

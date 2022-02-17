@@ -42,12 +42,12 @@ import org.axonframework.intellij.ide.plugin.util.createCachedValue
  */
 class MessageHandlerResolver(private val project: Project) {
     private val searchers = listOf(
-            CommandHandlerInterceptorSearcher(),
-            CommandHandlerSearcher(),
-            EventHandlerSearcher(),
-            EventSourcingHandlerSearcher(),
-            QueryHandlerSearcher(),
-            SagaEventHandlerSearcher(),
+        CommandHandlerInterceptorSearcher(),
+        CommandHandlerSearcher(),
+        EventHandlerSearcher(),
+        EventSourcingHandlerSearcher(),
+        QueryHandlerSearcher(),
+        SagaEventHandlerSearcher(),
         AggregateConstructorSearcher(),
         DeadlineHandlerSearcher(),
     )
@@ -86,8 +86,8 @@ class MessageHandlerResolver(private val project: Project) {
 
     private fun executeFindMessageHandlers(): List<Handler> {
         return searchers
-                .flatMap { it.search(project) }
-                .distinct()
+            .flatMap { it.search(project) }
+            .distinct()
     }
 }
 

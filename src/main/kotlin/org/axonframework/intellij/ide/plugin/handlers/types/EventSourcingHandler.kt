@@ -29,9 +29,9 @@ import org.axonframework.intellij.ide.plugin.util.toShortName
  * @See org.axonframework.intellij.ide.plugin.handlers.searchers.EventSourcingHandlerSearcher
  */
 data class EventSourcingHandler(
-        override val element: PsiMethod,
-        override val payload: String,
-        val model: String,
+    override val element: PsiMethod,
+    override val payload: String,
+    val model: String,
 ) : Handler {
     override val handlerType: MessageHandlerType = MessageHandlerType.EVENT_SOURCING
 

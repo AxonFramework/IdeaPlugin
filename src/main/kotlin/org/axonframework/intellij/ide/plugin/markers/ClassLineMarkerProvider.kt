@@ -47,14 +47,14 @@ class ClassLineMarkerProvider : LineMarkerProvider {
         }
 
         return NavigationGutterIconBuilder.create(AxonIcons.Publisher)
-                .setTooltipText("Navigate to message handlers and creations")
-                .setCellRenderer(AxonCellRenderer.getInstance())
-                .setTargets(NotNullLazyValue.createValue {
-                    val publishers = element.creatorResolver().getCreatorsForPayload(qualifiedName)
-                    val allItems = handlers + publishers
-                    allItems.sortedWith(sortingByDisplayName()).map { it.element }
-                })
-                .setAlignment(GutterIconRenderer.Alignment.LEFT)
-                .createLineMarkerInfo(element)
+            .setTooltipText("Navigate to message handlers and creations")
+            .setCellRenderer(AxonCellRenderer.getInstance())
+            .setTargets(NotNullLazyValue.createValue {
+                val publishers = element.creatorResolver().getCreatorsForPayload(qualifiedName)
+                val allItems = handlers + publishers
+                allItems.sortedWith(sortingByDisplayName()).map { it.element }
+            })
+            .setAlignment(GutterIconRenderer.Alignment.LEFT)
+            .createLineMarkerInfo(element)
     }
 }

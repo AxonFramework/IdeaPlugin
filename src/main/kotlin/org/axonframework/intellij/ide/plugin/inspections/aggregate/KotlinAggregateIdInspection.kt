@@ -45,13 +45,14 @@ class KotlinAggregateIdInspection : AbstractKotlinInspection() {
                 if (!uClass.hasAnnotation(AxonAnnotation.AGGREGATE_ROOT)) {
                     return
                 }
-                val isMissingFieldWithAnnotation = uClass.fields.none { field -> field.isAnnotated(AxonAnnotation.ENTITY_ID) }
+                val isMissingFieldWithAnnotation =
+                    uClass.fields.none { field -> field.isAnnotated(AxonAnnotation.ENTITY_ID) }
                 if (isMissingFieldWithAnnotation) {
                     holder.registerProblem(
-                            element,
-                            aggregateIdDescription,
-                            ProblemHighlightType.WARNING,
-                            element.identifyingElement!!.textRangeInParent,
+                        element,
+                        aggregateIdDescription,
+                        ProblemHighlightType.WARNING,
+                        element.identifyingElement!!.textRangeInParent,
                     )
                 }
             }

@@ -70,7 +70,8 @@ fun PsiType?.toQualifiedName(): String? = this?.let {
  */
 fun PsiMethod.resolvePayloadType(): PsiType? = PerformanceRegistry.measure("PsiMethod.resolvePayloadType") {
     val annotationResolver = this.project.getService(AnnotationResolver::class.java)
-    val annotation = annotations.firstOrNull { it.qualifiedName != null && annotationResolver.getClassByAnnotationName(it.qualifiedName!!) != null }
+    val annotation = annotations
+        .firstOrNull { it.qualifiedName != null && annotationResolver.getClassByAnnotationName(it.qualifiedName!!) != null }
     if (annotation != null) {
         val value = annotation.findDeclaredAttributeValue("payloadType")
         if (value is PsiClassObjectAccessExpression) {
@@ -105,7 +106,11 @@ fun areAssignable(project: Project, qualifiedNameA: String, qualifiedNameB: Stri
  * Creates the default scope for our searches. This includes all production files of JAVA and Kotlin types.
  * For now we don't search for references in tests to keep information concise and the plugin performing well.
  */
-fun Project.axonScope() = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScopes.projectProductionScope(this), JavaFileType.INSTANCE, KotlinFileType.INSTANCE)
+fun Project.axonScope() = GlobalSearchScope.getScopeRestrictedByFileTypes(
+    GlobalSearchScopes.projectProductionScope(this),
+    JavaFileType.INSTANCE,
+    KotlinFileType.INSTANCE
+)
 
 /**
  * The 'allScope' represents all java and kotlin files, including libraries. Used for searching Axon-specific classes.

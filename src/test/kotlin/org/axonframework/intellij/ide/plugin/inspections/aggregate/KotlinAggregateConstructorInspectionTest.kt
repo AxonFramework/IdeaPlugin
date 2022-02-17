@@ -22,11 +22,13 @@ import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
 
 class KotlinAggregateConstructorInspectionTest : AbstractAxonFixtureTestCase() {
     fun `test should detect missing aggregate constructor`() {
-        val file = addFile("MyAggregate.kt", """
+        val file = addFile(
+            "MyAggregate.kt", """
             @AggregateRoot
             class MyAggregate {
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(KotlinAggregateConstructorInspection())
         myFixture.openFileInEditor(file)
@@ -37,10 +39,12 @@ class KotlinAggregateConstructorInspectionTest : AbstractAxonFixtureTestCase() {
     }
 
     fun `test should detect missing aggregate constructor when is not an aggregate`() {
-        val file = addFile("MyAggregate.kt", """
+        val file = addFile(
+            "MyAggregate.kt", """
             class MyAggregate {
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(KotlinAggregateConstructorInspection())
         myFixture.openFileInEditor(file)
@@ -51,12 +55,14 @@ class KotlinAggregateConstructorInspectionTest : AbstractAxonFixtureTestCase() {
     }
 
     fun `test should not detect when aggregate has empty constructor`() {
-        val file = addFile("MyAggregate.kt", """
+        val file = addFile(
+            "MyAggregate.kt", """
             @AggregateRoot
             class MyAggregate {
                 constructor() {}
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(KotlinAggregateConstructorInspection())
         myFixture.openFileInEditor(file)

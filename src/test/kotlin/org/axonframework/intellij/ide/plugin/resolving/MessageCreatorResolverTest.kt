@@ -23,7 +23,8 @@ import org.axonframework.intellij.ide.plugin.util.toElementText
 
 class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
     fun `test can resolve application of event during command handling`() {
-        addFile("MyComponent.kt", """
+        addFile(
+            "MyComponent.kt", """
             data class MyCommand(@TargetAggregateIdentifier id: String)
             data class MyEvent(id: String)
             
@@ -39,7 +40,8 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
                    // Do something
                 }
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
         val creators = project.creatorResolver().getCreatorsForPayload("test.MyEvent")
         Assertions.assertThat(creators).anyMatch {
             it.payload == "test.MyEvent" && it.element.toElementText() == "MyCommand" && it.containerText == null
@@ -48,7 +50,8 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
 
 
     fun `test can resolve application of event during an event sourcing handler`() {
-        addFile("MyComponent.kt", """
+        addFile(
+            "MyComponent.kt", """
             data class MyEvent(id: String)
             data class MyEvent2(id: String)
             
@@ -63,7 +66,8 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
                 fun handle(event: MyEvent2) {
                 }
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
         val creators = project.creatorResolver().getCreatorsForPayload("test.MyEvent2")
         Assertions.assertThat(creators).anyMatch {
             it.payload == "test.MyEvent2" && it.element.toElementText() == "MyEvent" && it.containerText == "Side effect of EventSourcingHandler"
@@ -72,7 +76,8 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
 
 
     fun `test can resolve dispatch of command during SagaEventHandler`() {
-        addFile("MyComponent.kt", """
+        addFile(
+            "MyComponent.kt", """
             data class MyCommand(@TargetAggregateIdentifier id: String)
             data class MyEvent(id: String)
             
@@ -93,7 +98,8 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
                }
             }
             
-        """.trimIndent())
+        """.trimIndent()
+        )
         val creators = project.creatorResolver().getCreatorsForPayload("test.MyCommand")
         Assertions.assertThat(creators).anyMatch {
             it.payload == "test.MyCommand" &&
@@ -103,7 +109,8 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
     }
 
     fun `test can resolve dispatch of command from plain components`() {
-        addFile("MyComponent.kt", """
+        addFile(
+            "MyComponent.kt", """
             data class MyCommand(@TargetAggregateIdentifier id: String)
             data class MyEvent(id: String)
             
@@ -121,7 +128,8 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
                }
             }
             
-        """.trimIndent())
+        """.trimIndent()
+        )
         val creators = project.creatorResolver().getCreatorsForPayload("test.MyCommand")
         Assertions.assertThat(creators).anyMatch {
             it.payload == "test.MyCommand" &&
@@ -131,7 +139,8 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
     }
 
     fun `test can resolve query handlers without processing group`() {
-        addFile("MyComponent.kt", """
+        addFile(
+            "MyComponent.kt", """
             data class MyQuery(id: String)
             
             class MyQueryDispatcher {
@@ -146,7 +155,8 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
                }
             }
             
-        """.trimIndent())
+        """.trimIndent()
+        )
         val creators = project.creatorResolver().getCreatorsForPayload("test.MyQuery")
         Assertions.assertThat(creators).anyMatch {
             it.payload == "test.MyQuery" &&
@@ -156,7 +166,8 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
     }
 
     fun `test can find dispatch of deadline with payload`() {
-        addFile("MyComponent.kt", """
+        addFile(
+            "MyComponent.kt", """
             import org.axonframework.deadline.DeadlineManager
             import java.time.Instant
             
@@ -170,7 +181,8 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
                     deadlineManager.schedule(Instant.now(), "my-awesome-deadline", MyDeadlineEvent("")) 
                 }
             }            
-        """.trimIndent())
+        """.trimIndent()
+        )
         val creators = project.creatorResolver().getCreatorsForPayload("my-awesome-deadline")
         Assertions.assertThat(creators).anyMatch {
             it.payload == "test.MyDeadlineEvent" &&

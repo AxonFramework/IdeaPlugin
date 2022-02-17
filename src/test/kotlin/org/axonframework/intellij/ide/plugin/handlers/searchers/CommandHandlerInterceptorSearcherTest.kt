@@ -24,7 +24,8 @@ import org.axonframework.intellij.ide.plugin.util.handlerResolver
 class CommandHandlerInterceptorSearcherTest : AbstractAxonFixtureTestCase() {
 
     fun `test can resolve command handler interceptors in aggregate`() {
-        addFile("MyAggregate.kt", """
+        addFile(
+            "MyAggregate.kt", """
             data class MyCommand(@TargetAggregateIdentifier id: String)
             
             @AggregateRoot
@@ -34,16 +35,18 @@ class CommandHandlerInterceptorSearcherTest : AbstractAxonFixtureTestCase() {
                     
                 }
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
         val handlers = project.handlerResolver().findAllHandlers()
-                .filterIsInstance<CommandHandlerInterceptor>()
+            .filterIsInstance<CommandHandlerInterceptor>()
         Assertions.assertThat(handlers).anyMatch {
             it.payload == "test.MyCommand" && it.componentName == "test.MyAggregate" && it.element.name == "intercept"
         }
     }
 
     fun `test can not resolve command handler outside of aggregates`() {
-        addFile("MyAggregate.kt", """
+        addFile(
+            "MyAggregate.kt", """
             data class MyCommand(@TargetAggregateIdentifier id: String)
             
             class MyNonAggregate {
@@ -52,9 +55,10 @@ class CommandHandlerInterceptorSearcherTest : AbstractAxonFixtureTestCase() {
                     
                 }
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
         val handlers = project.handlerResolver().findAllHandlers()
-                .filterIsInstance<CommandHandlerInterceptor>()
+            .filterIsInstance<CommandHandlerInterceptor>()
         Assertions.assertThat(handlers).isEmpty()
     }
 }

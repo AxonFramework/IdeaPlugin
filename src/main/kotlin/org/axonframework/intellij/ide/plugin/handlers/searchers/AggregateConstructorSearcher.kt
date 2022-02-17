@@ -42,17 +42,20 @@ class AggregateConstructorSearcher : AbstractHandlerSearcher(MessageHandlerType.
      */
     override fun search(project: Project): List<Handler> {
         return project.annotationResolver()
-                .getAnnotationClasses(AxonAnnotation.AGGREGATE_ROOT)
-                .flatMap { annotation ->
-                    searchAggregateConstructorsForAnnotation(annotation, project)
-                }
+            .getAnnotationClasses(AxonAnnotation.AGGREGATE_ROOT)
+            .flatMap { annotation ->
+                searchAggregateConstructorsForAnnotation(annotation, project)
+            }
     }
 
-    private fun searchAggregateConstructorsForAnnotation(annotation: ResolvedAnnotation, project: Project): List<Handler> {
+    private fun searchAggregateConstructorsForAnnotation(
+        annotation: ResolvedAnnotation,
+        project: Project
+    ): List<Handler> {
         return AnnotatedElementsSearch.searchPsiClasses(annotation.psiClass, project.axonScope()).findAll()
-                .flatMap { it.constructors.toList() }
-                .filter { !it.hasAnnotation(MessageHandlerType.COMMAND.annotationName) && it.hasParameters() }
-                .mapNotNull { createMessageHandler(it, null) }
+            .flatMap { it.constructors.toList() }
+            .filter { !it.hasAnnotation(MessageHandlerType.COMMAND.annotationName) && it.hasParameters() }
+            .mapNotNull { createMessageHandler(it, null) }
     }
 
     override fun createMessageHandler(method: PsiMethod, annotation: PsiClass?): Handler? {

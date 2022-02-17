@@ -17,7 +17,7 @@
 package org.axonframework.intellij.ide.plugin.api
 
 data class Model(
-        val name: String,
-        val entityIdPresent: Boolean,
-        val children: List<ModelChild>
+    val name: String,
+    val entityIdPresent: Boolean,
+    val children: List<ModelChild>
 )

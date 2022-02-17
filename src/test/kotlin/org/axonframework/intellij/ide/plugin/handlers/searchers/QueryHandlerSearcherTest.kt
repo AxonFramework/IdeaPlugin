@@ -23,7 +23,8 @@ import org.axonframework.intellij.ide.plugin.util.handlerResolver
 
 class QueryHandlerSearcherTest : AbstractAxonFixtureTestCase() {
     fun `test can find query handler in class without processing group`() {
-        addFile("MyComponent.kt", """
+        addFile(
+            "MyComponent.kt", """
             class MyQuery
             
             class MyComponent {
@@ -32,9 +33,10 @@ class QueryHandlerSearcherTest : AbstractAxonFixtureTestCase() {
                     
                 }
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
         val handlers = project.handlerResolver().findAllHandlers()
-                .filterIsInstance<QueryHandler>()
+            .filterIsInstance<QueryHandler>()
         Assertions.assertThat(handlers).anyMatch {
             it.payload == "test.MyQuery" && it.componentName == "test" && it.element.name == "mySpecialQueryHandler"
         }
@@ -42,7 +44,8 @@ class QueryHandlerSearcherTest : AbstractAxonFixtureTestCase() {
 
 
     fun `test can find event handler in class with processing group`() {
-        addFile("MyComponent.kt", """
+        addFile(
+            "MyComponent.kt", """
             class MyQuery
             
             @ProcessingGroup("some-processing-group")
@@ -52,9 +55,10 @@ class QueryHandlerSearcherTest : AbstractAxonFixtureTestCase() {
                     
                 }
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
         val handlers = project.handlerResolver().findAllHandlers()
-                .filterIsInstance<QueryHandler>()
+            .filterIsInstance<QueryHandler>()
         Assertions.assertThat(handlers).anyMatch {
             it.payload == "test.MyQuery" && it.componentName == "some-processing-group" && it.element.name == "mySpecialQueryHandler"
         }

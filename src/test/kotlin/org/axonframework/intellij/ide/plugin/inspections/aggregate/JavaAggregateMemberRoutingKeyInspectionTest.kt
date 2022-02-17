@@ -24,16 +24,19 @@ class JavaAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCase(
     override fun setUp() {
         super.setUp()
 
-        addFile("MyEntityWithMissingKey.kt", """
+        addFile(
+            "MyEntityWithMissingKey.kt", """
             class MyEntityWithMissingKey {
             
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     fun `test should detect missing entity id in aggregate member when is in List`() {
 
-        val file = addFile("MyAggregate.java", """
+        val file = addFile(
+            "MyAggregate.java", """
             import test.MyEntityWithMissingKey;
             import java.util.List;
             
@@ -42,7 +45,8 @@ class JavaAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCase(
                 @AggregateMember
                 private List<MyEntityWithMissingKey> entities;
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(JavaAggregateMemberRoutingKeyInspection())
         myFixture.openFileInEditor(file)
@@ -53,16 +57,19 @@ class JavaAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCase(
     }
 
     fun `test should not detect missing entity id when actually has entity id`() {
-        addFile("MyEntityWithId.java", """
+        addFile(
+            "MyEntityWithId.java", """
             import java.lang.String;
             
             class MyEntityWithId {
                 @EntityId
                 private String id;
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
-        val file = addFile("MyAggregate.java", """
+        val file = addFile(
+            "MyAggregate.java", """
             import test.MyEntityWithId;
             import java.util.List;
             
@@ -71,7 +78,8 @@ class JavaAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCase(
                 @AggregateMember
                 private List<MyEntityWithId> entities;
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(JavaAggregateMemberRoutingKeyInspection())
         myFixture.openFileInEditor(file)
@@ -82,7 +90,8 @@ class JavaAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCase(
     }
 
     fun `test should not detect missing entity id if not in collection`() {
-        val file = addFile("MyAggregate.java", """
+        val file = addFile(
+            "MyAggregate.java", """
             import test.MyEntityWithMissingKey;
             
             @AggregateRoot
@@ -90,7 +99,8 @@ class JavaAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCase(
                 @AggregateMember
                 private MyEntityWithMissingKey entity;
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(JavaAggregateMemberRoutingKeyInspection())
         myFixture.openFileInEditor(file)
@@ -101,7 +111,8 @@ class JavaAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCase(
     }
 
     fun `test should detect missing entity id in aggregate member when is in Collection`() {
-        val file = addFile("MyAggregate.java", """
+        val file = addFile(
+            "MyAggregate.java", """
             import test.MyEntityWithMissingKey;
             import java.util.Collection;
             
@@ -110,7 +121,8 @@ class JavaAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCase(
                 @AggregateMember
                 private Collection<MyEntityWithMissingKey> entities;
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(JavaAggregateMemberRoutingKeyInspection())
         myFixture.openFileInEditor(file)
@@ -121,7 +133,8 @@ class JavaAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCase(
     }
 
     fun `test should detect missing entity id in aggregate member when is in Map`() {
-        val file = addFile("MyAggregate.java", """
+        val file = addFile(
+            "MyAggregate.java", """
             import test.MyEntityWithMissingKey;
             import java.util.Map;
             import java.lang.String;
@@ -131,7 +144,8 @@ class JavaAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCase(
                 @AggregateMember
                 private Map<String, MyEntityWithMissingKey> entities;
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(JavaAggregateMemberRoutingKeyInspection())
         myFixture.openFileInEditor(file)
@@ -143,7 +157,8 @@ class JavaAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCase(
 
 
     fun `test should detect problem in entities themselves`() {
-        val file = addFile("MyMiddleEntity.java", """
+        val file = addFile(
+            "MyMiddleEntity.java", """
             import test.MyEntityWithMissingKey;
             import java.util.Map;
             import java.lang.String;
@@ -155,9 +170,11 @@ class JavaAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCase(
                 @AggregateMember
                 private Map<String, MyEntityWithMissingKey> entitiesInEntity;
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
-        addFile("MyAggregate.java", """
+        addFile(
+            "MyAggregate.java", """
             import test.MyMiddleEntity;
             import java.util.Map;
             import java.lang.String;
@@ -167,7 +184,8 @@ class JavaAggregateMemberRoutingKeyInspectionTest : AbstractAxonFixtureTestCase(
                 @AggregateMember
                 private Map<String, MyMiddleEntity> entities;
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         myFixture.enableInspections(JavaAggregateMemberRoutingKeyInspection())
         myFixture.openFileInEditor(file)

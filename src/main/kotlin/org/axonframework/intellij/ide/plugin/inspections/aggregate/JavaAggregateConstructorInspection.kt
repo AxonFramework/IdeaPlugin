@@ -31,21 +31,25 @@ import org.axonframework.intellij.ide.plugin.util.isAggregate
  * The warning can be suppressed via the normal IntelliJ actions
  */
 class JavaAggregateConstructorInspection : AbstractBaseJavaLocalInspectionTool() {
-    override fun checkClass(aClass: PsiClass, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor> {
+    override fun checkClass(
+        aClass: PsiClass,
+        manager: InspectionManager,
+        isOnTheFly: Boolean
+    ): Array<ProblemDescriptor> {
         if (!aClass.isAggregate()) {
             return emptyArray()
         }
         val isMissingEmptyConstructor = aClass.constructors.none { !it.hasParameters() }
         if (isMissingEmptyConstructor) {
             return arrayOf(
-                    manager.createProblemDescriptor(
-                            aClass,
-                            aClass.identifyingElement!!.textRangeInParent,
-                            emptyConstructorDescription,
-                            ProblemHighlightType.ERROR,
-                            isOnTheFly,
-                            SuppressFix(shortName),
-                    )
+                manager.createProblemDescriptor(
+                    aClass,
+                    aClass.identifyingElement!!.textRangeInParent,
+                    emptyConstructorDescription,
+                    ProblemHighlightType.ERROR,
+                    isOnTheFly,
+                    SuppressFix(shortName),
+                )
             )
         }
         return emptyArray()
