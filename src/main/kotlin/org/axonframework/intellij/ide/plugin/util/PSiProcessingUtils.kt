@@ -25,7 +25,6 @@ import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJvmModifiersOwner
 import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiPrimitiveType
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiWildcardType
 import com.intellij.psi.impl.source.PsiClassReferenceType
@@ -43,7 +42,6 @@ import org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.uast.UMethod
-import org.jetbrains.uast.UastErrorType
 import org.jetbrains.uast.toUElement
 
 /**
@@ -56,9 +54,7 @@ fun PsiType?.toQualifiedName(): String? = this?.let {
         // Class<SomeClass> object. Extract the <SomeClass> and call this method recursively to resolve it
         is PsiImmediateClassType -> (this.parameters.firstOrNull() as PsiClassType?)?.toQualifiedName()
         is PsiWildcardType -> "java.lang.Object"
-        is UastErrorType -> null
-        is PsiPrimitiveType -> null
-        else -> throw IllegalArgumentException("Can not handle psiType of type " + this::class.qualifiedName + ". Its text is: " + canonicalText)
+        else -> null
     }
 }
 

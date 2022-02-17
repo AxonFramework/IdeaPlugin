@@ -59,9 +59,6 @@ class DeadlinePublisherLineMarkerProvider : LineMarkerProvider {
         val handlers = element.project.handlerResolver().findAllHandlers()
             .filterIsInstance<DeadlineHandler>()
             .filter { it.deadlineName == deadlineName }
-        if (handlers.isEmpty()) {
-            return null
-        }
 
         return NavigationGutterIconBuilder.create(AxonIcons.DeadlinePublisher)
             .setPopupTitle("Axon Deadline Handlers")

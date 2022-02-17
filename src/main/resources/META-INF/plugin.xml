@@ -5,9 +5,22 @@
     <vendor url="https://axoniq.io/">AxonIQ</vendor>
 
     <description>
-        This plugin helps to navigate from and to the axon framework event handler annotations. Axon Framework helps
-        build scalable, extensible and maintainable applications by supporting developers apply the Command Query
-        Responsibility Segregation (CQRS) architectural pattern.
+        <![CDATA[
+        Supports developers while writing applications using <a href="https://axoniq.io/">Axon Framework</a>. <br/><br/>
+        Axon Framework helps build scalable, extensible and maintainable applications by supporting developers apply the Command Query
+        Responsibility Segregation (CQRS) architectural pattern.<br/><br/>
+
+        The plugin provides the following features:
+        <ul>
+        <li>Line markers to visualize commands, events, queries and deadlines</li>
+        <li>Several inspections on code structure that is required for Axon Framework</li>
+        <li>Automatic highlighting of methods that are used by Axon</li>
+        <li>Easy access to the reference guide (ctrl+shift+a and type axon)
+        </ul>
+
+        If you have a feature request, or want to reports a bug, please report this at our <a href="https://github.com/AxonFramework/IdeaPlugin/issues">Github issue tracker</a>.<br/>
+        For questions on Axon Framework usage, or about the plugin, please visit out <a href="https://discuss.axoniq.io/">Discuss</a>.
+     ]]>
     </description>
 
     <depends>com.intellij.modules.platform</depends>

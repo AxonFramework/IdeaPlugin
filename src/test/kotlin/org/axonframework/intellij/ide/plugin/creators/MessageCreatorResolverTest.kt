@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.resolving
+package org.axonframework.intellij.ide.plugin.creators
 
 import org.assertj.core.api.Assertions
 import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase

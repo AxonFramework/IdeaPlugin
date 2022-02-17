@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.deadline
+package org.axonframework.intellij.ide.plugin.handlers.searchers
 
 import org.assertj.core.api.Assertions
 import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase

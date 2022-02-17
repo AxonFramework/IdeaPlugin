@@ -76,7 +76,7 @@ class DeadlineManagerResolver(val project: Project) {
         val inheritors = ClassInheritorsSearch.search(deadlineManager, scope, true)
         return (listOf(deadlineManager) + inheritors)
             .flatMap { it.methods.toList() }
-            .filter { it.name.contains("schedule") }
+            .filter { it.name.startsWith("schedule", ignoreCase = true) }
             .filter { getDeadlineParameterIndex(it) != null }
     }
 

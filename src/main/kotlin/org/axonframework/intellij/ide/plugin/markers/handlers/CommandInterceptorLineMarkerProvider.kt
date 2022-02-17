@@ -45,10 +45,12 @@ class CommandInterceptorLineMarkerProvider : AbstractHandlerLineMarkerProvider()
         handlerType: MessageHandlerType,
         payload: String?
     ): LineMarkerInfo<*>? {
-        if (handlerType != MessageHandlerType.COMMAND_INTERCEPTOR || payload == null) {
+        if (handlerType != MessageHandlerType.COMMAND_INTERCEPTOR) {
             return null
         }
         val className = element.toUElement()?.getContainingUClass()?.qualifiedName ?: return null
+        // An interceptor without payload is fine, default to Object to match all
+        val actualPayload = payload ?: "java.lang.Object"
 
         return NavigationGutterIconBuilder.create(AxonIcons.Interceptor)
             .setPopupTitle("Commands Intercepted")
@@ -56,7 +58,7 @@ class CommandInterceptorLineMarkerProvider : AbstractHandlerLineMarkerProvider()
             .setCellRenderer(AxonCellRenderer.getInstance())
             .setTargets(NotNullLazyValue.createValue {
                 val members = element.aggregateResolver().getMemberWithSubEntities(className)
-                element.handlerResolver().findHandlersForType(payload, MessageType.COMMAND)
+                element.handlerResolver().findHandlersForType(actualPayload, MessageType.COMMAND)
                     .filterIsInstance<CommandHandler>()
                     .filter {
                         val name = it.element.toUElement()?.getContainingUClass()?.qualifiedName

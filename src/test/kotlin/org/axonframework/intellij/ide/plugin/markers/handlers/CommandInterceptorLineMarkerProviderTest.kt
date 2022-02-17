@@ -18,9 +18,10 @@ package org.axonframework.intellij.ide.plugin.markers.handlers
 
 import org.assertj.core.api.Assertions.assertThat
 import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
+import org.axonframework.intellij.ide.plugin.AxonIcons
 
 class CommandInterceptorLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
-    fun `test shows interceptor on intercepted command when is same payload`() {
+    fun `test shows marker without options on interceptor with no intercepted handlers`() {
         addFile(
             "MyAggregate.kt", """
             class MyCommand
@@ -28,21 +29,41 @@ class CommandInterceptorLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
             @AggregateRoot
             class MyAggregate {
             
-                @CommandHandlerInterceptor
+                @CommandHandlerInterceptor<caret>
+                fun intercept(command: MyCommand) {
+                }
+            }
+        """.trimIndent(), open = true
+        )
+        assertThat(hasLineMarker(CommandInterceptorLineMarkerProvider::class.java)).isTrue
+        assertThat(getLineMarkerOptions(CommandInterceptorLineMarkerProvider::class.java)).isEmpty()
+    }
+
+    fun `test shows intercepted command on interceptor in same class`() {
+        addFile(
+            "MyAggregate.kt", """
+            class MyCommand
+            
+            @AggregateRoot
+            class MyAggregate {
+            
+                @CommandHandlerInterceptor<caret>
                 fun intercept(command: MyCommand) {
                 }
                 
-                @CommandHandler<caret>
+                @CommandHandler
                 fun handle(command: MyCommand) {
                 }
             }
         """.trimIndent(), open = true
         )
-        val options = getLineMarkers(InterceptedCommandHandlerMethodLineMarkerProvider::class.java)
-        assertThat(options).anyMatch { it.text == "Command Interceptor intercept" && it.containerText == "MyAggregate" }
+        assertThat(hasLineMarker(CommandInterceptorLineMarkerProvider::class.java)).isTrue
+        assertThat(getLineMarkerOptions(CommandInterceptorLineMarkerProvider::class.java)).containsExactly(
+            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Model)
+        )
     }
 
-    fun `test shows interceptor on intercepted command when is interface of payload`() {
+    fun `test shows intercepted command when is interface of payload`() {
         addFile(
             "MyAggregate.kt", """
             interface MyCommandInterface
@@ -51,21 +72,23 @@ class CommandInterceptorLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
             @AggregateRoot
             class MyAggregate {
             
-                @CommandHandlerInterceptor
+                @CommandHandlerInterceptor<caret>
                 fun intercept(commandInterface: MyCommandInterface) {
                 }
                 
-                @CommandHandler<caret>
+                @CommandHandler
                 fun handle(command: MyCommand) {
                 }
             }
         """.trimIndent(), open = true
         )
-        val options = getLineMarkers(InterceptedCommandHandlerMethodLineMarkerProvider::class.java)
-        assertThat(options).anyMatch { it.text == "Command Interceptor intercept" && it.containerText == "MyAggregate" }
+        assertThat(hasLineMarker(CommandInterceptorLineMarkerProvider::class.java)).isTrue
+        assertThat(getLineMarkerOptions(CommandInterceptorLineMarkerProvider::class.java)).containsExactly(
+            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Model)
+        )
     }
 
-    fun `test shows interceptor on intercepted command when no payload is defined`() {
+    fun `test shows intercepted command on interceptor`() {
         addFile(
             "MyAggregate.kt", """
             interface MyCommandInterface
@@ -74,28 +97,30 @@ class CommandInterceptorLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
             @AggregateRoot
             class MyAggregate {
             
-                @CommandHandlerInterceptor
+                @CommandHandlerInterceptor<caret>
                 fun intercept() {
                 }
                 
-                @CommandHandler<caret>
+                @CommandHandler
                 fun handle(command: MyCommand) {
                 }
             }
         """.trimIndent(), open = true
         )
-        val options = getLineMarkers(InterceptedCommandHandlerMethodLineMarkerProvider::class.java)
-        assertThat(options).anyMatch { it.text == "Command Interceptor intercept" && it.containerText == "MyAggregate" }
+        assertThat(hasLineMarker(CommandInterceptorLineMarkerProvider::class.java)).isTrue
+        assertThat(getLineMarkerOptions(CommandInterceptorLineMarkerProvider::class.java)).containsExactly(
+            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Model)
+        )
     }
 
-    fun `test shows interceptor on entity command handler when parent has a matching interceptor defined`() {
+    fun `test shows intercepted entity command handler on parent aggregate command interceptor`() {
         addFile(
             "MyAggregate.kt", """
             class MyCommand 
             
             class MyEntity {
                 
-                @CommandHandler<caret>
+                @CommandHandler
                 fun handle(command: MyCommand) {
                 }
             }
@@ -106,65 +131,15 @@ class CommandInterceptorLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
                 @AggregateMember
                 private lateinit var entity: MyEntity
             
-                @CommandHandlerInterceptor
+                @CommandHandlerInterceptor<caret>
                 fun intercept() {
                 }
             }
         """.trimIndent(), open = true
         )
-        val options = getLineMarkers(InterceptedCommandHandlerMethodLineMarkerProvider::class.java)
-        assertThat(options).anyMatch { it.text == "Command Interceptor intercept" && it.containerText == "MyAggregate" }
-    }
-
-    fun `test shows no interceptor when command is in aggregate but interceptor in entity`() {
-        addFile(
-            "MyAggregate.kt", """
-            class MyCommand
-            
-            class MyEntity {
-                @CommandHandlerInterceptor
-                fun intercept() {
-                }
-            }
-            
-            @AggregateRoot
-            class MyAggregate {
-                @AggregateMember
-                private lateinit var entity: MyEntity
-                
-                @CommandHand<caret>ler
-                fun handle(command: MyCommand) {
-                }
-            }
-        """.trimIndent(), open = true
+        assertThat(hasLineMarker(CommandInterceptorLineMarkerProvider::class.java)).isTrue
+        assertThat(getLineMarkerOptions(CommandInterceptorLineMarkerProvider::class.java)).containsExactly(
+            OptionSummary("MyCommand", "MyEntity", AxonIcons.Model)
         )
-        assertThat(areNoLineMarkers(InterceptedCommandHandlerMethodLineMarkerProvider::class.java)).isTrue
-    }
-
-
-    fun `test shows no interceptor when are no interceptors`() {
-        addFile(
-            "MyAggregate.kt", """
-            interface MyCommandInterface
-            class MyCommand : MyCommandInterface
-            
-            class MyEntity {
-                @CommandHandlerInterceptor
-                fun intercept() {
-                }
-            }
-            
-            @AggregateRoot
-            class MyAggregate {
-                @AggregateMember
-                private lateinit var entity: MyEntity
-                
-                @CommandHandler<caret>
-                fun handle(command: MyCommand) {
-                }
-            }
-        """.trimIndent(), open = true
-        )
-        assertThat(areNoLineMarkers(InterceptedCommandHandlerMethodLineMarkerProvider::class.java)).isTrue
     }
 }

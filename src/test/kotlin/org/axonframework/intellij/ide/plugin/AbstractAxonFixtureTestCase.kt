@@ -102,6 +102,7 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
         "org.axonframework.modelling.saga.SagaEventHandler",
         "org.axonframework.deadline.annotation.DeadlineHandler",
         "org.axonframework.deadline.DeadlineManager",
+        "java.time.Instant",
     )
 
     /**
@@ -133,9 +134,10 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
     }
 
     /**
-     * Retrieve marker options on the current line. You can set the caretr position using `<caret>` in the files
+     * Retrieve marker options on the current line. You can set the caret position using `<caret>` in the files.
+     * Will throw if no line marker exist, please first check that with `hasLineMarker`
      */
-    fun getLineMarkers(
+    fun getLineMarkerOptions(
         clazz: Class<out LineMarkerProvider>
     ): List<OptionSummary> {
         val gutters = myFixture.findGuttersAtCaret()
@@ -151,6 +153,11 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
     fun areNoLineMarkers(clazz: Class<out LineMarkerProvider>): Boolean {
         val gutters = myFixture.findGuttersAtCaret()
         return gutters.all { getHandlerMethodMakerProviders(it, clazz) == null }
+    }
+
+    fun hasLineMarker(clazz: Class<out LineMarkerProvider>): Boolean {
+        val gutters = myFixture.findGuttersAtCaret()
+        return gutters.any { getHandlerMethodMakerProviders(it, clazz) != null }
     }
 
     private fun getHandlerMethodMakerProviders(
