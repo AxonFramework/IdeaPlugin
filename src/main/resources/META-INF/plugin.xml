@@ -14,12 +14,12 @@
         <ul>
         <li>Line markers to visualize commands, events, queries and deadlines</li>
         <li>Several inspections on code structure that is required for Axon Framework</li>
-        <li>Automatic highlighting of methods that are used by Axon</li>
+        <li>Marks methods used by Axon Framework as used, such as annotated methods</li>
         <li>Easy access to the reference guide (ctrl+shift+a and type axon)
         </ul>
 
-        If you have a feature request, or want to reports a bug, please report this at our <a href="https://github.com/AxonFramework/IdeaPlugin/issues">Github issue tracker</a>.<br/>
-        For questions on Axon Framework usage, or about the plugin, please visit out <a href="https://discuss.axoniq.io/">Discuss</a>.
+        If you have a feature request, or want to report a bug, please report this at our <a href="https://github.com/AxonFramework/IdeaPlugin/issues">Github issue tracker</a>.<br/>
+        For questions on Axon Framework usage, or about the plugin, please visit our <a href="https://discuss.axoniq.io/">Discuss</a>.
      ]]>
     </description>
 
