@@ -60,7 +60,7 @@ class DeadlinePublisherLineMarkerProvider : LineMarkerProvider {
             .filterIsInstance<DeadlineHandler>()
             .filter { it.deadlineName == deadlineName }
 
-        return NavigationGutterIconBuilder.create(AxonIcons.DeadlinePublisher)
+        return NavigationGutterIconBuilder.create(AxonIcons.Publisher)
             .setPopupTitle("Axon Deadline Handlers")
             .setTooltipText("Navigate to Axon deadline handlers")
             .setCellRenderer(AxonCellRenderer.getInstance())

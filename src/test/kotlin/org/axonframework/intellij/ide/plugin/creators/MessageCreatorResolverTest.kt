@@ -70,7 +70,7 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
         )
         val creators = project.creatorResolver().getCreatorsForPayload("test.MyEvent2")
         Assertions.assertThat(creators).anyMatch {
-            it.payload == "test.MyEvent2" && it.element.toElementText() == "MyEvent" && it.containerText == "Side effect of EventSourcingHandler"
+            it.payload == "test.MyEvent2" && it.element.toElementText() == "EventSourcingHandler MyAggregate"
         }
     }
 
@@ -103,8 +103,7 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
         val creators = project.creatorResolver().getCreatorsForPayload("test.MyCommand")
         Assertions.assertThat(creators).anyMatch {
             it.payload == "test.MyCommand" &&
-                    it.element.toElementText() == "MyEvent"
-            it.containerText == "Saga fancy-saga"
+                    it.element.toElementText() == "Saga: fancy-saga"
         }
     }
 

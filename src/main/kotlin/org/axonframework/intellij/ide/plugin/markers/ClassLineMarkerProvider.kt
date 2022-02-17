@@ -46,7 +46,7 @@ class ClassLineMarkerProvider : LineMarkerProvider {
             return null
         }
 
-        return NavigationGutterIconBuilder.create(AxonIcons.Publisher)
+        return NavigationGutterIconBuilder.create(AxonIcons.Axon)
             .setTooltipText("Navigate to message handlers and creations")
             .setCellRenderer(AxonCellRenderer.getInstance())
             .setTargets(NotNullLazyValue.createValue {

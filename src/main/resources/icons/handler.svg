@@ -1,18 +1,93 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg version="1.1" id="Layer_1" x="0px" y="0px" viewBox="149.951 149.459 201.574 202.066"
-     style="enable-background:new 0 0 500 500;" xmlns="http://www.w3.org/2000/svg">
-    <style type="text/css">
-        .st0{fill:url(#SVGID_1_);}
-        .st1{opacity:0.22;}
-        .st2{fill:#13110C;}
-        .st3{fill:#FFFFFF;}
-    </style>
-    <g>
-        <g/>
-    </g>
-    <g transform="matrix(0, -4.226881, 2.212389, 0, 223.668243, 214.307617)" style=""/>
-    <g transform="matrix(10.72053, 0, 0, 10.665902, 121.32634, 122.992493)" style="">
-        <path d="M6.25 3H17.75C19.483 3 20.8992 4.35645 20.9949 6.06558L21 6.25V17.75C21 19.483 19.6435 20.8992 17.9344 20.9949L17.75 21H6.25C4.51697 21 3.10075 19.6435 3.00514 17.9344L3 17.75V6.25C3 4.51697 4.35645 3.10075 6.06558 3.00514L6.25 3ZM8.32501 14.5H4.5V17.75C4.5 18.6682 5.20711 19.4212 6.10647 19.4942L6.25 19.5H17.75C18.6682 19.5 19.4212 18.7929 19.4942 17.8935L19.5 17.75V14.5H15.675C15.3404 16.1483 13.9247 17.404 12.2003 17.4947L12 17.5C10.253 17.5 8.78498 16.3053 8.36837 14.6884L8.32501 14.5ZM17.75 4.5H6.25C5.33183 4.5 4.57881 5.20711 4.5058 6.10647L4.5 6.25V13H9C9.3797 13 9.69349 13.2822 9.74315 13.6482L9.75 13.75C9.75 14.9926 10.7574 16 12 16C13.1909 16 14.1656 15.0748 14.2448 13.904L14.25 13.75C14.25 13.3703 14.5322 13.0565 14.8982 13.0068L15 13H19.5V6.25C19.5 5.33183 18.7929 4.57881 17.8935 4.5058L17.75 4.5ZM6.75 9.5H17.25C17.6642 9.5 18 9.83579 18 10.25C18 10.6297 17.7178 10.9435 17.3518 10.9932L17.25 11H6.75C6.33579 11 6 10.6642 6 10.25C6 9.8703 6.28215 9.55651 6.64823 9.50685L6.75 9.5H17.25H6.75ZM6.75 6.5H17.25C17.6642 6.5 18 6.83579 18 7.25C18 7.6297 17.7178 7.94349 17.3518 7.99315L17.25 8H6.75C6.33579 8 6 7.66421 6 7.25C6 6.8703 6.28215 6.55651 6.64823 6.50685L6.75 6.5H17.25H6.75Z"
-              style="fill: rgb(243, 144, 0);"/>
-    </g>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 26.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+        version="1.1"
+        id="Layer_1"
+        x="0px"
+        y="0px"
+        viewBox="0 0 430 430"
+        style="enable-background:new 0 0 1666 430;"
+        xml:space="preserve"
+        sodipodi:docname="handler.svg"
+        inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+        xmlns="http://www.w3.org/2000/svg"
+><defs
+   id="defs74397" />
+    <sodipodi:namedview
+            id="namedview74395"
+            pagecolor="#ffffff"
+            bordercolor="#666666"
+            borderopacity="1.0"
+            inkscape:pageshadow="2"
+            inkscape:pageopacity="0.0"
+            inkscape:pagecheckerboard="0"
+            showgrid="false"
+            inkscape:zoom="2.0302326"
+            inkscape:cx="118.45933"
+            inkscape:cy="214.75372"
+            inkscape:window-width="3440"
+            inkscape:window-height="1371"
+            inkscape:window-x="0"
+            inkscape:window-y="32"
+            inkscape:window-maximized="1"
+            inkscape:current-layer="Clean"/>
+    <style
+            type="text/css"
+            id="style74369">
+	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#21252B;}
+	.st1{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Shape_bot_00000100352569534222870050000010098148881650178211_);}
+	.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#FE5E00;}
+	.st3{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Shape_bot-2_00000161604097883923061390000014671746944440283819_);}
+</style>
+    <g
+            id="Axon_Framework_-_dark">
+        <g
+                id="Clean">
+		<path
+                id="DOts_copy"
+                class="st0"
+                d="m 81.504228,243.3618 c -17.7,0 -32.1,-14.4 -32.1,-32.1 0,-17.7 14.4,-32.1 32.1,-32.1 17.7,0 32.100002,14.4 32.100002,32.1 v 0 c 0,17.7 -14.400002,32.1 -32.100002,32.1 z"
+                sodipodi:nodetypes="ssssss"
+                style="fill:#fe5e00;fill-opacity:1"/>
+            <g
+                    id="Right"
+                    transform="matrix(1.7124623,0,0,1.3947855,-316.62397,-89.455399)">
+
+				<linearGradient
+                        id="Shape_bot_00000121241902988526533580000004407579460486918056_"
+                        gradientUnits="userSpaceOnUse"
+                        x1="405.47119"
+                        y1="-4792.4751"
+                        x2="281.561"
+                        y2="-4668.5649"
+                        gradientTransform="matrix(1,0,0,-1,-20,-4590)">
+				<stop
+                        offset="0"
+                        style="stop-color:#3D1700"
+                        id="stop74372"/>
+                    <stop
+                            offset="0.2"
+                            style="stop-color:#FE5E00"
+                            id="stop74374"/>
+                    <stop
+                            offset="1"
+                            style="stop-color:#FE5E00"
+                            id="stop74376"/>
+			</linearGradient>
+
+                <path
+                        id="Shape_bot"
+                        style="clip-rule:evenodd;fill:url(#Shape_bot_00000121241902988526533580000004407579460486918056_);fill-rule:evenodd"
+                        d="m 399.3,170.6 -46.6,44.9 -65.6,-65.6 c -7.2,-6.4 -13.2,-15.8 -13.2,-26.2 0,-17.7 14.3,-32.1 32,-32.1 7.8,0 15.3,2.8 21.2,8 z"/>
+                <path
+                        id="Shape_top"
+                        class="st2"
+                        d="m 429.4,214.8 c 0,8.5 -3.4,16.6 -9.4,22.7 l -92.3,92.2 c -13,12 -33.3,11.1 -45.3,-1.9 -5.4,-5.9 -8.4,-13.7 -8.4,-21.7 0,-10.8 5.2,-19.5 13.2,-26.7 L 397.6,169 l 22.5,23.4 v 0.1 c 5.9,5.8 9.3,13.9 9.3,22.3 z"/>
+		</g>
+
+	</g>
+</g>
 </svg>

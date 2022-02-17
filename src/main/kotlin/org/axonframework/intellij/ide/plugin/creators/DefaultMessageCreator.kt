@@ -20,11 +20,6 @@ import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageCreator
-import org.axonframework.intellij.ide.plugin.handlers.types.CommandHandler
-import org.axonframework.intellij.ide.plugin.handlers.types.DeadlineHandler
-import org.axonframework.intellij.ide.plugin.handlers.types.EventSourcingHandler
-import org.axonframework.intellij.ide.plugin.handlers.types.SagaEventHandler
-import org.axonframework.intellij.ide.plugin.util.toShortName
 import javax.swing.Icon
 
 /**
@@ -39,30 +34,13 @@ import javax.swing.Icon
 data class DefaultMessageCreator(
     override val element: PsiElement,
     override val payload: String,
-    override val parentHandler: Handler?
+    override val parentHandler: Handler?,
 ) : MessageCreator {
-    /**
-     * Renders the grey text next to the initial identifier.
-     *
-     * If the parent handler is EventSourcingHandler, it means that the message is published from the aggregate while
-     * an event is being applied to the source. We show a warning here that it's a side effect of it.
-     *
-     * If the parent handler is a Saga, add the Saga to qualify the event better.
-     */
-    override val containerText = when (parentHandler) {
-        is EventSourcingHandler -> "Side effect of EventSourcingHandler"
-        is SagaEventHandler -> "Saga ${parentHandler.processingGroup}"
-        is DeadlineHandler -> "Deadline ${parentHandler.deadlineName.toShortName()}"
-        else -> null
-    }
 
     /**
-     * Returns the correct icon for the creator, based on the parent handler type.
+     * Returns the correct icon for the creator
      */
-    override val icon: Icon = when (parentHandler) {
-        is CommandHandler, is EventSourcingHandler -> AxonIcons.Model
-        is SagaEventHandler -> AxonIcons.Saga
-        is DeadlineHandler -> AxonIcons.DeadlineHandler
-        else -> AxonIcons.Publisher
-    }
+    override val icon: Icon = AxonIcons.Publisher
+
+    override val containerText: String? = null
 }

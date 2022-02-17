@@ -43,7 +43,7 @@ class DeadlineHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase(
         )
         assertThat(hasLineMarker(DeadlineHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(DeadlineHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Model)
+            OptionSummary("MyCommand", null, AxonIcons.Handler)
         )
     }
 }

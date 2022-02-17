@@ -59,7 +59,7 @@ class CommandInterceptorLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
         )
         assertThat(hasLineMarker(CommandInterceptorLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommandInterceptorLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Model)
+            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Handler)
         )
     }
 
@@ -84,7 +84,7 @@ class CommandInterceptorLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
         )
         assertThat(hasLineMarker(CommandInterceptorLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommandInterceptorLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Model)
+            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Handler)
         )
     }
 
@@ -109,7 +109,7 @@ class CommandInterceptorLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
         )
         assertThat(hasLineMarker(CommandInterceptorLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommandInterceptorLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Model)
+            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Handler)
         )
     }
 
@@ -139,7 +139,7 @@ class CommandInterceptorLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
         )
         assertThat(hasLineMarker(CommandInterceptorLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommandInterceptorLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", "MyEntity", AxonIcons.Model)
+            OptionSummary("MyCommand", "MyEntity", AxonIcons.Handler)
         )
     }
 }

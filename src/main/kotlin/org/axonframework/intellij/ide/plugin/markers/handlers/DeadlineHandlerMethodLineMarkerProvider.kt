@@ -50,7 +50,7 @@ class DeadlineHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvide
         val deadlineName = method.resolveAnnotationStringValue(AxonAnnotation.DEADLINE_HANDLER, "deadlineName")
             ?: payload
             ?: return null
-        return NavigationGutterIconBuilder.create(AxonIcons.DeadlineHandler)
+        return NavigationGutterIconBuilder.create(AxonIcons.Handler)
             .setPopupTitle("Deadline Schedulers")
             .setTooltipText("Navigate to schedule invocation of this deadline")
             .setCellRenderer(AxonCellRenderer.getInstance())

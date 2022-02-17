@@ -26,11 +26,9 @@ import com.intellij.openapi.util.IconLoader
  * NOTE: They must be either an SVG or 12x12 pixels. For details, SVG is probably better.
  */
 object AxonIcons {
-    val Publisher = IconLoader.getIcon("/icons/publisher.svg", AxonIcons::class.java)
     val Handler = IconLoader.getIcon("/icons/handler.svg", AxonIcons::class.java)
-    val Saga = IconLoader.getIcon("/icons/saga.svg", AxonIcons::class.java)
-    val Model = IconLoader.getIcon("/icons/model.svg", AxonIcons::class.java)
+    val HandlerIntercepted = IconLoader.getIcon("/icons/handler_intercepted.svg", AxonIcons::class.java)
+    val Publisher = IconLoader.getIcon("/icons/publisher.svg", AxonIcons::class.java)
     val Interceptor = IconLoader.getIcon("/icons/interceptor.svg", AxonIcons::class.java)
-    val DeadlinePublisher = IconLoader.getIcon("/icons/deadline_publish.svg", AxonIcons::class.java)
-    val DeadlineHandler = IconLoader.getIcon("/icons/deadline_handler.svg", AxonIcons::class.java)
+    val Axon = IconLoader.getIcon("/META-INF/pluginIcon.svg", AxonIcons::class.java)
 }

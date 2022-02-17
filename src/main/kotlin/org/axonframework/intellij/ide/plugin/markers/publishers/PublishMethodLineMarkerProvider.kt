@@ -66,8 +66,7 @@ class PublishMethodLineMarkerProvider : LineMarkerProvider {
             // Hide DeadlineHandlers here. These are handled by a more specific LineMarkerProvider
             .filter { it !is DeadlineHandler }
         val isCommand = allHandlers.all { it.handlerType == MessageHandlerType.COMMAND }
-        val handlers =
-            allHandlers.filter { it !is CommandHandlerInterceptor || isCommand } // Only show interceptors when is a command
+        val handlers = allHandlers.filter { it !is CommandHandlerInterceptor || isCommand } // Only show interceptors when is a command
         if (handlers.isEmpty()) {
             return null
         }

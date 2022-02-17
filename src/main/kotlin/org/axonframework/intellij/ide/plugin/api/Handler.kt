@@ -17,6 +17,7 @@
 package org.axonframework.intellij.ide.plugin.api
 
 import com.intellij.psi.PsiElement
+import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.util.toShortName
 import javax.swing.Icon
 
@@ -55,12 +56,12 @@ interface Handler : PsiElementWrapper {
      *
      * @return Container text used in a line marker popup.
      */
-    fun renderContainerText(): String?
+    fun renderContainerText(): String? = null
 
     /**
      * Returns the correct icon for the handler, should be implemented by each implementor of Handler.
      *
      * @return The correct icon to be used in a line marker popup
      */
-    fun getIcon(): Icon
+    fun getIcon(): Icon = AxonIcons.Handler
 }

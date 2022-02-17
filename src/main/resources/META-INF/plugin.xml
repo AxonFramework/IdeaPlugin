@@ -8,7 +8,7 @@
         <![CDATA[
         Supports developers while writing applications using <a href="https://axoniq.io/">Axon Framework</a>. <br/><br/>
         Axon Framework helps build scalable, extensible and maintainable applications by supporting developers apply the Command Query
-        Responsibility Segregation (CQRS) architectural pattern.<br/><br/>
+        Responsibility Separation (CQRS) architectural pattern.<br/><br/>
 
         The plugin provides the following features:
         <ul>
@@ -42,8 +42,6 @@
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.DeadlineHandlerMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.ClassLineMarkerProvider"/>
-        <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.InterceptedCommandHandlerMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.publishers.PublishMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin"
@@ -56,8 +54,6 @@
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.ClassLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.publishers.DeadlinePublisherLineMarkerProvider"/>
-        <codeInsight.lineMarkerProvider language="kotlin"
-                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.InterceptedCommandHandlerMethodLineMarkerProvider"/>
 
         <!-- Project services -->
         <projectService

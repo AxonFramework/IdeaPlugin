@@ -17,7 +17,6 @@
 package org.axonframework.intellij.ide.plugin.handlers.types
 
 import com.intellij.psi.PsiMethod
-import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 
@@ -34,12 +33,6 @@ data class DeadlineHandler(
     override val handlerType: MessageHandlerType = MessageHandlerType.DEADLINE
 
     override fun renderText(): String {
-        return deadlineName
+        return "Deadline $deadlineName"
     }
-
-    override fun renderContainerText(): String? {
-        return null
-    }
-
-    override fun getIcon() = AxonIcons.DeadlineHandler
 }

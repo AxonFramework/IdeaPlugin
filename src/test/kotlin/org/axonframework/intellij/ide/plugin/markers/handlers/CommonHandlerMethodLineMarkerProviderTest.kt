@@ -119,7 +119,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MySagaTriggeringEvent", "Saga test", AxonIcons.Saga)
+            OptionSummary("Saga: test", null, AxonIcons.Handler)
         )
     }
 
@@ -154,7 +154,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MySagaTriggeringEvent", "Saga test", AxonIcons.Saga)
+            OptionSummary("Saga: test", null, AxonIcons.Handler)
         )
     }
 
@@ -180,7 +180,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Model)
+            OptionSummary("MyCommand", null, AxonIcons.Handler)
         )
     }
 
@@ -209,7 +209,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Model)
+            OptionSummary("MyCommand", null, AxonIcons.Handler)
         )
     }
 
@@ -237,7 +237,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyEventOne", "Side effect of EventSourcingHandler", AxonIcons.Model)
+            OptionSummary("EventSourcingHandler MyAggregate", null, AxonIcons.Handler)
         )
     }
 
@@ -270,7 +270,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyEventOne", "Side effect of EventSourcingHandler", AxonIcons.Model)
+            OptionSummary("EventSourcingHandler MyAggregate", null, AxonIcons.Handler)
         )
     }
 
@@ -298,7 +298,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Model)
+            OptionSummary("MyCommand", null, AxonIcons.Handler)
         )
     }
 
@@ -338,7 +338,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Model)
+            OptionSummary("MyCommand", null, AxonIcons.Handler)
         )
     }
 
@@ -367,7 +367,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Model)
+            OptionSummary("MyCommand", null, AxonIcons.Handler)
         )
     }
 }

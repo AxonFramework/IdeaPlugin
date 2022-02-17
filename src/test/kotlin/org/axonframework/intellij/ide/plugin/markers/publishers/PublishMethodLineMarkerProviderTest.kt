@@ -52,7 +52,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyEvent", "MyAggregate", AxonIcons.Model)
+            OptionSummary("EventSourcingHandler MyAggregate", null, AxonIcons.Handler)
         )
     }
 
@@ -76,7 +76,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyEvent", "MyAggregate", AxonIcons.Model)
+            OptionSummary("EventSourcingHandler MyAggregate", null, AxonIcons.Handler)
         )
     }
 
@@ -103,7 +103,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Model)
+            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Handler)
         )
     }
 
@@ -127,7 +127,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Model)
+            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Handler)
         )
     }
 
@@ -152,7 +152,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyQuery", "some-group", AxonIcons.Handler)
+            OptionSummary("some-group", null, AxonIcons.Handler)
         )
     }
 
@@ -175,7 +175,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyQuery", "test", AxonIcons.Handler)
+            OptionSummary("test", null, AxonIcons.Handler)
         )
     }
 
@@ -201,7 +201,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyEvent", "awesome-group", AxonIcons.Handler)
+            OptionSummary("Event processor", "awesome-group", AxonIcons.Handler)
         )
     }
 
@@ -226,7 +226,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyEvent", "test", AxonIcons.Handler)
+            OptionSummary("Event processor", "test", AxonIcons.Handler)
         )
     }
 }

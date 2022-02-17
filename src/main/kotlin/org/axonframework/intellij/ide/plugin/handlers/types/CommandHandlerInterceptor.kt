@@ -37,11 +37,11 @@ data class CommandHandlerInterceptor(
     override val handlerType: MessageHandlerType = MessageHandlerType.COMMAND_INTERCEPTOR
 
     override fun renderText(): String {
-        return "Command Interceptor ${element.name}"
+        return "Command Interceptor of ${componentName.toShortName()}"
     }
 
     override fun renderContainerText(): String {
-        return componentName.toShortName()
+        return element.name
     }
 
     override fun getIcon(): Icon {

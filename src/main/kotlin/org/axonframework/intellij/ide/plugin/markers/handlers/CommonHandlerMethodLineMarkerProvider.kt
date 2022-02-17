@@ -23,8 +23,11 @@ import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
+import org.axonframework.intellij.ide.plugin.api.MessageType
+import org.axonframework.intellij.ide.plugin.handlers.types.CommandHandlerInterceptor
 import org.axonframework.intellij.ide.plugin.markers.AxonCellRenderer
 import org.axonframework.intellij.ide.plugin.util.creatorResolver
+import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 
 /**
@@ -39,15 +42,25 @@ class CommonHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvider(
         if (handlerType == MessageHandlerType.DEADLINE || handlerType == MessageHandlerType.COMMAND_INTERCEPTOR || payload == null) {
             return null
         }
-        return NavigationGutterIconBuilder.create(AxonIcons.Handler)
+
+        val interceptingElements = if (handlerType == MessageHandlerType.COMMAND) {
+            element.handlerResolver().findHandlersForType(payload, MessageType.COMMAND, true)
+                .filterIsInstance<CommandHandlerInterceptor>()
+                .sortedWith(sortingByDisplayName())
+                .map { it.element }
+        } else emptyList()
+
+        val icon = if (interceptingElements.isEmpty()) AxonIcons.Handler else AxonIcons.HandlerIntercepted
+        return NavigationGutterIconBuilder.create(icon)
             .setPopupTitle("Payload Creators")
             .setTooltipText("Navigate to creation of message payload")
             .setCellRenderer(AxonCellRenderer.getInstance())
             .setTargets(NotNullLazyValue.createValue {
-                element.creatorResolver().getCreatorsForPayload(payload)
+                val creatingElements = element.creatorResolver().getCreatorsForPayload(payload)
                     .distinctBy { it.parentHandler }
                     .sortedWith(sortingByDisplayName())
                     .map { it.element }
+                interceptingElements + creatingElements
             })
             .setAlignment(GutterIconRenderer.Alignment.LEFT)
             .setEmptyPopupText("No creators of this message payload were found")

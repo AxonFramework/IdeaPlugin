@@ -34,7 +34,7 @@ data class QueryHandler(
 ) : Handler {
     override val handlerType: MessageHandlerType = MessageHandlerType.QUERY
 
-    override fun renderContainerText(): String {
+    override fun renderText(): String {
         return componentName
     }
 

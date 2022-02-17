@@ -140,7 +140,7 @@ class DeadlinePublisherLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
         )
         assertThat(hasLineMarker(DeadlinePublisherLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(DeadlinePublisherLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("my_special_deadline", null, AxonIcons.DeadlineHandler)
+            OptionSummary("Deadline my_special_deadline", null, AxonIcons.Handler)
         )
     }
 
@@ -164,7 +164,7 @@ class DeadlinePublisherLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
         )
         assertThat(hasLineMarker(DeadlinePublisherLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(DeadlinePublisherLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("my_special_deadline", null, AxonIcons.DeadlineHandler)
+            OptionSummary("Deadline my_special_deadline", null, AxonIcons.Handler)
         )
     }
 }
