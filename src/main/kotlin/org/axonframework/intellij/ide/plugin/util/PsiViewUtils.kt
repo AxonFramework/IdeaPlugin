@@ -16,6 +16,7 @@
 
 package org.axonframework.intellij.ide.plugin.util
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.PsiElementWrapper
@@ -62,6 +63,10 @@ fun PsiElement.toElementText(): String {
     val methodParent = toUElement()?.getParentOfType<UMethod>()
     if (methodParent != null) {
         return methodParent.containingClassname() + "." + methodParent.name
+    }
+
+    if (this is PsiClass) {
+        return this.name ?: this.containingFile.name
     }
 
     return this.containingFile.name

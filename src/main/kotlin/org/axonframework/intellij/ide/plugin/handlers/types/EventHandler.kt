@@ -19,6 +19,7 @@ package org.axonframework.intellij.ide.plugin.handlers.types
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
+import org.axonframework.intellij.ide.plugin.util.containingClassname
 
 /**
  * Represents a method being able to handle an event. There are more specific event handlers (`EventSourcingHandler` and
@@ -39,7 +40,7 @@ data class EventHandler(
     override val handlerType: MessageHandlerType = MessageHandlerType.EVENT
 
     override fun renderText(): String {
-        return "Event processor"
+        return element.containingClassname().ifEmpty { "Event Processor" }
     }
 
     override fun renderContainerText(): String {

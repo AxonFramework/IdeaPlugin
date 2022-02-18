@@ -44,6 +44,15 @@ class AggregateStructureResolver(private val project: Project) {
 
     fun getFlattendedModelsAndEntities(): List<Model> = getModels().flatMap { it.flatten() }
 
+    fun getAllModelsRelatedToName(name: String): List<Model> {
+        getMemberForName(name) ?: return emptyList()
+        return getModels().firstOrNull { it.contains(name) }?.flatten() ?: emptyList()
+    }
+
+    private fun Model.contains(name: String): Boolean {
+        return this.name == name || children.any { child -> child.member.contains(name) }
+    }
+
     fun getMemberForName(name: String): Model? {
         return getFlattendedModelsAndEntities().firstOrNull { it.name == name }
     }

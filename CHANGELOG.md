@@ -2,11 +2,23 @@
 
 # Axon Framework plugin Changelog
 
-## [Unreleased]
+## [0.3.0]
+
+### Fixed
+
+- Ghost line marker on aggregate constructors
+- Fixed event handlers showing as "Event Processor". They will now show the name of the containing class
 
 ### Added
 
-## [1.0.0]
+- Line marker on aggregate members to easily related models with the aggregate model hierarchy.
+
+## [0.2.0]
+
+### Changed
+
+- New icons added based on the new logo
+- Intercepted command handlers now have their own icon
 
 ### Added
 
