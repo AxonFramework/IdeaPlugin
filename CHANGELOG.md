@@ -2,6 +2,12 @@
 
 # Axon Framework plugin Changelog
 
+## [0.4.0]
+
+### Fixed
+
+- Fixed issue with deadline cancel methods not always being detected correctly.
+
 ## [0.3.0]
 
 ### Fixed

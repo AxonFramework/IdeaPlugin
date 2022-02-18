@@ -35,6 +35,8 @@ import org.jetbrains.uast.getUParentForIdentifier
 
 /**
  * Provides a gutter icon on class declarations of types which are used in handlers.
+ *
+ * Alternatively, if the class is part of an aggregate(-member) hierarchy, show an icon to navigate to all handlers in the hierarcy.
  */
 class ClassLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {

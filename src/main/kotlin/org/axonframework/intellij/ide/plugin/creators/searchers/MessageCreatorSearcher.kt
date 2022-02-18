@@ -16,6 +16,13 @@
 
 package org.axonframework.intellij.ide.plugin.creators.searchers
 
+
+/**
+ * Tasked to find creations of messages. Returns a list of result which is combined by
+ * the `MessageCreationResolver`.
+ *
+ * @see org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
+ */
 interface MessageCreatorSearcher {
     fun findByPayload(payload: String): List<CreatorSearchResult>
     fun findAll(): List<CreatorSearchResult>

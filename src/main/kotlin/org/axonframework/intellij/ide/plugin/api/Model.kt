@@ -16,8 +16,23 @@
 
 package org.axonframework.intellij.ide.plugin.api
 
+/**
+ * Represents a model in the Aggregate hierarchy. Can be the Aggregate root (top-level)
+ * or an aggregate member.
+ * Is used by inspections and line markers.
+ */
 data class Model(
     val name: String,
     val entityIdPresent: Boolean,
     val children: List<ModelChild>
+)
+
+/**
+ * Models the child of a Model with additional information, such as if it's in a collection.
+ * Used by inspections mostly, to determine warnings.
+ */
+data class ModelChild(
+    val fieldName: String,
+    val member: Model,
+    val isCollection: Boolean
 )

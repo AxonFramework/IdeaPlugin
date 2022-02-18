@@ -44,7 +44,7 @@ class CommandHandlerInterceptorSearcherTest : AbstractAxonFixtureTestCase() {
         }
     }
 
-    fun `test can not resolve command handler outside of aggregates`() {
+    fun `test does not resolve command handler interceptor outside of aggregates`() {
         addFile(
             "MyAggregate.kt", """
             data class MyCommand(@TargetAggregateIdentifier id: String)

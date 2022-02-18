@@ -18,6 +18,11 @@ package org.axonframework.intellij.ide.plugin.creators.searchers
 
 import com.intellij.psi.PsiElement
 
+/**
+ * Search result of a `MessageCreatorSearcher`.
+ *
+ * @see MessageCreatorSearcher
+ */
 data class CreatorSearchResult(
     val payload: String,
     val element: PsiElement,

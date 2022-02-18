@@ -42,7 +42,7 @@ import org.jetbrains.uast.toUElement
 import org.jetbrains.uast.toUElementOfType
 
 /**
- * Shows a gutter icon whenever a called method matches one of the deadline schedule methods.
+ * Shows a gutter icon whenever a called method matches one of the deadline schedule or cancel methods.
  *
  * @see DeadlineHandler
  * @see org.axonframework.intellij.ide.plugin.resolving.DeadlineManagerResolver

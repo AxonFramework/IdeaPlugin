@@ -23,6 +23,11 @@ import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.javaFacade
 
+/**
+ * Finds constructors of a payload. Takes inheritance into account in a limited way, based on defined
+ * handlers in the application.
+ *
+ */
 class ConstructorMessageCreatorSearcher(val project: Project) : MessageCreatorSearcher {
     private val handlerResolver = project.handlerResolver()
     private val psiFacade = project.javaFacade()

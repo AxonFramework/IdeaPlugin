@@ -21,7 +21,7 @@ import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
 import org.axonframework.intellij.ide.plugin.util.creatorResolver
 
 class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
-    fun `test can find creator of deadline based on the default Axon interface in kotlin`() {
+    fun `test can find creator of deadline based on the default DeadlineManager_schedule in kotlin`() {
         val file = addFile(
             "MyAggregate.kt", """      
             import java.time.Instant
@@ -34,9 +34,27 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
                 fun handle(command: MyCommand, deadlineManager: DeadlineManager) {
                     deadlineManager.schedule(Instant.now(), "my_special_deadline")
                 }
-                
-                @DeadlineHandler("my_special_deadline")
-                fun handle() {
+            }
+        """.trimIndent()
+        )
+        myFixture.openFileInEditor(file)
+        val creators = project.creatorResolver().resolveAllCreators()
+        assertThat(creators).anyMatch {
+            it.payload == "my_special_deadline"
+        }
+    }
+
+    fun `test can find creator of deadline based on the default DeadlineManager_cancelSchedule in kotlin`() {
+        val file = addFile(
+            "MyAggregate.kt", """ 
+            
+            class MyCommand
+            
+            @AggregateRoot
+            class MyAggregate {
+                @CommandHandler
+                fun handle(command: MyCommand, deadlineManager: DeadlineManager) {
+                    deadlineManager.cancelSchedule("my_special_deadline", "id")
                 }
             }
         """.trimIndent()
@@ -48,7 +66,7 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
         }
     }
 
-    fun `test can find creator of deadline based on custom manager in kotlin`() {
+    fun `test can find creator of deadline based on CustomManager_schedule in kotlin`() {
         addFile(
             "MyDeadlineManager.kt", """
             class MyDeadlineManager : DeadlineManager {
@@ -68,11 +86,7 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
             class MyAggregate {
                 @CommandHandler
                 fun handle(command: MyCommand, deadlineManager: MyDeadlineManager) {
-                    deadlineManager.schedule("my_special_deadline")
-                }
-                
-                @DeadlineHandler(deadlineName = "my_special_deadline")
-                fun handle() {
+                    deadlineManager.scheduleInMyOwnVeryInterestingWay("my_special_deadline")
                 }
             }
         """.trimIndent()
@@ -84,7 +98,39 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
         }
     }
 
-    fun `test can find creator of deadline based on the default Axon interface in java`() {
+    fun `test can find creator of deadline based on CustomManager_cancel in kotlin`() {
+        addFile(
+            "MyDeadlineManager.kt", """
+            class MyDeadlineManager : DeadlineManager {
+                fun cancelInMyOwnVeryInterestingWay(deadlineName: String) {
+                    
+                }
+            }
+        """.trimIndent()
+        )
+        val file = addFile(
+            "MyAggregate.kt", """      
+            import test.MyDeadlineManager
+            
+            class MyCommand
+            
+            @AggregateRoot
+            class MyAggregate {
+                @CommandHandler
+                fun handle(command: MyCommand, deadlineManager: MyDeadlineManager) {
+                    deadlineManager.cancelInMyOwnVeryInterestingWay("my_special_deadline")
+                }
+            }
+        """.trimIndent()
+        )
+        myFixture.openFileInEditor(file)
+        val creators = project.creatorResolver().resolveAllCreators()
+        assertThat(creators).anyMatch {
+            it.payload == "my_special_deadline"
+        }
+    }
+
+    fun `test can find creator of deadline based on the DeadlineManager_schedule in java`() {
         val file = addFile(
             "MyAggregate.java", """      
             import test.MyCommand;
@@ -96,9 +142,106 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
                 public void handle(MyCommand command, DeadlineManager deadlineManager) {
                     deadlineManager.schedule(Instant.now(), "my_special_deadline");
                 }
-                
-                @DeadlineHandler(deadlineName = "my_special_deadline")
-                public void handle() { 
+            }
+        """.trimIndent()
+        )
+        addFile(
+            "MyCommand.java", """
+            class MyCommand {
+            }
+        """.trimIndent()
+        )
+        myFixture.openFileInEditor(file)
+        val creators = project.creatorResolver().resolveAllCreators()
+        assertThat(creators).anyMatch {
+            it.payload == "my_special_deadline"
+        }
+    }
+
+    fun `test can find creator of deadline based on the CustomManager_schedule in java`() {
+        addFile(
+            "CustomManager.java", """
+            public class CustomManager implements DeadlineManager {
+                public void scheduleInMyOwnInterestingWay(String deadlineName) {
+                }
+            }
+        """.trimIndent()
+        )
+        val file = addFile(
+            "MyAggregate.java", """      
+            import test.MyCommand;
+            import test.CustomManager;
+            
+            @AggregateRoot
+            public class MyAggregate {
+                @CommandHandler
+                public void handle(MyCommand command, CustomManager deadlineManager) {
+                    deadlineManager.scheduleInMyOwnInterestingWay("my_special_deadline");
+                }
+            }
+        """.trimIndent()
+        )
+        addFile(
+            "MyCommand.java", """
+            class MyCommand {
+            }
+        """.trimIndent()
+        )
+        myFixture.openFileInEditor(file)
+        val creators = project.creatorResolver().resolveAllCreators()
+        assertThat(creators).anyMatch {
+            it.payload == "my_special_deadline"
+        }
+    }
+
+    fun `test can find creator of deadline based on the DeadlineManager_cancelSchedule in java`() {
+        val file = addFile(
+            "MyAggregate.java", """      
+            import test.MyCommand;
+            import java.time.Instant;
+            
+            @AggregateRoot
+            public class MyAggregate {
+                @CommandHandler
+                public void handle(MyCommand command, DeadlineManager deadlineManager) {
+                    deadlineManager.cancelSchedule("my_special_deadline", "id");
+                }
+            }
+        """.trimIndent()
+        )
+        addFile(
+            "MyCommand.java", """
+            class MyCommand {
+            }
+        """.trimIndent()
+        )
+        myFixture.openFileInEditor(file)
+        val creators = project.creatorResolver().resolveAllCreators()
+        assertThat(creators).anyMatch {
+            it.payload == "my_special_deadline"
+        }
+    }
+
+
+    fun `test can find creator of deadline based on the CustomManager_cancel in java`() {
+        addFile(
+            "CustomManager.java", """
+            public class CustomManager implements DeadlineManager {
+                public void cancelInMyOwnInterestingWay(String deadlineName) {
+                }
+            }
+        """.trimIndent()
+        )
+        val file = addFile(
+            "MyAggregate.java", """      
+            import test.MyCommand;
+            import test.CustomManager;
+            
+            @AggregateRoot
+            public class MyAggregate {
+                @CommandHandler
+                public void handle(MyCommand command, CustomManager deadlineManager) {
+                    deadlineManager.cancelInMyOwnInterestingWay("my_special_deadline");
                 }
             }
         """.trimIndent()

@@ -38,8 +38,11 @@ import org.axonframework.intellij.ide.plugin.util.javaFacade
  * default.
  * This method resolves all allowed possible method calls. For it to take class into account:
  * - It has to be an implementor of the `DeadlineManager` interface
- * - the name has to contain `schedule` (`scheduleBasedOnCronjob` is also fine)
- * - One of the parameters has to be named `deadlineName` of type string
+ * - the name has to start with `schedule` or `cancel`
+ * - There is a String parameter
+ * The first String parameter is registered as the deadline name.
+ *
+ * Methods that cancel deadlines are also seen as message creators, to link all related actions to the deadline handler.
  *
  * We differentiate between managers found in libraries, which are scanned once every library change.
  * We do this by listening the PROJECT_ROOTS topic of IntelliJ.
@@ -52,6 +55,9 @@ import org.axonframework.intellij.ide.plugin.util.javaFacade
  */
 class DeadlineManagerResolver(val project: Project) {
     private val libraryCache = LibraryDeadlineCache()
+    private val deadlineManagerClass = project.createCachedValue {
+        project.javaFacade().findClass("org.axonframework.deadline.DeadlineManager", project.allScope())
+    }
     private val deadlineScheduleCache = project.createCachedValue {
         PerformanceRegistry.measure("DeadlineManagerResolver.computeSchedule") { computeDeadlineScheduleMethods() }
     }
@@ -80,31 +86,22 @@ class DeadlineManagerResolver(val project: Project) {
             .distinct()
     }
 
-    private fun scanForSchedulers(scope: GlobalSearchScope): List<PsiMethod> {
-        val deadlineManager =
-            project.javaFacade().findClass("org.axonframework.deadline.DeadlineManager", project.allScope())
-                ?: return emptyList()
-        val inheritors = ClassInheritorsSearch.search(deadlineManager, scope, true)
-        return (listOf(deadlineManager) + inheritors)
-            .flatMap { it.methods.toList() }
-            .filter { it.name.startsWith("schedule", ignoreCase = true) }
-            .filter { getDeadlineParameterIndex(it) != null }
-    }
+    private fun scanForSchedulers(scope: GlobalSearchScope): List<PsiMethod> = scanForMethodsStartingWith(scope, "schedule")
+    private fun scanForCancelMethods(scope: GlobalSearchScope): List<PsiMethod> = scanForMethodsStartingWith(scope, "cancel")
 
-    private fun scanForCancelMethods(scope: GlobalSearchScope): List<PsiMethod> {
-        val deadlineManager =
-            project.javaFacade().findClass("org.axonframework.deadline.DeadlineManager", project.allScope())
-                ?: return emptyList()
+    private fun scanForMethodsStartingWith(scope: GlobalSearchScope, text: String): List<PsiMethod> {
+        val deadlineManager = deadlineManagerClass.value ?: return emptyList()
         val inheritors = ClassInheritorsSearch.search(deadlineManager, scope, true)
         return (listOf(deadlineManager) + inheritors)
             .flatMap { it.methods.toList() }
-            .filter { it.name.startsWith("cancel", ignoreCase = true) }
+            .filter { it.name.startsWith(text, ignoreCase = true) }
             .filter { getDeadlineParameterIndex(it) != null }
+
     }
 
     fun getDeadlineParameterIndex(method: PsiMethod): Int? {
         val matchingParam = method.parameterList.parameters
-            .firstOrNull { p -> p.name == "deadlineName" && p.type.canonicalText == "java.lang.String" }
+            .firstOrNull { p -> p.type.canonicalText == "java.lang.String" }
             ?: return null
         return method.parameterList.getParameterIndex(matchingParam)
     }

@@ -95,6 +95,27 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).isEmpty()
     }
 
+    fun `test marks command handler as intercepted when command interceptor matches`() {
+        addFile(
+            "MyAggregate.java", """
+            @AggregateRoot
+            class MyAggregate {
+               @CommandHandler<caret>
+               public MyAggregate(MyCommand command) {
+               }
+               
+               @CommandHandlerInterceptor
+               fun intercept() {}
+            }
+        """.trimIndent(), open = true
+        )
+
+        assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
+        assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
+            OptionSummary("Command Interceptor of MyAggregate", "intercept", AxonIcons.Interceptor)
+        )
+    }
+
     fun `test shows command created by saga in command handler marker in kotlin`() {
         addFile(
             "MyAggregate.kt", """
