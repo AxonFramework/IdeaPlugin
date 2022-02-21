@@ -17,7 +17,6 @@
 package org.axonframework.intellij.ide.plugin.markers.handlers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
-import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
@@ -26,6 +25,7 @@ import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.api.MessageType
 import org.axonframework.intellij.ide.plugin.handlers.types.CommandHandler
 import org.axonframework.intellij.ide.plugin.markers.AxonCellRenderer
+import org.axonframework.intellij.ide.plugin.markers.AxonGutterIconBuilder
 import org.axonframework.intellij.ide.plugin.util.aggregateResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
@@ -52,7 +52,7 @@ class CommandInterceptorLineMarkerProvider : AbstractHandlerLineMarkerProvider()
         // An interceptor without payload is fine, default to Object to match all
         val actualPayload = payload ?: "java.lang.Object"
 
-        return NavigationGutterIconBuilder.create(AxonIcons.Interceptor)
+        return AxonGutterIconBuilder(AxonIcons.Interceptor)
             .setPopupTitle("Commands Intercepted")
             .setTooltipText("Navigate to command handlers that are intercepted")
             .setCellRenderer(AxonCellRenderer.getInstance())

@@ -2,6 +2,12 @@
 
 # Axon Framework plugin Changelog
 
+## [0.4.2]
+
+### Changed
+
+- Always show popup for references, even if there is only one.
+
 ## [0.4.1]
 
 ### Changed

@@ -18,7 +18,6 @@ package org.axonframework.intellij.ide.plugin.markers.publishers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
-import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.NotNullLazyValue
@@ -28,6 +27,7 @@ import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.handlers.types.CommandHandlerInterceptor
 import org.axonframework.intellij.ide.plugin.handlers.types.DeadlineHandler
 import org.axonframework.intellij.ide.plugin.markers.AxonCellRenderer
+import org.axonframework.intellij.ide.plugin.markers.AxonGutterIconBuilder
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
@@ -70,7 +70,7 @@ class PublishMethodLineMarkerProvider : LineMarkerProvider {
         if (handlers.isEmpty()) {
             return null
         }
-        return NavigationGutterIconBuilder.create(AxonIcons.Publisher)
+        return AxonGutterIconBuilder(AxonIcons.Publisher)
             .setPopupTitle("Axon Message Handlers")
             .setTooltipText("Navigate to Axon message handlers")
             .setCellRenderer(AxonCellRenderer.getInstance())

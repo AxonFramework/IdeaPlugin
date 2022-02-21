@@ -17,7 +17,6 @@
 package org.axonframework.intellij.ide.plugin.markers.handlers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
-import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
@@ -25,6 +24,7 @@ import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.markers.AxonCellRenderer
+import org.axonframework.intellij.ide.plugin.markers.AxonGutterIconBuilder
 import org.axonframework.intellij.ide.plugin.util.deadlineReferenceResolver
 import org.axonframework.intellij.ide.plugin.util.resolveAnnotationStringValue
 import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
@@ -50,7 +50,7 @@ class DeadlineHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvide
         val deadlineName = method.resolveAnnotationStringValue(AxonAnnotation.DEADLINE_HANDLER, "deadlineName")
             ?: payload
             ?: return null
-        return NavigationGutterIconBuilder.create(AxonIcons.Handler)
+        return AxonGutterIconBuilder(AxonIcons.Handler)
             .setPopupTitle("Deadline Schedulers")
             .setTooltipText("Navigate to schedule invocation of this deadline")
             .setCellRenderer(AxonCellRenderer.getInstance())

@@ -17,7 +17,6 @@
 package org.axonframework.intellij.ide.plugin.markers.handlers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
-import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
@@ -26,6 +25,7 @@ import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.api.MessageType
 import org.axonframework.intellij.ide.plugin.handlers.types.CommandHandlerInterceptor
 import org.axonframework.intellij.ide.plugin.markers.AxonCellRenderer
+import org.axonframework.intellij.ide.plugin.markers.AxonGutterIconBuilder
 import org.axonframework.intellij.ide.plugin.util.creatorResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
@@ -51,7 +51,7 @@ class CommonHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvider(
         } else emptyList()
 
         val icon = if (interceptingElements.isEmpty()) AxonIcons.Handler else AxonIcons.HandlerIntercepted
-        return NavigationGutterIconBuilder.create(icon)
+        return AxonGutterIconBuilder(icon)
             .setPopupTitle("Payload Creators")
             .setTooltipText("Navigate to creators of $payload")
             .setCellRenderer(AxonCellRenderer.getInstance())
