@@ -20,8 +20,6 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.PsiElementWrapper
-import org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
-import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.getParentOfType
 import org.jetbrains.uast.toUElement
@@ -47,29 +45,33 @@ fun String.toShortName() = split(".").last()
  *
  * @see org.axonframework.intellij.ide.plugin.markers.AxonCellRenderer
  */
-fun PsiElement.toElementText(): String {
-    val handlerResolver = project.getService(MessageHandlerResolver::class.java)
-    val handler = handlerResolver.findHandlerByElement(this)
+fun PsiElement.toElementText(): String = cacheData("Axon_elementText") {
+    val handler = handlerResolver().findHandlerByElement(this)
     if (handler != null) {
-        return handler.renderText()
+        return@cacheData handler.renderText()
     }
 
-    val creatorResolver = project.getService(MessageCreationResolver::class.java)
-    val creator = creatorResolver.findCreatorByElement(this)
+    val creator = creatorResolver().findCreatorByElement(this)
     if (creator?.parentHandler != null) {
-        return creator.parentHandler!!.renderText()
+        return@cacheData creator.parentHandler!!.renderText()
+    }
+
+    val deadlineResolver = deadlineReferenceResolver()
+    val deadline = deadlineResolver.findByElement(this)
+    if (deadline?.parentHandler != null) {
+        return@cacheData deadline.parentHandler!!.renderText()
     }
 
     val methodParent = toUElement()?.getParentOfType<UMethod>()
     if (methodParent != null) {
-        return methodParent.containingClassname() + "." + methodParent.name
+        return@cacheData methodParent.containingClassname() + "." + methodParent.name
     }
 
     if (this is PsiClass) {
-        return this.name ?: this.containingFile.name
+        return@cacheData this.name ?: this.containingFile.name
     }
 
-    return this.containingFile.name
+    return@cacheData this.containingFile.name
 }
 
 /**
@@ -77,14 +79,12 @@ fun PsiElement.toElementText(): String {
  *
  * @see org.axonframework.intellij.ide.plugin.markers.AxonCellRenderer
  */
-fun PsiElement.toContainerText(): String? {
-    val handlerResolver = project.getService(MessageHandlerResolver::class.java)
-
-    val handler = handlerResolver.findHandlerByElement(this)
+fun PsiElement.toContainerText(): String? = cacheData("Axon_containerText") {
+    val handler = handlerResolver().findHandlerByElement(this)
     if (handler != null) {
-        return handler.renderContainerText()
+        return@cacheData handler.renderContainerText()
     }
-    return null
+    return@cacheData null
 }
 
 /**
@@ -92,14 +92,18 @@ fun PsiElement.toContainerText(): String? {
  *
  * @see org.axonframework.intellij.ide.plugin.markers.AxonCellRenderer
  */
-fun PsiElement.toIcon(): Icon {
-    val handler = project.getService(MessageHandlerResolver::class.java).findHandlerByElement(this)
+fun PsiElement.toIcon(): Icon = cacheData("Axon_icon") {
+    val handler = handlerResolver().findHandlerByElement(this)
     if (handler != null) {
-        return handler.getIcon()
+        return@cacheData handler.getIcon()
     }
-    val creator = project.getService(MessageCreationResolver::class.java).findCreatorByElement(this)
+    val creator = creatorResolver().findCreatorByElement(this)
     if (creator != null) {
-        return creator.parentHandler?.getIcon() ?: creator.icon
+        return@cacheData creator.parentHandler?.getIcon() ?: creator.icon
     }
-    return AxonIcons.Axon
+    val deadline = deadlineReferenceResolver().findByElement(this)
+    if (deadline?.parentHandler != null) {
+        return@cacheData deadline.parentHandler?.getIcon() ?: deadline.icon
+    }
+    return@cacheData AxonIcons.Axon
 }

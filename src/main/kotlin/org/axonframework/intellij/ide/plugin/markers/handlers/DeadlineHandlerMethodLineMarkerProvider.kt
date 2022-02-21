@@ -25,7 +25,7 @@ import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.markers.AxonCellRenderer
-import org.axonframework.intellij.ide.plugin.util.creatorResolver
+import org.axonframework.intellij.ide.plugin.util.deadlineReferenceResolver
 import org.axonframework.intellij.ide.plugin.util.resolveAnnotationStringValue
 import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 import org.jetbrains.uast.UAnnotation
@@ -55,7 +55,7 @@ class DeadlineHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvide
             .setTooltipText("Navigate to schedule invocation of this deadline")
             .setCellRenderer(AxonCellRenderer.getInstance())
             .setTargets(NotNullLazyValue.createValue {
-                val publishingElements = element.creatorResolver().getCreatorsForPayload(deadlineName)
+                val publishingElements = element.deadlineReferenceResolver().findByDeadlineName(deadlineName)
                     .distinctBy { it.parentHandler }
                     .sortedWith(sortingByDisplayName())
                     .map { it.element }

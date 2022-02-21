@@ -28,7 +28,7 @@ import com.intellij.psi.util.elementType
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.handlers.types.DeadlineHandler
 import org.axonframework.intellij.ide.plugin.markers.AxonCellRenderer
-import org.axonframework.intellij.ide.plugin.util.deadlineResolver
+import org.axonframework.intellij.ide.plugin.util.deadlineMethodResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.lexer.KtToken
@@ -45,7 +45,7 @@ import org.jetbrains.uast.toUElementOfType
  * Shows a gutter icon whenever a called method matches one of the deadline schedule or cancel methods.
  *
  * @see DeadlineHandler
- * @see org.axonframework.intellij.ide.plugin.resolving.DeadlineManagerResolver
+ * @see org.axonframework.intellij.ide.plugin.resolving.DeadlineMethodResolver
  * @see org.axonframework.intellij.ide.plugin.creators.searchers.DeadlineMessageCreatorSearcher
  */
 class DeadlinePublisherLineMarkerProvider : LineMarkerProvider {
@@ -79,14 +79,14 @@ class DeadlinePublisherLineMarkerProvider : LineMarkerProvider {
         }
         val parent = PsiTreeUtil.findFirstParent(element) { it is KtNameReferenceExpression } ?: return null
         val methodCall = element.toUElement()?.getParentOfType<UCallExpression>() ?: return null
-        val methods = element.deadlineResolver().getAllReferencedMethods()
+        val methods = element.deadlineMethodResolver().getAllReferencedMethods()
         val matchingMethods = methods.filter { method ->
             parent.references.any { reference ->
                 reference.isReferenceTo(method)
             }
         }
         if (matchingMethods.isNotEmpty()) {
-            val parameterIndex = element.deadlineResolver().getDeadlineParameterIndex(matchingMethods[0]) ?: return null
+            val parameterIndex = element.deadlineMethodResolver().getDeadlineParameterIndex(matchingMethods[0]) ?: return null
             return methodCall.valueArguments[parameterIndex].evaluateString()
         }
         return null
@@ -97,9 +97,9 @@ class DeadlinePublisherLineMarkerProvider : LineMarkerProvider {
             ?.getParentOfType(UCallExpression::class.java, true, USimpleNameReferenceExpression::class.java)
             ?: return null
         val referencedMethod = methodCall.resolve() ?: return null
-        val methods = element.deadlineResolver().getAllReferencedMethods()
+        val methods = element.deadlineMethodResolver().getAllReferencedMethods()
         if (methods.contains(referencedMethod)) {
-            val parameterIndex = element.deadlineResolver().getDeadlineParameterIndex(referencedMethod) ?: return null
+            val parameterIndex = element.deadlineMethodResolver().getDeadlineParameterIndex(referencedMethod) ?: return null
             return methodCall.valueArguments[parameterIndex].evaluateString()
         }
         return null

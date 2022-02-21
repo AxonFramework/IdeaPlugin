@@ -18,7 +18,7 @@ package org.axonframework.intellij.ide.plugin.creators
 
 import org.assertj.core.api.Assertions.assertThat
 import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
-import org.axonframework.intellij.ide.plugin.util.creatorResolver
+import org.axonframework.intellij.ide.plugin.util.deadlineReferenceResolver
 
 class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
     fun `test can find creator of deadline based on the default DeadlineManager_schedule in kotlin`() {
@@ -38,7 +38,7 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
         """.trimIndent()
         )
         myFixture.openFileInEditor(file)
-        val creators = project.creatorResolver().resolveAllCreators()
+        val creators = project.deadlineReferenceResolver().findAll()
         assertThat(creators).anyMatch {
             it.payload == "my_special_deadline"
         }
@@ -60,7 +60,7 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
         """.trimIndent()
         )
         myFixture.openFileInEditor(file)
-        val creators = project.creatorResolver().resolveAllCreators()
+        val creators = project.deadlineReferenceResolver().findAll()
         assertThat(creators).anyMatch {
             it.payload == "my_special_deadline"
         }
@@ -92,7 +92,7 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
         """.trimIndent()
         )
         myFixture.openFileInEditor(file)
-        val creators = project.creatorResolver().resolveAllCreators()
+        val creators = project.deadlineReferenceResolver().findAll()
         assertThat(creators).anyMatch {
             it.payload == "my_special_deadline"
         }
@@ -124,7 +124,7 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
         """.trimIndent()
         )
         myFixture.openFileInEditor(file)
-        val creators = project.creatorResolver().resolveAllCreators()
+        val creators = project.deadlineReferenceResolver().findAll()
         assertThat(creators).anyMatch {
             it.payload == "my_special_deadline"
         }
@@ -152,7 +152,7 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
         """.trimIndent()
         )
         myFixture.openFileInEditor(file)
-        val creators = project.creatorResolver().resolveAllCreators()
+        val creators = project.deadlineReferenceResolver().findAll()
         assertThat(creators).anyMatch {
             it.payload == "my_special_deadline"
         }
@@ -188,7 +188,7 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
         """.trimIndent()
         )
         myFixture.openFileInEditor(file)
-        val creators = project.creatorResolver().resolveAllCreators()
+        val creators = project.deadlineReferenceResolver().findAll()
         assertThat(creators).anyMatch {
             it.payload == "my_special_deadline"
         }
@@ -216,7 +216,7 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
         """.trimIndent()
         )
         myFixture.openFileInEditor(file)
-        val creators = project.creatorResolver().resolveAllCreators()
+        val creators = project.deadlineReferenceResolver().findAll()
         assertThat(creators).anyMatch {
             it.payload == "my_special_deadline"
         }
@@ -253,7 +253,7 @@ class DeadlineCreatorTests : AbstractAxonFixtureTestCase() {
         """.trimIndent()
         )
         myFixture.openFileInEditor(file)
-        val creators = project.creatorResolver().resolveAllCreators()
+        val creators = project.deadlineReferenceResolver().findAll()
         assertThat(creators).anyMatch {
             it.payload == "my_special_deadline"
         }

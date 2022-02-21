@@ -20,19 +20,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.util.CachedValue
-import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageCreator
 import org.axonframework.intellij.ide.plugin.creators.DefaultMessageCreator
-import org.axonframework.intellij.ide.plugin.creators.searchers.ConstructorMessageCreatorSearcher
-import org.axonframework.intellij.ide.plugin.creators.searchers.CreatorSearchResult
-import org.axonframework.intellij.ide.plugin.creators.searchers.DeadlineMessageCreatorSearcher
 import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
+import org.axonframework.intellij.ide.plugin.util.areAssignable
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
+import org.axonframework.intellij.ide.plugin.util.findParentHandlers
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
-import org.jetbrains.uast.UMethod
-import org.jetbrains.uast.getParentOfType
-import org.jetbrains.uast.toUElement
+import org.axonframework.intellij.ide.plugin.util.javaFacade
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -43,11 +39,8 @@ import java.util.concurrent.ConcurrentHashMap
  * the PSI is modified (code is edited) or is collected by the garbage collector.
  */
 class MessageCreationResolver(private val project: Project) {
-    private val searchers = listOf(
-        ConstructorMessageCreatorSearcher(project),
-        DeadlineMessageCreatorSearcher(project),
-    )
     private val handlerResolver = project.handlerResolver()
+    private val psiFacade = project.javaFacade()
     private val constructorsByPayloadCache = ConcurrentHashMap<String, CachedValue<List<MessageCreator>>>()
 
     /**
@@ -60,10 +53,36 @@ class MessageCreationResolver(private val project: Project) {
     fun getCreatorsForPayload(payload: String): List<MessageCreator> {
         val cache = constructorsByPayloadCache.getOrPut(payload) {
             project.createCachedValue {
-                searchers.flatMap { it.findByPayload(payload) }.flatMap { createCreators(it) }
+                findByPayload(payload)
             }
         }
         return cache.value
+    }
+
+    private fun findByPayload(payload: String): List<MessageCreator> {
+        val matchingHandlers = handlerResolver.findAllHandlers()
+            .map { it.payload }
+            .filter { areAssignable(project, payload, it) }
+        val classesForQualifiedName = listOf(payload).plus(matchingHandlers)
+            .distinct()
+        return resolveCreatorsForFqns(classesForQualifiedName)
+    }
+
+    private fun findAll(): List<MessageCreator> {
+        val handlers = handlerResolver.findAllHandlers()
+        val payloads = handlers.map { it.payload }.distinct()
+        return payloads.flatMap { findByPayload(it) }
+    }
+
+    private fun resolveCreatorsForFqns(fqns: List<String>): List<MessageCreator> {
+        return fqns.flatMap { typeFqn ->
+            psiFacade.findClasses(typeFqn, project.axonScope()).flatMap { clazz ->
+                clazz.constructors
+                    .flatMap { MethodReferencesSearch.search(it, project.axonScope(), true) }
+                    .flatMap { ref -> createCreators(typeFqn, ref.element) }
+                    .distinct()
+            }
+        }
     }
 
     /**
@@ -82,38 +101,17 @@ class MessageCreationResolver(private val project: Project) {
      * @return List of all message creators in an application
      */
     fun resolveAllCreators(): List<MessageCreator> {
-        return searchers.flatMap { it.findAll() }
-            .flatMap { createCreators(it) }
+        return findAll()
+            .flatMap { createCreators(it.payload, it.element) }
     }
 
-    private fun createCreators(element: CreatorSearchResult): List<MessageCreator> {
+    private fun createCreators(payload: String, element: PsiElement): List<MessageCreator> {
         val parentHandlers = PerformanceRegistry.measure("MessageCreationResolver.findParentHandlers") {
-            findParentHandlers(element.element)
+            element.findParentHandlers()
         }
         if (parentHandlers.isEmpty()) {
-            return listOf(DefaultMessageCreator(element.element, element.payload, null))
+            return listOf(DefaultMessageCreator(element, payload, null))
         }
-        return parentHandlers.map { DefaultMessageCreator(element.element, element.payload, it) }
-    }
-
-    /**
-     * Finds all parent handlers of a method. This is kind of intense on IntelliJ, so we should monitor performance
-     * on this and perhaps reduce the recursion limit. The recursion limit the depth of the call tree that is searched.
-     */
-    private fun findParentHandlers(element: PsiElement, depth: Int = 0): List<Handler> {
-        if (depth > 3) {
-            // Recursion guard
-            return listOf()
-        }
-        val parent = element.toUElement()?.getParentOfType<UMethod>()?.javaPsi ?: return listOf()
-        val parentHandler = handlerResolver.findHandlerByElement(parent)
-        if (parentHandler != null) {
-            return listOf(parentHandler)
-        }
-
-        return PerformanceRegistry.measure("MessageCreationResolver.findParentHandlers") {
-            val references = MethodReferencesSearch.search(parent, element.project.axonScope(), true)
-            references.flatMap { findParentHandlers(it.element, depth + 1) }
-        }
+        return parentHandlers.map { DefaultMessageCreator(element, payload, it) }
     }
 }

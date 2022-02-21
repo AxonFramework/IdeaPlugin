@@ -2,6 +2,16 @@
 
 # Axon Framework plugin Changelog
 
+## [0.4.1]
+
+### Changed
+
+- Split deadline resolver from normal message creation resolver for performance improvements
+
+### Added
+
+- Utility to cache information on PsiElement level to improve performance
+
 ## [0.4.0]
 
 ### Fixed

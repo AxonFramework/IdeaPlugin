@@ -31,17 +31,18 @@ import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.impl.source.PsiImmediateClassType
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScopes
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.search.searches.MethodReferencesSearch
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
+import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.resolving.AggregateStructureResolver
 import org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver
-import org.axonframework.intellij.ide.plugin.resolving.DeadlineManagerResolver
+import org.axonframework.intellij.ide.plugin.resolving.DeadlineMethodResolver
+import org.axonframework.intellij.ide.plugin.resolving.DeadlineReferenceResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.getContainingUMethod
 import org.jetbrains.uast.toUElement
 
 /**
@@ -114,7 +115,7 @@ fun Project.axonScope() = GlobalSearchScope.getScopeRestrictedByFileTypes(
 fun Project.allScope() = GlobalSearchScope.allScope(this)
 
 /**
- * Quick method to retrieve a JavaPsiFacade instance.
+ * Quick methods to retrieve project services
  */
 fun Project.javaFacade(): JavaPsiFacade = JavaPsiFacade.getInstance(this)
 fun PsiElement.javaFacade(): JavaPsiFacade = project.javaFacade()
@@ -124,17 +125,12 @@ fun Project.handlerResolver(): MessageHandlerResolver = getService(MessageHandle
 fun PsiElement.handlerResolver(): MessageHandlerResolver = project.handlerResolver()
 fun Project.creatorResolver(): MessageCreationResolver = getService(MessageCreationResolver::class.java)
 fun PsiElement.creatorResolver(): MessageCreationResolver = project.creatorResolver()
-fun Project.deadlineResolver(): DeadlineManagerResolver = getService(DeadlineManagerResolver::class.java)
-fun PsiElement.deadlineResolver(): DeadlineManagerResolver = project.deadlineResolver()
+fun Project.deadlineMethodResolver(): DeadlineMethodResolver = getService(DeadlineMethodResolver::class.java)
+fun PsiElement.deadlineMethodResolver(): DeadlineMethodResolver = project.deadlineMethodResolver()
+fun Project.deadlineReferenceResolver(): DeadlineReferenceResolver = getService(DeadlineReferenceResolver::class.java)
+fun PsiElement.deadlineReferenceResolver(): DeadlineReferenceResolver = project.deadlineReferenceResolver()
 fun Project.aggregateResolver(): AggregateStructureResolver = getService(AggregateStructureResolver::class.java)
 fun PsiElement.aggregateResolver(): AggregateStructureResolver = project.aggregateResolver()
-
-/**
- * Convenience method to quickly create a cached value for a project based on PSI modifications.
- */
-fun <T> Project.createCachedValue(supplier: () -> T) = CachedValuesManager.getManager(this).createCachedValue() {
-    CachedValueProvider.Result.create(supplier.invoke(), PsiModificationTracker.MODIFICATION_COUNT)
-}
 
 fun PsiClass?.isAggregate() = this?.hasAnnotation(AxonAnnotation.AGGREGATE_ROOT) == true
 
@@ -144,5 +140,26 @@ fun PsiClass?.isAggregate() = this?.hasAnnotation(AxonAnnotation.AGGREGATE_ROOT)
 fun PsiJvmModifiersOwner.isAnnotated(axonAnnotation: AxonAnnotation): Boolean {
     return annotationResolver().getAnnotationClasses(axonAnnotation).any { annotationClass ->
         hasAnnotation(annotationClass.qualifiedName)
+    }
+}
+
+/**
+ * Finds all parent handlers of a method. This is kind of intense on IntelliJ, so we should monitor performance
+ * on this and perhaps reduce the recursion limit. The recursion limit the depth of the call tree that is searched.
+ */
+fun PsiElement.findParentHandlers(depth: Int = 0): List<Handler> {
+    if (depth > 3) {
+        // Recursion guard
+        return listOf()
+    }
+    val parent = toUElement()?.getContainingUMethod()?.javaPsi ?: return listOf()
+    val parentHandler = handlerResolver().findHandlerByElement(parent)
+    if (parentHandler != null) {
+        return listOf(parentHandler)
+    }
+
+    return PerformanceRegistry.measure("MessageCreationResolver.findParentHandlers") {
+        val references = MethodReferencesSearch.search(parent, project.axonScope(), true)
+        references.flatMap { it.element.findParentHandlers(depth + 1) }
     }
 }

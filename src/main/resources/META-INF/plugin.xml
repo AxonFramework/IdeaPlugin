@@ -60,10 +60,9 @@
                 serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.AggregateStructureResolver"/>
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver"/>
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver"/>
-        <projectService
-                serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.DeadlineManagerResolver"/>
-        <projectService
-                serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver"/>
+        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.DeadlineMethodResolver"/>
+        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.DeadlineReferenceResolver"/>
+        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver"/>
 
         <!-- Usage providers -->
         <implicitUsageProvider implementation="org.axonframework.intellij.ide.plugin.usage.AxonImplicitUsageProvider"/>

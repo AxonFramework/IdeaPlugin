@@ -31,9 +31,9 @@ import org.axonframework.intellij.ide.plugin.util.javaFacade
 
 
 /**
- * Responsible for managing (and caching) information regarding Deadline managers.
+ * Responsible for managing (and caching) information regarding Deadline methods.
  *
- * So, the thing with deadlines is that there are many implementations. For example, in our own projects
+ * The thing with deadlines is that the user can create their own implementation. For example, in our own projects
  * we created a deadline manager with a scheduleCronjob function, and the signature does not match that of Axon's
  * default.
  * This method resolves all allowed possible method calls. For it to take class into account:
@@ -53,7 +53,7 @@ import org.axonframework.intellij.ide.plugin.util.javaFacade
  * Every PSI change we scan for deadline manager implementations in the project scope. This way we can support
  * all use cases.
  */
-class DeadlineManagerResolver(val project: Project) {
+class DeadlineMethodResolver(val project: Project) {
     private val libraryCache = LibraryDeadlineCache()
     private val deadlineManagerClass = project.createCachedValue {
         project.javaFacade().findClass("org.axonframework.deadline.DeadlineManager", project.allScope())

@@ -14,13 +14,18 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.creators.searchers
+package org.axonframework.intellij.ide.plugin.resolving
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.MethodReferencesSearch
+import org.axonframework.intellij.ide.plugin.api.MessageCreator
+import org.axonframework.intellij.ide.plugin.creators.DefaultMessageCreator
+import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
-import org.axonframework.intellij.ide.plugin.util.deadlineResolver
+import org.axonframework.intellij.ide.plugin.util.deadlineMethodResolver
+import org.axonframework.intellij.ide.plugin.util.findParentHandlers
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.evaluateString
@@ -29,20 +34,25 @@ import org.jetbrains.uast.sourcePsiElement
 import org.jetbrains.uast.toUElement
 
 /**
- * Finds all references of the DeadlineManager's schedule method and reports them as MessageCreators.
+ * Finds all references of the DeadlineManager's schedule and cancel method and reports them as MessageCreators.
  *
- * The first String argument of the call is recorded as the deadline's name.
+ * The first String argument of the call is recorded as the deadline's name. In addition, if there's a payload, that is also
+ * registered as a method name.
  */
-class DeadlineMessageCreatorSearcher(val project: Project) : MessageCreatorSearcher {
+class DeadlineReferenceResolver(val project: Project) {
     private val cache = project.createCachedValue {
-        findAllCreators()
+        findAllReferences()
     }
 
-    override fun findByPayload(payload: String): List<CreatorSearchResult> {
-        return findAll().filter { it.payload == payload }
+    fun findByDeadlineName(deadlineName: String): List<MessageCreator> {
+        return findAll().filter { it.payload == deadlineName }
     }
 
-    override fun findAll(): List<CreatorSearchResult> {
+    fun findByElement(element: PsiElement): MessageCreator? {
+        return findAll().firstOrNull { it.element == element }
+    }
+
+    fun findAll(): List<MessageCreator> {
         return cache.value
     }
 
@@ -54,8 +64,8 @@ class DeadlineMessageCreatorSearcher(val project: Project) : MessageCreatorSearc
      *
      * This way, we can always match correctly.
      */
-    private fun findAllCreators(): List<CreatorSearchResult> {
-        val scheduleReferences = project.deadlineResolver().getAllScheduleMethods()
+    private fun findAllReferences(): List<MessageCreator> {
+        val scheduleReferences = project.deadlineMethodResolver().getAllScheduleMethods()
             .flatMap { method ->
                 MethodReferencesSearch.search(method, project.axonScope(), true)
                     .findAll()
@@ -67,9 +77,9 @@ class DeadlineMessageCreatorSearcher(val project: Project) : MessageCreatorSearc
                     createCreatorBasedOnDeadlineName(parentCallExpression),
                     createCreatorBasedOnPayloadType(parentCallExpression)
                 )
-            }.distinct()
+            }.flatten().distinct()
 
-        val cancelReferences = project.deadlineResolver().getAllCancelMethods()
+        val cancelReferences = project.deadlineMethodResolver().getAllCancelMethods()
             .flatMap { method ->
                 MethodReferencesSearch.search(method, project.axonScope(), true)
                     .findAll()
@@ -80,7 +90,7 @@ class DeadlineMessageCreatorSearcher(val project: Project) : MessageCreatorSearc
                 listOfNotNull(
                     createCreatorBasedOnDeadlineName(parentCallExpression)
                 )
-            }.distinct()
+            }.flatten().distinct()
 
         return schedulers + cancelers
     }
@@ -88,22 +98,32 @@ class DeadlineMessageCreatorSearcher(val project: Project) : MessageCreatorSearc
     /**
      * Searches for the deadline name arguments. This is the first String argument.
      */
-    private fun createCreatorBasedOnDeadlineName(callExpression: UCallExpression): CreatorSearchResult? {
+    private fun createCreatorBasedOnDeadlineName(callExpression: UCallExpression): List<MessageCreator> {
         val argument =
             callExpression.valueArguments.firstOrNull { it.getExpressionType().toQualifiedName() == "java.lang.String" }
-        val deadlineName = argument?.evaluateString() ?: return null
-        return CreatorSearchResult(deadlineName, callExpression.sourcePsiElement!!)
+        val deadlineName = argument?.evaluateString() ?: return emptyList()
+        return createCreators(deadlineName, callExpression.sourcePsiElement!!)
     }
 
     /**
      * Searches for the payload arguments. This is the first argument that is not belonging to java (such as Instant or String).
      *
      */
-    private fun createCreatorBasedOnPayloadType(callExpression: UCallExpression): CreatorSearchResult? {
+    private fun createCreatorBasedOnPayloadType(callExpression: UCallExpression): List<MessageCreator> {
         val argument = callExpression.valueArguments.firstOrNull {
             it.getExpressionType().toQualifiedName()?.startsWith("java") != true
-        } ?: return null
-        val deadlineType = argument.getExpressionType()?.toQualifiedName() ?: return null
-        return CreatorSearchResult(deadlineType, callExpression.sourcePsiElement!!)
+        } ?: return emptyList()
+        val deadlineType = argument.getExpressionType()?.toQualifiedName() ?: return emptyList()
+        return createCreators(deadlineType, callExpression.sourcePsiElement!!)
+    }
+
+    private fun createCreators(payload: String, element: PsiElement): List<MessageCreator> {
+        val parentHandlers = PerformanceRegistry.measure("DeadlineReferenceResolver.findParentHandlers") {
+            element.findParentHandlers()
+        }
+        if (parentHandlers.isEmpty()) {
+            return listOf(DefaultMessageCreator(element, payload, null))
+        }
+        return parentHandlers.map { DefaultMessageCreator(element, payload, it) }
     }
 }
