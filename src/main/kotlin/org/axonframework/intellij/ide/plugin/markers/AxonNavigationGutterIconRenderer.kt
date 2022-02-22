@@ -16,16 +16,17 @@
 
 package org.axonframework.intellij.ide.plugin.markers
 
-import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
+import com.intellij.codeInsight.daemon.LineMarkerInfo
+import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.navigation.NavigationGutterIconRenderer
 import com.intellij.codeInsight.navigation.NavigationUtil
-import com.intellij.ide.util.PsiElementListCellRenderer
-import com.intellij.openapi.util.Computable
+import com.intellij.navigation.GotoRelatedItem
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
-import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.ui.awt.RelativePoint
+import org.axonframework.intellij.ide.plugin.api.PsiElementWrapper
 import java.awt.event.MouseEvent
 import javax.swing.Icon
 
@@ -33,17 +34,19 @@ import javax.swing.Icon
 /**
  * Gutter renderer that is modified to always show a popup list, even when there is only one option.
  *
- * Used by the AxonGutterIconBuilder.
- *
- * @see AxonGutterIconBuilder
  */
 class AxonNavigationGutterIconRenderer(
-    popupTitle: String,
-    emptyText: String?,
     private val icon: Icon,
+    popupTitle: String,
     private val tooltipText: String?,
-    pointers: NotNullLazyValue<List<SmartPsiElementPointer<*>>>,
-) : NavigationGutterIconRenderer(popupTitle, emptyText, { AxonCellRenderer.getInstance() }, pointers) {
+    emptyText: String?,
+    private val elements: NotNullLazyValue<List<PsiElementWrapper>>,
+) : NavigationGutterIconRenderer(popupTitle, emptyText, { AxonCellRenderer(elements) }, NotNullLazyValue.createValue {
+    elements.value.sortedBy { it.getIcon().toString() + it.renderText() }.map { p ->
+        val spm = SmartPointerManager.getInstance(p.element.project)
+        spm.createSmartPsiElementPointer(p.element)
+    }
+}) {
 
     override fun getIcon(): Icon {
         return icon
@@ -64,20 +67,19 @@ class AxonNavigationGutterIconRenderer(
             popup.show(RelativePoint(event))
         }
     }
-}
 
-/**
- * The default gutter icon builder of IntelliJ extended to use the AxonNavigationGutterIconRenderer.
- *
- * @See AxonNavigationGutterIconRenderer
- */
-class AxonGutterIconBuilder(icon: Icon) :
-    NavigationGutterIconBuilder<PsiElement>(icon, DEFAULT_PSI_CONVERTOR, PSI_GOTO_RELATED_ITEM_PROVIDER) {
-    override fun createGutterIconRenderer(
-        pointers: NotNullLazyValue<List<SmartPsiElementPointer<*>>>,
-        renderer: Computable<PsiElementListCellRenderer<*>>,
-        empty: Boolean
-    ): NavigationGutterIconRenderer {
-        return AxonNavigationGutterIconRenderer(myPopupTitle, myEmptyText, myIcon, myTooltipText, pointers)
+    fun createLineMarkerInfo(element: PsiElement): LineMarkerInfo<*> {
+        return RelatedItemLineMarkerInfo(
+            element,
+            element.textRange,
+            icon,
+            { tooltipText },
+            this,
+            alignment,
+            { elements.value.map { WrappedGoToRelatedItem(it) } }
+        )
     }
 }
+
+
+class WrappedGoToRelatedItem(val wrapper: PsiElementWrapper) : GotoRelatedItem(wrapper.element)

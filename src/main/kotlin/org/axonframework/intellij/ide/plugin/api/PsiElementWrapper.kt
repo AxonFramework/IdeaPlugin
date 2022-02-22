@@ -16,7 +16,13 @@
 
 package org.axonframework.intellij.ide.plugin.api
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import org.axonframework.intellij.ide.plugin.util.containingClassname
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.getParentOfType
+import org.jetbrains.uast.toUElement
+import javax.swing.Icon
 
 /**
  * Parent interface of any creator or handler. Represents a wrapped PsiElement.
@@ -26,4 +32,36 @@ import com.intellij.psi.PsiElement
  */
 interface PsiElementWrapper {
     val element: PsiElement
+
+
+    /**
+     * Renders the main text in line marker popups.
+     */
+    fun renderText(): String {
+        val methodParent = element.toUElement()?.getParentOfType<UMethod>()
+        if (methodParent != null) {
+            return methodParent.containingClassname() + "." + methodParent.name
+        }
+
+        if (element is PsiClass) {
+            return (element as PsiClass).name ?: element.containingFile.name
+        }
+
+        return element.containingFile.name
+    }
+
+    /**
+     * Renders the grey text next to the initial identifier. Is optional, and by default empty, but can be overridden
+     * by specific implementations
+     *
+     * @return Container text used in a line marker popup.
+     */
+    fun renderContainerText(): String? = null
+
+    /**
+     * Returns the correct icon for the handler, should be implemented by each implementor of Handler.
+     *
+     * @return The correct icon to be used in a line marker popup
+     */
+    fun getIcon(): Icon
 }

@@ -14,7 +14,19 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.util
+package org.axonframework.intellij.ide.plugin.api
 
-fun String.toShortName() = split(".").last()
+import com.intellij.psi.PsiElement
+import org.axonframework.intellij.ide.plugin.AxonIcons
+import javax.swing.Icon
 
+/**
+ * Represents a class, used in marker lists
+ */
+class ClassReference(
+    override val element: PsiElement
+) : PsiElementWrapper {
+    override fun getIcon(): Icon {
+        return AxonIcons.Axon
+    }
+}

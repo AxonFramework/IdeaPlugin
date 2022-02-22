@@ -23,7 +23,7 @@ import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.markers.AxonGutterIconBuilder
+import org.axonframework.intellij.ide.plugin.markers.AxonNavigationGutterIconRenderer
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.axonframework.intellij.ide.plugin.resolving.handlers.types.CommandHandlerInterceptor
 import org.axonframework.intellij.ide.plugin.resolving.handlers.types.DeadlineHandler
@@ -68,11 +68,15 @@ class PublishMethodLineMarkerProvider : LineMarkerProvider {
         if (handlers.isEmpty()) {
             return null
         }
-        return AxonGutterIconBuilder(AxonIcons.Publisher)
-            .setPopupTitle("Axon Message Handlers")
-            .setTooltipText("Navigate to Axon message handlers")
-            .setTargets(NotNullLazyValue.createValue { handlers.map { it.element } })
-            .createLineMarkerInfo(element)
+
+        return AxonNavigationGutterIconRenderer(
+            icon = AxonIcons.Publisher,
+            popupTitle = "Axon Message Handlers",
+            tooltipText = "Navigate to Axon message handlers",
+            emptyText = "No message handlers were found",
+            elements = NotNullLazyValue.createValue {
+                handlers
+            }).createLineMarkerInfo(element)
     }
 
     private fun qualifiedNameForKotlin(element: PsiElement): String? {

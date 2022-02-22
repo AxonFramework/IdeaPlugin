@@ -32,9 +32,7 @@ import com.intellij.util.PathUtil
 import org.axonframework.config.ProcessingGroup
 import org.axonframework.eventhandling.EventHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
-import org.axonframework.intellij.ide.plugin.util.toContainerText
-import org.axonframework.intellij.ide.plugin.util.toElementText
-import org.axonframework.intellij.ide.plugin.util.toIcon
+import org.axonframework.intellij.ide.plugin.markers.WrappedGoToRelatedItem
 import org.axonframework.modelling.command.AggregateMember
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import javax.swing.Icon
@@ -143,10 +141,9 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
         val gutters = myFixture.findGuttersAtCaret()
         val marker = gutters.firstNotNullResult { getHandlerMethodMakerProviders(it, clazz) }
             ?: throw IllegalStateException("No gutter found")
-        val items = marker.createGotoRelatedItems()
+        val items = marker.createGotoRelatedItems() as List<WrappedGoToRelatedItem>
         return items.map {
-            val element = it.element!!
-            OptionSummary(element.toElementText(), element.toContainerText(), element.toIcon())
+            OptionSummary(it.wrapper.renderText(), it.wrapper.renderContainerText(), it.wrapper.getIcon())
         }
     }
 

@@ -22,10 +22,9 @@ import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.markers.AxonGutterIconBuilder
+import org.axonframework.intellij.ide.plugin.markers.AxonNavigationGutterIconRenderer
 import org.axonframework.intellij.ide.plugin.util.deadlineReferenceResolver
 import org.axonframework.intellij.ide.plugin.util.resolveAnnotationStringValue
-import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.getContainingUMethod
 import org.jetbrains.uast.getParentOfType
@@ -48,16 +47,15 @@ class DeadlineHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvide
         val deadlineName = method.resolveAnnotationStringValue(AxonAnnotation.DEADLINE_HANDLER, "deadlineName")
             ?: payload
             ?: return null
-        return AxonGutterIconBuilder(AxonIcons.Handler)
-            .setPopupTitle("Deadline Schedulers")
-            .setTooltipText("Navigate to schedule invocation of this deadline")
-            .setTargets(NotNullLazyValue.createValue {
+
+        return AxonNavigationGutterIconRenderer(
+            icon = AxonIcons.Handler,
+            popupTitle = "Deadline Schedulers",
+            tooltipText = "Navigate to schedule invocation of this deadline",
+            emptyText = "No deadline schedule invocations could be found",
+            elements = NotNullLazyValue.createValue {
                 element.deadlineReferenceResolver().findByDeadlineName(deadlineName)
                     .distinctBy { it.parentHandler }
-                    .sortedWith(sortingByDisplayName())
-                    .map { it.element }
-            })
-            .setEmptyPopupText("No deadline schedule invocations could be found")
-            .createLineMarkerInfo(element)
+            }).createLineMarkerInfo(element)
     }
 }

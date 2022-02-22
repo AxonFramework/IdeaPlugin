@@ -48,20 +48,9 @@ interface Handler : PsiElementWrapper {
      * Renders the main text in line marker popups. By default, it just shows the name of the payload's class,
      * but can be overridden by specific handlers.
      */
-    fun renderText(): String = payload.toShortName()
+    override fun renderText(): String = payload.toShortName()
 
-    /**
-     * Renders the grey text next to the initial identifier. Is optional, and by default empty, but can be overridden
-     * by specific handlers
-     *
-     * @return Container text used in a line marker popup.
-     */
-    fun renderContainerText(): String? = null
-
-    /**
-     * Returns the correct icon for the handler, should be implemented by each implementor of Handler.
-     *
-     * @return The correct icon to be used in a line marker popup
-     */
-    fun getIcon(): Icon = AxonIcons.Handler
+    override fun getIcon(): Icon {
+        return AxonIcons.Handler
+    }
 }

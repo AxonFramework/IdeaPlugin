@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import org.axonframework.intellij.ide.plugin.AxonIcons
-import org.axonframework.intellij.ide.plugin.markers.AxonGutterIconBuilder
+import org.axonframework.intellij.ide.plugin.markers.AxonNavigationGutterIconRenderer
 import org.axonframework.intellij.ide.plugin.resolving.handlers.types.DeadlineHandler
 import org.axonframework.intellij.ide.plugin.util.deadlineMethodResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
@@ -54,15 +54,18 @@ class DeadlinePublisherLineMarkerProvider : LineMarkerProvider {
             else -> null
         } ?: return null
 
-        val handlers = element.project.handlerResolver().findAllHandlers()
-            .filterIsInstance<DeadlineHandler>()
-            .filter { it.deadlineName == deadlineName }
 
-        return AxonGutterIconBuilder(AxonIcons.Publisher)
-            .setPopupTitle("Axon Deadline Handlers")
-            .setTooltipText("Navigate to Axon deadline handlers")
-            .setTargets(NotNullLazyValue.createValue { handlers.map { it.element } })
-            .createLineMarkerInfo(element)
+
+        return AxonNavigationGutterIconRenderer(
+            icon = AxonIcons.Publisher,
+            popupTitle = "Axon Deadline Handlers",
+            tooltipText = "Navigate to Axon deadline handlers",
+            emptyText = "No deadline handlers were found",
+            elements = NotNullLazyValue.createValue {
+                element.project.handlerResolver().findAllHandlers()
+                    .filterIsInstance<DeadlineHandler>()
+                    .filter { it.deadlineName == deadlineName }
+            }).createLineMarkerInfo(element)
     }
 
     /*

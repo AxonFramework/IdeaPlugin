@@ -21,9 +21,8 @@ import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.markers.AxonGutterIconBuilder
+import org.axonframework.intellij.ide.plugin.markers.AxonNavigationGutterIconRenderer
 import org.axonframework.intellij.ide.plugin.util.creatorResolver
-import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 
 /**
  * Provides a gutter icon on all generic handler methods
@@ -39,16 +38,14 @@ class CommonHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvider(
             return null
         }
 
-        return AxonGutterIconBuilder(AxonIcons.Handler)
-            .setPopupTitle("Payload Creators")
-            .setTooltipText("Navigate to creators of $payload")
-            .setTargets(NotNullLazyValue.createValue {
+        return AxonNavigationGutterIconRenderer(
+            icon = AxonIcons.Handler,
+            popupTitle = "Payload Creators",
+            tooltipText = "Navigate to creators of $payload",
+            emptyText = "No creators of this message payload were found",
+            elements = NotNullLazyValue.createValue {
                 element.creatorResolver().getCreatorsForPayload(payload)
                     .distinctBy { it.parentHandler }
-                    .sortedWith(sortingByDisplayName())
-                    .map { it.element }
-            })
-            .setEmptyPopupText("No creators of this message payload were found")
-            .createLineMarkerInfo(element)
+            }).createLineMarkerInfo(element)
     }
 }

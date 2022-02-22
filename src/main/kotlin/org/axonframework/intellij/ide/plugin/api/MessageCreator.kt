@@ -16,20 +16,12 @@
 
 package org.axonframework.intellij.ide.plugin.api
 
-import com.intellij.psi.PsiElement
-import javax.swing.Icon
-
 /**
  * Represents an element that creates a message (payload).
  *
  * @see org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
  */
 interface MessageCreator : PsiElementWrapper {
-    /**
-     * The PsiElement that is creating the payload.
-     */
-    override val element: PsiElement
-
     /**
      * The name of the payload being created. For deadlines, this is the deadlineName. For all other messages,
      * it's the payload type.
@@ -42,15 +34,5 @@ interface MessageCreator : PsiElementWrapper {
      * The same applied for commands created by a SagaEventHandler, among others.
      */
     val parentHandler: Handler?
-
-    /**
-     * Renders the grey text next to the initial identifier.
-     */
-    val containerText: String?
-
-    /**
-     * Returns the correct icon for the creator, based on the parent handler type.
-     */
-    val icon: Icon
 }
 

@@ -18,10 +18,9 @@ package org.axonframework.intellij.ide.plugin.markers
 
 import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.openapi.util.Iconable.ICON_FLAG_VISIBILITY
+import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
-import org.axonframework.intellij.ide.plugin.util.toContainerText
-import org.axonframework.intellij.ide.plugin.util.toElementText
-import org.axonframework.intellij.ide.plugin.util.toIcon
+import org.axonframework.intellij.ide.plugin.api.PsiElementWrapper
 import javax.swing.Icon
 
 /**
@@ -33,25 +32,22 @@ import javax.swing.Icon
  * @see org.axonframework.intellij.ide.plugin.api.Handler
  * @see org.axonframework.intellij.ide.plugin.api.MessageCreator
  */
-class AxonCellRenderer private constructor() : PsiElementListCellRenderer<PsiElement>() {
-    companion object {
-        private val renderer = lazy { AxonCellRenderer() }
-        fun getInstance() = renderer.value
-    }
-
+class AxonCellRenderer(
+    private val elements: NotNullLazyValue<List<PsiElementWrapper>>
+) : PsiElementListCellRenderer<PsiElement>() {
     /**
      * Renders the text in the line marker popup. Contains the name of the item
      *
      * @return PSI element text
      */
-    override fun getElementText(element: PsiElement): String = element.toElementText()
+    override fun getElementText(element: PsiElement): String = onElement(element).renderText()
 
     /**
      * Renders the container text in the line marker popup. Contains additional contextual information.
      *
      * @return PSI element container text
      */
-    override fun getContainerText(element: PsiElement, name: String?): String? = element.toContainerText()
+    override fun getContainerText(element: PsiElement, name: String?): String? = onElement(element).renderContainerText()
 
     override fun getIconFlags(): Int {
         return ICON_FLAG_VISIBILITY
@@ -62,5 +58,9 @@ class AxonCellRenderer private constructor() : PsiElementListCellRenderer<PsiEle
      *
      * @return PSI element icon
      */
-    override fun getIcon(element: PsiElement): Icon = element.toIcon()
+    override fun getIcon(element: PsiElement): Icon = onElement(element).getIcon()
+
+    private fun onElement(element: PsiElement): PsiElementWrapper {
+        return elements.value.first { it.element == element }
+    }
 }

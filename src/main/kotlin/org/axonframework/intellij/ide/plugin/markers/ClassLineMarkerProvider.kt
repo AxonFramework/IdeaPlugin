@@ -21,13 +21,13 @@ import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
+import org.axonframework.intellij.ide.plugin.api.ClassReference
 import org.axonframework.intellij.ide.plugin.util.aggregateResolver
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.creatorResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.isAggregate
 import org.axonframework.intellij.ide.plugin.util.javaFacade
-import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.getUParentForIdentifier
 
@@ -46,15 +46,15 @@ class ClassLineMarkerProvider : LineMarkerProvider {
         if (!uElement.isAggregate()) {
             val handlers = element.handlerResolver().findHandlersForType(qualifiedName)
             if (handlers.isNotEmpty()) {
-                return AxonGutterIconBuilder(AxonIcons.Axon)
-                    .setPopupTitle("Axon References To This Class")
-                    .setTooltipText("Navigate to message handlers and creations")
-                    .setTargets(NotNullLazyValue.createValue {
+                return AxonNavigationGutterIconRenderer(
+                    icon = AxonIcons.Axon,
+                    popupTitle = "Axon References To This Class",
+                    tooltipText = "Navigate to message handlers and creations",
+                    emptyText = "No references were found",
+                    elements = NotNullLazyValue.createValue {
                         val publishers = element.creatorResolver().getCreatorsForPayload(qualifiedName)
-                        val allItems = handlers + publishers
-                        allItems.sortedWith(sortingByDisplayName()).map { it.element }
-                    })
-                    .createLineMarkerInfo(element)
+                        handlers + publishers
+                    }).createLineMarkerInfo(element)
             }
         }
 
@@ -63,13 +63,16 @@ class ClassLineMarkerProvider : LineMarkerProvider {
             .mapNotNull {
                 element.javaFacade().findClass(it.name, element.project.axonScope())
             }
+            .map { ClassReference(it) }
         if (parents.isNotEmpty()) {
-            return AxonGutterIconBuilder(AxonIcons.Axon)
-                .setPopupTitle("Related Models")
-                .setTooltipText("Navigate to members in the same model hierarchy")
-                .setTargets(NotNullLazyValue.createValue { parents })
-                .createLineMarkerInfo(element)
-
+            return AxonNavigationGutterIconRenderer(
+                icon = AxonIcons.Axon,
+                popupTitle = "Related Models",
+                tooltipText = "Navigate to members in the same model hierarchy",
+                emptyText = "No related models were found",
+                elements = NotNullLazyValue.createValue {
+                    parents
+                }).createLineMarkerInfo(element)
         }
 
         return null

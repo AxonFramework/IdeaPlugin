@@ -19,7 +19,6 @@ package org.axonframework.intellij.ide.plugin.creators
 import org.assertj.core.api.Assertions
 import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
 import org.axonframework.intellij.ide.plugin.util.creatorResolver
-import org.axonframework.intellij.ide.plugin.util.toElementText
 
 class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
     fun `test can resolve application of event during command handling`() {
@@ -44,7 +43,7 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
         )
         val creators = project.creatorResolver().getCreatorsForPayload("test.MyEvent")
         Assertions.assertThat(creators).anyMatch {
-            it.payload == "test.MyEvent" && it.element.toElementText() == "MyCommand" && it.containerText == null
+            it.payload == "test.MyEvent" && it.renderContainerText() == null
         }
     }
 
@@ -70,7 +69,7 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
         )
         val creators = project.creatorResolver().getCreatorsForPayload("test.MyEvent2")
         Assertions.assertThat(creators).anyMatch {
-            it.payload == "test.MyEvent2" && it.element.toElementText() == "EventSourcingHandler MyAggregate"
+            it.payload == "test.MyEvent2" && it.renderText() == "EventSourcingHandler MyAggregate"
         }
     }
 
@@ -103,7 +102,7 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
         val creators = project.creatorResolver().getCreatorsForPayload("test.MyCommand")
         Assertions.assertThat(creators).anyMatch {
             it.payload == "test.MyCommand" &&
-                    it.element.toElementText() == "Saga: fancy-saga"
+                    it.renderText() == "Saga: fancy-saga"
         }
     }
 
@@ -132,8 +131,8 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
         val creators = project.creatorResolver().getCreatorsForPayload("test.MyCommand")
         Assertions.assertThat(creators).anyMatch {
             it.payload == "test.MyCommand" &&
-                    it.element.toElementText() == "PlainComponent.handleImportantHttpRequest"
-            it.containerText == null
+                    it.renderText() == "PlainComponent.handleImportantHttpRequest"
+            it.renderContainerText() == null
         }
     }
 
@@ -159,8 +158,8 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
         val creators = project.creatorResolver().getCreatorsForPayload("test.MyQuery")
         Assertions.assertThat(creators).anyMatch {
             it.payload == "test.MyQuery" &&
-                    it.element.toElementText() == "MyQueryHandler.handle"
-            it.containerText == null
+                    it.renderText() == "MyQueryHandler.handle"
+            it.renderContainerText() == null
         }
     }
 }

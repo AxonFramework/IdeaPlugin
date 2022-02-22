@@ -22,11 +22,10 @@ import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.api.MessageType
-import org.axonframework.intellij.ide.plugin.markers.AxonGutterIconBuilder
+import org.axonframework.intellij.ide.plugin.markers.AxonNavigationGutterIconRenderer
 import org.axonframework.intellij.ide.plugin.resolving.handlers.types.CommandHandler
 import org.axonframework.intellij.ide.plugin.util.aggregateResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
-import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 import org.jetbrains.uast.getContainingUClass
 import org.jetbrains.uast.toUElement
 
@@ -50,10 +49,12 @@ class CommandInterceptorLineMarkerProvider : AbstractHandlerLineMarkerProvider()
         // An interceptor without payload is fine, default to Object to match all
         val actualPayload = payload ?: "java.lang.Object"
 
-        return AxonGutterIconBuilder(AxonIcons.Interceptor)
-            .setPopupTitle("Commands Intercepted")
-            .setTooltipText("Navigate to command handlers that are intercepted")
-            .setTargets(NotNullLazyValue.createValue {
+        return AxonNavigationGutterIconRenderer(
+            icon = AxonIcons.Interceptor,
+            popupTitle = "Commands Intercepted",
+            tooltipText = "Navigate to command handlers that are intercepted",
+            emptyText = "No intercepted command handlers were found",
+            elements = NotNullLazyValue.createValue {
                 val members = element.aggregateResolver().getMemberWithSubEntities(className)
                 element.handlerResolver().findHandlersForType(actualPayload, MessageType.COMMAND)
                     .filterIsInstance<CommandHandler>()
@@ -61,10 +62,7 @@ class CommandInterceptorLineMarkerProvider : AbstractHandlerLineMarkerProvider()
                         val name = it.element.toUElement()?.getContainingUClass()?.qualifiedName
                         members.any { member -> member.name == name }
                     }
-                    .sortedWith(sortingByDisplayName())
-                    .map { it.element }
             })
-            .setEmptyPopupText("No intercepted command handlers were found")
             .createLineMarkerInfo(element)
     }
 }

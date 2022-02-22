@@ -22,11 +22,10 @@ import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.api.MessageType
-import org.axonframework.intellij.ide.plugin.markers.AxonGutterIconBuilder
+import org.axonframework.intellij.ide.plugin.markers.AxonNavigationGutterIconRenderer
 import org.axonframework.intellij.ide.plugin.resolving.handlers.types.CommandHandlerInterceptor
 import org.axonframework.intellij.ide.plugin.util.creatorResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
-import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 
 /**
  * Provides a gutter icon on command handlers, switching to an intercepted icon if necessary
@@ -43,21 +42,17 @@ class CommandHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvider
 
         val interceptingElements = element.handlerResolver().findHandlersForType(payload, MessageType.COMMAND, true)
             .filterIsInstance<CommandHandlerInterceptor>()
-            .sortedWith(sortingByDisplayName())
-            .map { it.element }
 
         val icon = if (interceptingElements.isNotEmpty()) AxonIcons.HandlerIntercepted else AxonIcons.Handler
-        return AxonGutterIconBuilder(icon)
-            .setPopupTitle("Payload Creators")
-            .setTooltipText("Navigate to creators of $payload")
-            .setTargets(NotNullLazyValue.createValue {
+        return AxonNavigationGutterIconRenderer(
+            icon = icon,
+            popupTitle = "Payload Creators",
+            tooltipText = "Navigate to creators of $payload",
+            emptyText = "No creators of this message payload were found",
+            elements = NotNullLazyValue.createValue {
                 val creatingElements = element.creatorResolver().getCreatorsForPayload(payload)
                     .distinctBy { it.parentHandler }
-                    .sortedWith(sortingByDisplayName())
-                    .map { it.element }
                 interceptingElements + creatingElements
-            })
-            .setEmptyPopupText("No creators of this message payload were found")
-            .createLineMarkerInfo(element)
+            }).createLineMarkerInfo(element)
     }
 }

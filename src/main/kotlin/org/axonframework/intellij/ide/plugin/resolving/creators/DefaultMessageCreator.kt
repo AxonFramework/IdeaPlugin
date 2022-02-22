@@ -40,7 +40,17 @@ data class DefaultMessageCreator(
     /**
      * Returns the correct icon for the creator
      */
-    override val icon: Icon = AxonIcons.Publisher
+    override fun getIcon(): Icon {
+        if (parentHandler != null) {
+            return parentHandler.getIcon()
+        }
+        return AxonIcons.Publisher
+    }
 
-    override val containerText: String? = null
+    override fun renderText(): String {
+        if (parentHandler != null) {
+            return parentHandler.renderText()
+        }
+        return super.renderText()
+    }
 }

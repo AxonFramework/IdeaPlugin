@@ -17,7 +17,6 @@
 package org.axonframework.intellij.ide.plugin.resolving.handlers.types
 
 import com.intellij.psi.PsiMethod
-import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 
@@ -37,6 +36,4 @@ data class QueryHandler(
     override fun renderText(): String {
         return componentName
     }
-
-    override fun getIcon() = AxonIcons.Handler
 }
