@@ -2,6 +2,14 @@
 
 # Axon Framework plugin Changelog
 
+## [5.0.0]
+
+### Changed
+
+- Improve list rendering for better performance
+- Restructured packages
+- Improve caching on line markers to improve performance
+
 ## [0.4.2]
 
 ### Changed
