@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.handlers.searchers
+package org.axonframework.intellij.ide.plugin.resolving.handlers.searchers
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
@@ -23,8 +23,8 @@ import com.intellij.psi.search.searches.AnnotatedElementsSearch
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.handlers.types.AggregateConstructor
 import org.axonframework.intellij.ide.plugin.resolving.ResolvedAnnotation
+import org.axonframework.intellij.ide.plugin.resolving.handlers.types.AggregateConstructor
 import org.axonframework.intellij.ide.plugin.util.annotationResolver
 import org.axonframework.intellij.ide.plugin.util.axonScope
 

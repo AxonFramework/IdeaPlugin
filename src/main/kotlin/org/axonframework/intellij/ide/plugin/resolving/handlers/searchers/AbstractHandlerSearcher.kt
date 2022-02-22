@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.handlers.searchers
+package org.axonframework.intellij.ide.plugin.resolving.handlers.searchers
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass

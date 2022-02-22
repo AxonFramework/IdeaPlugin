@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.handlers.types
+package org.axonframework.intellij.ide.plugin.resolving.handlers.types
 
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
@@ -22,19 +22,18 @@ import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.util.toShortName
 
 /**
- * Represents a method being able to handle a command.
+ * Represents a constructor invocation of an Aggregate.
+ * This is often done during command handling, where aggregate A creates an instance of aggregate B.
  *
- * @param componentName The fully qualified name of the class handling the command.
- * @See org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerSearcher
+ * @see org.axonframework.intellij.ide.plugin.handlers.searchers.AggregateConstructorSearcher
  */
-data class CommandHandler(
+data class AggregateConstructor(
     override val element: PsiMethod,
     override val payload: String,
-    val componentName: String,
 ) : Handler {
     override val handlerType: MessageHandlerType = MessageHandlerType.COMMAND
 
-    override fun renderContainerText(): String {
-        return componentName.toShortName()
+    override fun renderText(): String {
+        return "Aggregate creation: " + payload.toShortName()
     }
 }

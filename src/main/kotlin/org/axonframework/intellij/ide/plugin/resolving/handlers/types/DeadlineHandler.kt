@@ -14,26 +14,25 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.handlers.types
+package org.axonframework.intellij.ide.plugin.resolving.handlers.types
 
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 
 /**
- * Represents a method in a Saga that is able to handle an event
+ * Represents a method being able to a deadline message. Invoked when a deadline expires.
  *
- * @param processingGroup The name of the saga handling the event, based on package or ProcessingGroup annotation
- * @See org.axonframework.intellij.ide.plugin.handlers.searchers.SagaEventHandlerSearcher
+ * @See org.axonframework.intellij.ide.plugin.handlers.searchers.DeadlineHandlerSearcher
  */
-data class SagaEventHandler(
+data class DeadlineHandler(
     override val element: PsiMethod,
     override val payload: String,
-    val processingGroup: String,
+    val deadlineName: String,
 ) : Handler {
-    override val handlerType: MessageHandlerType = MessageHandlerType.SAGA
+    override val handlerType: MessageHandlerType = MessageHandlerType.DEADLINE
 
     override fun renderText(): String {
-        return "Saga: $processingGroup"
+        return "Deadline $deadlineName"
     }
 }

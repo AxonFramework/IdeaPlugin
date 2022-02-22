@@ -14,26 +14,26 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.handlers.types
+package org.axonframework.intellij.ide.plugin.resolving.handlers.types
 
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.util.toShortName
 
 /**
- * Represents a constructor invocation of an Aggregate.
- * This is often done during command handling, where aggregate A creates an instance of aggregate B.
+ * Represents a method in a Saga that is able to handle an event
  *
- * @see org.axonframework.intellij.ide.plugin.handlers.searchers.AggregateConstructorSearcher
+ * @param processingGroup The name of the saga handling the event, based on package or ProcessingGroup annotation
+ * @See org.axonframework.intellij.ide.plugin.handlers.searchers.SagaEventHandlerSearcher
  */
-data class AggregateConstructor(
+data class SagaEventHandler(
     override val element: PsiMethod,
     override val payload: String,
+    val processingGroup: String,
 ) : Handler {
-    override val handlerType: MessageHandlerType = MessageHandlerType.COMMAND
+    override val handlerType: MessageHandlerType = MessageHandlerType.SAGA
 
     override fun renderText(): String {
-        return "Aggregate creation: " + payload.toShortName()
+        return "Saga: $processingGroup"
     }
 }

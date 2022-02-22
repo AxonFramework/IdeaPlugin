@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.handlers.types
+package org.axonframework.intellij.ide.plugin.resolving.handlers.types
 
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
@@ -22,19 +22,19 @@ import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.util.toShortName
 
 /**
- * Represents a method being able to handle an event for sourcing an aggregate.
+ * Represents a method being able to handle a command.
  *
- * @param model The fully qualified name of the aggregate class sourced by the event
- * @See org.axonframework.intellij.ide.plugin.handlers.searchers.EventSourcingHandlerSearcher
+ * @param componentName The fully qualified name of the class handling the command.
+ * @See org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerSearcher
  */
-data class EventSourcingHandler(
+data class CommandHandler(
     override val element: PsiMethod,
     override val payload: String,
-    val model: String,
+    val componentName: String,
 ) : Handler {
-    override val handlerType: MessageHandlerType = MessageHandlerType.EVENT_SOURCING
+    override val handlerType: MessageHandlerType = MessageHandlerType.COMMAND
 
-    override fun renderText(): String {
-        return "EventSourcingHandler " + model.toShortName()
+    override fun renderContainerText(): String {
+        return componentName.toShortName()
     }
 }

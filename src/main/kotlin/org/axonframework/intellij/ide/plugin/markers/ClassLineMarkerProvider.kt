@@ -18,7 +18,6 @@ package org.axonframework.intellij.ide.plugin.markers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
-import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
@@ -50,13 +49,11 @@ class ClassLineMarkerProvider : LineMarkerProvider {
                 return AxonGutterIconBuilder(AxonIcons.Axon)
                     .setPopupTitle("Axon References To This Class")
                     .setTooltipText("Navigate to message handlers and creations")
-                    .setCellRenderer(AxonCellRenderer.getInstance())
                     .setTargets(NotNullLazyValue.createValue {
                         val publishers = element.creatorResolver().getCreatorsForPayload(qualifiedName)
                         val allItems = handlers + publishers
                         allItems.sortedWith(sortingByDisplayName()).map { it.element }
                     })
-                    .setAlignment(GutterIconRenderer.Alignment.LEFT)
                     .createLineMarkerInfo(element)
             }
         }
@@ -70,9 +67,7 @@ class ClassLineMarkerProvider : LineMarkerProvider {
             return AxonGutterIconBuilder(AxonIcons.Axon)
                 .setPopupTitle("Related Models")
                 .setTooltipText("Navigate to members in the same model hierarchy")
-                .setCellRenderer(AxonCellRenderer.getInstance())
                 .setTargets(NotNullLazyValue.createValue { parents })
-                .setAlignment(GutterIconRenderer.Alignment.LEFT)
                 .createLineMarkerInfo(element)
 
         }

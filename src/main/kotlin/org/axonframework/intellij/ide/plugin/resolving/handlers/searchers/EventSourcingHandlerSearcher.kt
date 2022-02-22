@@ -14,25 +14,25 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.handlers.searchers
+package org.axonframework.intellij.ide.plugin.resolving.handlers.searchers
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.handlers.types.QueryHandler
-import org.axonframework.intellij.ide.plugin.util.findProcessingGroup
+import org.axonframework.intellij.ide.plugin.resolving.handlers.types.EventSourcingHandler
+import org.axonframework.intellij.ide.plugin.util.containingClassFqn
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 
 /**
- * Searches for any query handlers.
+ * Searches for any event handlers in aggregates that source the state of the aggregates.
  *
- * @see org.axonframework.intellij.ide.plugin.handlers.types.QueryHandler
+ * @see org.axonframework.intellij.ide.plugin.handlers.types.EventSourcingHandler
  */
-class QueryHandlerSearcher : AbstractHandlerSearcher(MessageHandlerType.QUERY) {
+class EventSourcingHandlerSearcher : AbstractHandlerSearcher(MessageHandlerType.EVENT_SOURCING) {
     override fun createMessageHandler(method: PsiMethod, annotation: PsiClass?): Handler? {
         val payloadType = method.resolvePayloadType()?.toQualifiedName() ?: return null
-        return QueryHandler(method, payloadType, method.findProcessingGroup())
+        return EventSourcingHandler(method, payloadType, method.containingClassFqn())
     }
 }

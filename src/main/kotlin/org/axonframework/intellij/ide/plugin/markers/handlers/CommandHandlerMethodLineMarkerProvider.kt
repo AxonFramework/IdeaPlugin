@@ -21,32 +21,41 @@ import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
+import org.axonframework.intellij.ide.plugin.api.MessageType
 import org.axonframework.intellij.ide.plugin.markers.AxonGutterIconBuilder
+import org.axonframework.intellij.ide.plugin.resolving.handlers.types.CommandHandlerInterceptor
 import org.axonframework.intellij.ide.plugin.util.creatorResolver
+import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
 
 /**
- * Provides a gutter icon on all generic handler methods
+ * Provides a gutter icon on command handlers, switching to an intercepted icon if necessary
  */
-class CommonHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvider() {
-    private val blacklistedTypes = listOf(MessageHandlerType.DEADLINE, MessageHandlerType.COMMAND, MessageHandlerType.COMMAND_INTERCEPTOR)
+class CommandHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvider() {
     override fun createLineMarker(
         element: PsiElement,
         handlerType: MessageHandlerType,
         payload: String?,
     ): LineMarkerInfo<*>? {
-        if (blacklistedTypes.contains(handlerType) || payload == null) {
+        if (handlerType != MessageHandlerType.COMMAND || payload == null) {
             return null
         }
 
-        return AxonGutterIconBuilder(AxonIcons.Handler)
+        val interceptingElements = element.handlerResolver().findHandlersForType(payload, MessageType.COMMAND, true)
+            .filterIsInstance<CommandHandlerInterceptor>()
+            .sortedWith(sortingByDisplayName())
+            .map { it.element }
+
+        val icon = if (interceptingElements.isNotEmpty()) AxonIcons.HandlerIntercepted else AxonIcons.Handler
+        return AxonGutterIconBuilder(icon)
             .setPopupTitle("Payload Creators")
             .setTooltipText("Navigate to creators of $payload")
             .setTargets(NotNullLazyValue.createValue {
-                element.creatorResolver().getCreatorsForPayload(payload)
+                val creatingElements = element.creatorResolver().getCreatorsForPayload(payload)
                     .distinctBy { it.parentHandler }
                     .sortedWith(sortingByDisplayName())
                     .map { it.element }
+                interceptingElements + creatingElements
             })
             .setEmptyPopupText("No creators of this message payload were found")
             .createLineMarkerInfo(element)

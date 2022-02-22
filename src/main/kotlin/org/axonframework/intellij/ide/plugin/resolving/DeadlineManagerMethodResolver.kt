@@ -53,7 +53,7 @@ import org.axonframework.intellij.ide.plugin.util.javaFacade
  * Every PSI change we scan for deadline manager implementations in the project scope. This way we can support
  * all use cases.
  */
-class DeadlineMethodResolver(val project: Project) {
+class DeadlineManagerMethodResolver(val project: Project) {
     private val libraryCache = LibraryDeadlineCache()
     private val deadlineManagerClass = project.createCachedValue {
         project.javaFacade().findClass("org.axonframework.deadline.DeadlineManager", project.allScope())

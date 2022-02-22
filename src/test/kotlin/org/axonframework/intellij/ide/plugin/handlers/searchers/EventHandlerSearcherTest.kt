@@ -18,7 +18,7 @@ package org.axonframework.intellij.ide.plugin.handlers.searchers
 
 import org.assertj.core.api.Assertions
 import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
-import org.axonframework.intellij.ide.plugin.handlers.types.EventHandler
+import org.axonframework.intellij.ide.plugin.resolving.handlers.types.EventHandler
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
 
 class EventHandlerSearcherTest : AbstractAxonFixtureTestCase() {

@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import org.axonframework.intellij.ide.plugin.api.MessageCreator
-import org.axonframework.intellij.ide.plugin.creators.DefaultMessageCreator
+import org.axonframework.intellij.ide.plugin.resolving.creators.DefaultMessageCreator
 import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
@@ -39,7 +39,7 @@ import org.jetbrains.uast.toUElement
  * The first String argument of the call is recorded as the deadline's name. In addition, if there's a payload, that is also
  * registered as a method name.
  */
-class DeadlineReferenceResolver(val project: Project) {
+class DeadlineManagerReferenceResolver(val project: Project) {
     private val cache = project.createCachedValue {
         findAllReferences()
     }

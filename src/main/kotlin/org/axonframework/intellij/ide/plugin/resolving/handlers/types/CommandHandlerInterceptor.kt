@@ -14,36 +14,37 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.handlers.types
+package org.axonframework.intellij.ide.plugin.resolving.handlers.types
 
 import com.intellij.psi.PsiMethod
+import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.util.containingClassname
+import org.axonframework.intellij.ide.plugin.util.toShortName
+import javax.swing.Icon
 
 /**
- * Represents a method being able to handle an event. There are more specific event handlers (`EventSourcingHandler` and
- * `SagaEventHandler`) that are not included here. These have their own representation, despite being meta-annotated
- * by `@EventHandler`
+ * Represents a method that is able to intercept a command.
  *
- * @param processingGroup The name of the component handling the event, based on package or ProcessingGroup annotation
- *
- * @See org.axonframework.intellij.ide.plugin.handlers.searchers.EventHandlerSearcher
- * @see SagaEventHandler
- * @see EventSourcingHandler
+ * @param componentName The fully qualified name of the class intercepting the command
+ * @see org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerInterceptorSearcher
  */
-data class EventHandler(
+data class CommandHandlerInterceptor(
     override val element: PsiMethod,
     override val payload: String,
-    val processingGroup: String,
+    val componentName: String,
 ) : Handler {
-    override val handlerType: MessageHandlerType = MessageHandlerType.EVENT
+    override val handlerType: MessageHandlerType = MessageHandlerType.COMMAND_INTERCEPTOR
 
     override fun renderText(): String {
-        return element.containingClassname().ifEmpty { "Event Processor" }
+        return "Command Interceptor of ${componentName.toShortName()}"
     }
 
     override fun renderContainerText(): String {
-        return processingGroup
+        return element.name
+    }
+
+    override fun getIcon(): Icon {
+        return AxonIcons.Interceptor
     }
 }

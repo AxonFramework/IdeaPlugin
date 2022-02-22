@@ -19,16 +19,14 @@ package org.axonframework.intellij.ide.plugin.markers.publishers
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.handlers.types.CommandHandlerInterceptor
-import org.axonframework.intellij.ide.plugin.handlers.types.DeadlineHandler
-import org.axonframework.intellij.ide.plugin.markers.AxonCellRenderer
 import org.axonframework.intellij.ide.plugin.markers.AxonGutterIconBuilder
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
+import org.axonframework.intellij.ide.plugin.resolving.handlers.types.CommandHandlerInterceptor
+import org.axonframework.intellij.ide.plugin.resolving.handlers.types.DeadlineHandler
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -73,8 +71,6 @@ class PublishMethodLineMarkerProvider : LineMarkerProvider {
         return AxonGutterIconBuilder(AxonIcons.Publisher)
             .setPopupTitle("Axon Message Handlers")
             .setTooltipText("Navigate to Axon message handlers")
-            .setCellRenderer(AxonCellRenderer.getInstance())
-            .setAlignment(GutterIconRenderer.Alignment.LEFT)
             .setTargets(NotNullLazyValue.createValue { handlers.map { it.element } })
             .createLineMarkerInfo(element)
     }

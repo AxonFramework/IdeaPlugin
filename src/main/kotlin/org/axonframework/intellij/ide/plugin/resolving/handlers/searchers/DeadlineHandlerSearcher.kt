@@ -14,14 +14,14 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.handlers.searchers
+package org.axonframework.intellij.ide.plugin.resolving.handlers.searchers
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.handlers.types.DeadlineHandler
+import org.axonframework.intellij.ide.plugin.resolving.handlers.types.DeadlineHandler
 import org.axonframework.intellij.ide.plugin.util.resolveAnnotationStringValue
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName

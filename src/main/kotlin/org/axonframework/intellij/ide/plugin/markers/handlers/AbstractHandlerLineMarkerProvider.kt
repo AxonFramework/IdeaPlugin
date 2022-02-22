@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry.measure
 import org.axonframework.intellij.ide.plugin.util.annotationResolver
+import org.axonframework.intellij.ide.plugin.util.cacheData
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 import org.jetbrains.uast.UAnnotation
@@ -38,7 +39,11 @@ import org.jetbrains.uast.toUElementOfType
  */
 abstract class AbstractHandlerLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
-        val info = measure("getInfoForAnnotatedFunction") { getInfoForAnnotatedFunction(element) }
+        val info = element.cacheData("Axon_annotationInfo") {
+            measure("getInfoForAnnotatedFunction") {
+                getInfoForAnnotatedFunction(element)
+            }
+        }
         if (info != null) {
             return createLineMarker(element, info.first, info.second)
         }

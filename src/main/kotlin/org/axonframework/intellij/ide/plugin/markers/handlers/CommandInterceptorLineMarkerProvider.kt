@@ -17,15 +17,13 @@
 package org.axonframework.intellij.ide.plugin.markers.handlers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
-import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.api.MessageType
-import org.axonframework.intellij.ide.plugin.handlers.types.CommandHandler
-import org.axonframework.intellij.ide.plugin.markers.AxonCellRenderer
 import org.axonframework.intellij.ide.plugin.markers.AxonGutterIconBuilder
+import org.axonframework.intellij.ide.plugin.resolving.handlers.types.CommandHandler
 import org.axonframework.intellij.ide.plugin.util.aggregateResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.sortingByDisplayName
@@ -55,7 +53,6 @@ class CommandInterceptorLineMarkerProvider : AbstractHandlerLineMarkerProvider()
         return AxonGutterIconBuilder(AxonIcons.Interceptor)
             .setPopupTitle("Commands Intercepted")
             .setTooltipText("Navigate to command handlers that are intercepted")
-            .setCellRenderer(AxonCellRenderer.getInstance())
             .setTargets(NotNullLazyValue.createValue {
                 val members = element.aggregateResolver().getMemberWithSubEntities(className)
                 element.handlerResolver().findHandlersForType(actualPayload, MessageType.COMMAND)
@@ -67,7 +64,6 @@ class CommandInterceptorLineMarkerProvider : AbstractHandlerLineMarkerProvider()
                     .sortedWith(sortingByDisplayName())
                     .map { it.element }
             })
-            .setAlignment(GutterIconRenderer.Alignment.LEFT)
             .setEmptyPopupText("No intercepted command handlers were found")
             .createLineMarkerInfo(element)
     }

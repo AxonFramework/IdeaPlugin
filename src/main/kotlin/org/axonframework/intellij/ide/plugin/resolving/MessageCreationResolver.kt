@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.util.CachedValue
 import org.axonframework.intellij.ide.plugin.api.MessageCreator
-import org.axonframework.intellij.ide.plugin.creators.DefaultMessageCreator
+import org.axonframework.intellij.ide.plugin.resolving.creators.DefaultMessageCreator
 import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
 import org.axonframework.intellij.ide.plugin.util.areAssignable
 import org.axonframework.intellij.ide.plugin.util.axonScope

@@ -36,8 +36,8 @@ import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.resolving.AggregateStructureResolver
 import org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver
-import org.axonframework.intellij.ide.plugin.resolving.DeadlineMethodResolver
-import org.axonframework.intellij.ide.plugin.resolving.DeadlineReferenceResolver
+import org.axonframework.intellij.ide.plugin.resolving.DeadlineManagerMethodResolver
+import org.axonframework.intellij.ide.plugin.resolving.DeadlineManagerReferenceResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -125,10 +125,10 @@ fun Project.handlerResolver(): MessageHandlerResolver = getService(MessageHandle
 fun PsiElement.handlerResolver(): MessageHandlerResolver = project.handlerResolver()
 fun Project.creatorResolver(): MessageCreationResolver = getService(MessageCreationResolver::class.java)
 fun PsiElement.creatorResolver(): MessageCreationResolver = project.creatorResolver()
-fun Project.deadlineMethodResolver(): DeadlineMethodResolver = getService(DeadlineMethodResolver::class.java)
-fun PsiElement.deadlineMethodResolver(): DeadlineMethodResolver = project.deadlineMethodResolver()
-fun Project.deadlineReferenceResolver(): DeadlineReferenceResolver = getService(DeadlineReferenceResolver::class.java)
-fun PsiElement.deadlineReferenceResolver(): DeadlineReferenceResolver = project.deadlineReferenceResolver()
+fun Project.deadlineMethodResolver(): DeadlineManagerMethodResolver = getService(DeadlineManagerMethodResolver::class.java)
+fun PsiElement.deadlineMethodResolver(): DeadlineManagerMethodResolver = project.deadlineMethodResolver()
+fun Project.deadlineReferenceResolver(): DeadlineManagerReferenceResolver = getService(DeadlineManagerReferenceResolver::class.java)
+fun PsiElement.deadlineReferenceResolver(): DeadlineManagerReferenceResolver = project.deadlineReferenceResolver()
 fun Project.aggregateResolver(): AggregateStructureResolver = getService(AggregateStructureResolver::class.java)
 fun PsiElement.aggregateResolver(): AggregateStructureResolver = project.aggregateResolver()
 

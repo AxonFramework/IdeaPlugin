@@ -14,29 +14,25 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.handlers.searchers
+package org.axonframework.intellij.ide.plugin.resolving.handlers.searchers
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.handlers.types.CommandHandlerInterceptor
+import org.axonframework.intellij.ide.plugin.resolving.handlers.types.CommandHandler
 import org.axonframework.intellij.ide.plugin.util.containingClassFqn
-import org.axonframework.intellij.ide.plugin.util.isAggregate
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 
 /**
- * Searches for any command interceptors. Currently, limited to Aggregates only.
+ * Searches for any command handlers
  *
- * @see org.axonframework.intellij.ide.plugin.handlers.types.CommandHandlerInterceptor
+ * @see org.axonframework.intellij.ide.plugin.handlers.types.CommandHandler
  */
-class CommandHandlerInterceptorSearcher : AbstractHandlerSearcher(MessageHandlerType.COMMAND_INTERCEPTOR) {
+class CommandHandlerSearcher : AbstractHandlerSearcher(MessageHandlerType.COMMAND) {
     override fun createMessageHandler(method: PsiMethod, annotation: PsiClass?): Handler? {
-        if (!method.containingClass.isAggregate()) {
-            return null
-        }
-        val payloadType = method.resolvePayloadType()?.toQualifiedName() ?: "java.lang.Object"
-        return CommandHandlerInterceptor(method, payloadType, method.containingClassFqn())
+        val payloadType = method.resolvePayloadType()?.toQualifiedName() ?: return null
+        return CommandHandler(method, payloadType, method.containingClassFqn())
     }
 }

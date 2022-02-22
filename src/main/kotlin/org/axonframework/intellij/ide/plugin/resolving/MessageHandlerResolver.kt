@@ -20,15 +20,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageType
-import org.axonframework.intellij.ide.plugin.handlers.searchers.AggregateConstructorSearcher
-import org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerInterceptorSearcher
-import org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerSearcher
-import org.axonframework.intellij.ide.plugin.handlers.searchers.DeadlineHandlerSearcher
-import org.axonframework.intellij.ide.plugin.handlers.searchers.EventHandlerSearcher
-import org.axonframework.intellij.ide.plugin.handlers.searchers.EventSourcingHandlerSearcher
-import org.axonframework.intellij.ide.plugin.handlers.searchers.QueryHandlerSearcher
-import org.axonframework.intellij.ide.plugin.handlers.searchers.SagaEventHandlerSearcher
-import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
+import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.AggregateConstructorSearcher
+import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.CommandHandlerInterceptorSearcher
+import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.CommandHandlerSearcher
+import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.DeadlineHandlerSearcher
+import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.EventHandlerSearcher
+import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.EventSourcingHandlerSearcher
+import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.QueryHandlerSearcher
+import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.SagaEventHandlerSearcher
 import org.axonframework.intellij.ide.plugin.util.areAssignable
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 
@@ -53,9 +52,7 @@ class MessageHandlerResolver(private val project: Project) {
     )
 
     private val handlerCache = project.createCachedValue {
-        PerformanceRegistry.measure("MessageHandlerResolver.executeFindMessageHandlers") {
-            executeFindMessageHandlers()
-        }
+        executeFindMessageHandlers()
     }
 
     /**

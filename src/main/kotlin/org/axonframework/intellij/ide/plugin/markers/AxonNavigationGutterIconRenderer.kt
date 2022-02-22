@@ -40,12 +40,11 @@ import javax.swing.Icon
 class AxonNavigationGutterIconRenderer(
     popupTitle: String,
     emptyText: String?,
-    private val alignment: Alignment,
     private val icon: Icon,
     private val tooltipText: String?,
     pointers: NotNullLazyValue<List<SmartPsiElementPointer<*>>>,
-    cellRenderer: Computable<PsiElementListCellRenderer<*>>,
-) : NavigationGutterIconRenderer(popupTitle, emptyText, cellRenderer, pointers) {
+) : NavigationGutterIconRenderer(popupTitle, emptyText, { AxonCellRenderer.getInstance() }, pointers) {
+
     override fun getIcon(): Icon {
         return icon
     }
@@ -55,7 +54,7 @@ class AxonNavigationGutterIconRenderer(
     }
 
     override fun getAlignment(): Alignment {
-        return alignment
+        return Alignment.LEFT
     }
 
     override fun navigateToItems(event: MouseEvent?) {
@@ -79,6 +78,6 @@ class AxonGutterIconBuilder(icon: Icon) :
         renderer: Computable<PsiElementListCellRenderer<*>>,
         empty: Boolean
     ): NavigationGutterIconRenderer {
-        return AxonNavigationGutterIconRenderer(myPopupTitle, myEmptyText, myAlignment, myIcon, myTooltipText, pointers, renderer)
+        return AxonNavigationGutterIconRenderer(myPopupTitle, myEmptyText, myIcon, myTooltipText, pointers)
     }
 }

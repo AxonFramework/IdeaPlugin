@@ -14,37 +14,27 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.handlers.types
+package org.axonframework.intellij.ide.plugin.resolving.handlers.types
 
 import com.intellij.psi.PsiMethod
-import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.util.toShortName
-import javax.swing.Icon
 
 /**
- * Represents a method that is able to intercept a command.
+ * Represents a method being able to handle an event for sourcing an aggregate.
  *
- * @param componentName The fully qualified name of the class intercepting the command
- * @see org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerInterceptorSearcher
+ * @param model The fully qualified name of the aggregate class sourced by the event
+ * @See org.axonframework.intellij.ide.plugin.handlers.searchers.EventSourcingHandlerSearcher
  */
-data class CommandHandlerInterceptor(
+data class EventSourcingHandler(
     override val element: PsiMethod,
     override val payload: String,
-    val componentName: String,
+    val model: String,
 ) : Handler {
-    override val handlerType: MessageHandlerType = MessageHandlerType.COMMAND_INTERCEPTOR
+    override val handlerType: MessageHandlerType = MessageHandlerType.EVENT_SOURCING
 
     override fun renderText(): String {
-        return "Command Interceptor of ${componentName.toShortName()}"
-    }
-
-    override fun renderContainerText(): String {
-        return element.name
-    }
-
-    override fun getIcon(): Icon {
-        return AxonIcons.Interceptor
+        return "EventSourcingHandler " + model.toShortName()
     }
 }
