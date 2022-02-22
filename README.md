@@ -1,27 +1,35 @@
 Axon Framework IntelliJ Plugin
 ===================================
 
-This plugin will help you navigate and visualize the [Axon Framework](http://www.axonframework.org/) annotations.
+Supports developers while writing applications using [Axon Framework](https://axoniq.io/).
 
-If you have any issues using the plugin, please let us know by [filing a new issue](http://issues.axonframework.org/youtrack/issues/IDEAPLUGIN), send us an [e-mail](mailto:intellijplugin@axonframework.org) or even sending a pull request.
+Axon Framework helps build scalable, extensible and maintainable applications by supporting developers apply the Command Query
+Responsibility Separation (CQRS) architectural pattern.
 
+The plugin provides the following features:
 
-### Build from source
+- Line markers to visualize commands, events, queries and deadlines
+- Several inspections on code structure that is required for Axon Framework
+- Marks methods used by Axon Framework as used, such as annotated methods
+- Easy access to the reference guide (ctrl+shift+a and type axon)
 
-#### Requirements
-The plugin is build by maven. At the moment there is no remote repository available. Make sure you have [maven](https://maven.apache.org/) and the [Intellij plugin development with Maven](http://plugins.jetbrains.com/plugin/7127?pr=) installed. 
+If you have a feature request, or want to report a bug, please report this at
+our [Github issue tracker](https://github.com/AxonFramework/IdeaPlugin/issues). For questions on Axon Framework usage, or about the plugin,
+please visit our [Discuss](https://discuss.axoniq.io/)
 
-#### Build
-Before you build you should run the setup.sh script once to install the intellij dependencies into your local maven repository.
+## Usage
 
-From the command line: mvn clean install
+Download and install the plugin manually from the [IntelliJ Plugin Website](https://plugins.jetbrains.com/plugin/18628-axon-framework) or
+use the Plugin Repository Browser in your IDE.
 
-#### Release
-mvn clean release:prepare release:perform -Dmaven.javadoc.skip -Dgoals=install
+After installation the plugin will automatically annotate the [Axon Framework](http://www.axonframework.org/)
+annotations it recognizes. You can click on the icons on the left of the sourcecode to navigate to and from the annotations.
 
-### Usage
-Download and install the plugin manually from the [IntelliJ Plugin Website](http://plugins.jetbrains.com/plugin/7506) or use the Plugin Repository Browser in your IDE.
+![Axon Hotel Demo Screenshot With Annotations](.github/screenshot.png)
 
-After installation the plugin will automatically annotate the [Axon Framework](http://www.axonframework.org/) annotations it recognizes. You can click on the icons on the left of the sourcecode to navigate to and from the annotations.
+## Local development
 
-![Axon Trader Application EventHandler Screenshot With Annotations](http://plugins.jetbrains.com/files/7506/screenshot_14689.png)
+You can run an IntelliJ instance with the plugin locally with `./gradlew runIde`. This will bootstrap a clean instance
+and load the plugin. While the instance is running, you can run `./gradlew buildPlugin` for a hot reload of the plugin.
+
+To check compatibility with the most common IntelliJ versions run `./gradlew runPluginVerifier`.

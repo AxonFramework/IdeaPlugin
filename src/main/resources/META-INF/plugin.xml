@@ -1,156 +1,131 @@
-<idea-plugin version="2">
-    <id>org.axonframework.intellij.axonplugin</id>
-    <name>Axon Framework Plugin</name>
+<!--
+  ~  Copyright (c) 2022. Axon Framework
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<idea-plugin require-restart="false">
+    <id>io.axoniq.ide.intellij</id>
+    <name>Axon Framework</name>
     <version>${project.version}</version>
-    <vendor email="intellijplugin@axonframework.org" url="http://www.axonframework.org/">Axon Framework</vendor>
+    <vendor url="https://axoniq.io/">AxonIQ</vendor>
 
     <description>
-        This plugin helps to navigate from and to the axon framework event handler annotations. Axon Framework helps
-        build scalable, extensible and maintainable applications by supporting developers apply the Command Query
-        Responsibility Segregation (CQRS) architectural pattern.
-        Please report issues at http://issues.axonframework.org
+        <![CDATA[
+        Supports developers while writing applications using <a href="https://axoniq.io/">Axon Framework</a>. <br/><br/>
+        Axon Framework helps build scalable, extensible and maintainable applications by supporting developers apply the Command Query
+        Responsibility Separation (CQRS) architectural pattern.<br/><br/>
+
+        The plugin provides the following features:
+        <ul>
+        <li>Line markers to visualize commands, events, queries and deadlines</li>
+        <li>Several inspections on code structure that is required for Axon Framework</li>
+        <li>Marks methods used by Axon Framework as used, such as annotated methods</li>
+        <li>Easy access to the reference guide (ctrl+shift+a and type axon)
+        </ul>
+
+        If you have a feature request, or want to report a bug, please report this at our <a href="https://github.com/AxonFramework/IdeaPlugin/issues">Github issue tracker</a>.<br/>
+        For questions on Axon Framework usage, or about the plugin, please visit our <a href="https://discuss.axoniq.io/">Discuss</a>.
+     ]]>
     </description>
 
-    <change-notes><![CDATA[
-        Version 0.3.9<br />
-        -------------<br />
-        <ul>
-            <li>FIXED IDEAPLUGIN-10 Plugin crashes because it cannot find java.util.concurrent.ConcurrentHashMap.keySet </li>
-        </ul>
-        <br />
-        <br />
-        Version 0.3.7<br />
-        -------------<br />
-        <ul>
-            <li>FIXED IDEAPLUGIN-5 Command Publisher now links to @CommandHandler</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.3.6<br />
-        -------------<br />
-        <ul>
-            <li>Performance improvements and navigation from event classes and command classes to handlers (thanks to Pawel Badenski)</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.3.5<br />
-        -------------<br />
-        <ul>
-            <li>Several bugfixes for IDEAPLUGIN-4</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.3.4<br />
-        -------------<br />
-        <ul>
-            <li>FIXED IDEAPLUGIN-4 @CommandHandler now links to the constructor of the commandhandler argument</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.3.3<br />
-        -------------<br />
-        <ul>
-            <li>FIXED IDEAPLUGIN-13 / IDEAPLUGIN-14 Plugin crashes all the time </li>
-        </ul>
-        <br />
-        <br />
-        Version 0.3.2<br />
-        -------------<br />
-        <ul>
-            <li>IDEAPLUGIN-6 Added visual distinction between internal, saga and other events</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.3.0<br />
-        -------------<br />
-        <ul>
-            <li>IDEAPLUGIN-6 Added visual distinction between internal and external events</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.2.2<br />
-        -------------<br />
-        <ul>
-            <li>Bugfix: IDEAPLUGIN-9 / Issue when switching projects with Axon plugin #3 </li>
-        </ul>
-        <br />
-        <br />
-        Version 0.2.1<br />
-        -------------<br />
-        <ul>
-            <li>Bugfix: IDEAPLUGIN-10 </li>
-            <li>Small performance improvement </li>
-        </ul>
-        <br />
-        <br />
-        Version 0.2.0<br />
-        -------------<br />
-        <ul>
-            <li>Added Create Event Handler Quickfix</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.1.1<br />
-        -------------<br />
-        <ul>
-            <li>Added support for Events from AbstractAnnotatedEntity</li>
-            <li>Fixed some issues where the plugin would not always show all handlers/publishers</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.1.0<br />
-        -------------<br />
-        <ul>
-            <li>Fixed NPE</li>
-            <li>Fixed ConcurrentModificationException</li>
-            <li>Restructured code</li>
-        </ul>
-        <br />
-        <br />
-        Version 0.0.8<br />
-        -------------<br />
-        <ul>
-            <li>Fixed NPE</li>
-            <li>Fixed ConcurrentModificationException</li>
-            <li>Added support for all event handlers annotation types:
-            <ul>
-                <li>@EventHandler</li>
-                <li>@EventSourcingHandler</li>
-                <li>@SagaEventHandler</li>
-            </ul>
-            </li>
-            <li>Event handler methods (and parameters used to defined the event type) are not marked as unused if a
-           publishers for the declared event is available.</li>
-        </ul>
-        ]]>
-    </change-notes>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+    <depends>org.jetbrains.kotlin</depends>
 
-    <idea-version since-build="129.1359"/>
-
-    <application-components/>
-
-    <project-components/>
-
-    <extensionPoints>
-        <extensionPoint name="publisherProvider"
-                        interface="org.axonframework.intellij.ide.plugin.publisher.PublisherProvider"/>
-        <extensionPoint name="handlerProvider"
-                        interface="org.axonframework.intellij.ide.plugin.handler.HandlerProvider"/>
-    </extensionPoints>
+    <idea-version since-build="203"/>
 
     <extensions defaultExtensionNs="com.intellij">
-        <annotator language="JAVA"
-                   implementationClass="org.axonframework.intellij.ide.plugin.annotator.AxonGutterAnnotator"/>
-        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager"
-                        serviceInterface="org.axonframework.intellij.ide.plugin.publisher.PublisherProviderManager"/>
-        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager"
-                        serviceInterface="org.axonframework.intellij.ide.plugin.handler.HandlerProviderManager"/>
-        <implicitUsageProvider implementation="org.axonframework.intellij.ide.plugin.handler.HandlerUsageProvider"/>
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.publishers.PublishMethodLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.publishers.DeadlinePublisherLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.CommandHandlerMethodLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.CommonHandlerMethodLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.CommandInterceptorLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.DeadlineHandlerMethodLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.ClassLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="kotlin"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.publishers.PublishMethodLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="kotlin"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.CommandHandlerMethodLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="kotlin"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.CommonHandlerMethodLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="kotlin"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.CommandInterceptorLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="kotlin"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.DeadlineHandlerMethodLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="kotlin"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.ClassLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="kotlin"
+                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.publishers.DeadlinePublisherLineMarkerProvider"/>
+
+        <!-- Project services -->
+        <projectService
+                serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.AggregateStructureResolver"/>
+        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver"/>
+        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver"/>
+        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.DeadlineManagerMethodResolver"/>
+        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.DeadlineManagerReferenceResolver"/>
+        <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver"/>
+
+        <!-- Usage providers -->
+        <implicitUsageProvider implementation="org.axonframework.intellij.ide.plugin.usage.AxonImplicitUsageProvider"/>
+
+        <!-- Java inspections -->
+        <localInspection displayName="Aggregate has an identifier" shortName="JavaAggregateIdInspection"
+                         groupName="Axon Framework usage" language="JAVA"
+                         implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.JavaAggregateIdInspection"
+                         enabledByDefault="true"/>
+        <localInspection displayName="Aggregate has no-argument constructor"
+                         shortName="JavaAggregateConstructorInspection" groupName="Axon Framework usage"
+                         language="JAVA"
+                         implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.JavaAggregateConstructorInspection"
+                         enabledByDefault="true"/>
+        <localInspection displayName="Aggregate members have an ID"
+                         shortName="JavaAggregateMemberRoutingKeyInspection" groupName="Axon Framework usage"
+                         language="JAVA"
+                         implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.JavaAggregateMemberRoutingKeyInspection"
+                         enabledByDefault="true"/>
+
+        <!-- Kotlin inspections -->
+        <localInspection displayName="Aggregate has an identifier" shortName="KotlinAggregateIdInspection"
+                         groupName="Axon Framework usage" language="kotlin"
+                         implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.KotlinAggregateIdInspection"
+                         enabledByDefault="true"/>
+        <localInspection displayName="Aggregate has no-argument constructor"
+                         shortName="KotlinAggregateConstructorInspection" groupName="Axon Framework usage"
+                         language="kotlin"
+                         implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.KotlinAggregateConstructorInspection"
+                         enabledByDefault="true"/>
+        <localInspection displayName="Aggregate members have an ID"
+                         shortName="KotlinAggregateMemberRoutingKeyInspection" groupName="Axon Framework usage"
+                         language="JAVA"
+                         implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.KotlinAggregateMemberRoutingKeyInspection"
+                         enabledByDefault="true"/>
     </extensions>
 
-    <extensions defaultExtensionNs="org.axonframework.intellij.axonplugin">
-        <publisherProvider
-                implementation="org.axonframework.intellij.ide.plugin.publisher.DefaultEventPublisherProvider"/>
-        <handlerProvider implementation="org.axonframework.intellij.ide.plugin.handler.DefaultEventHandlerProvider"/>
-    </extensions>
+    <actions>
+        <action id="DumpAxonInfoAction" text="Dump Axon Plugin Information"
+                class="org.axonframework.intellij.ide.plugin.actions.DumpAxonInformationAction"/>
+        <action id="DumpAxonPerformanceAction" text="Dump Axon Plugin Performance"
+                class="org.axonframework.intellij.ide.plugin.actions.DumpAxonPerformanceAction"/>
+        <action id="AxonReferenceGuideAction" text="Axon Reference Guide"
+                class="org.axonframework.intellij.ide.plugin.actions.AxonReferenceGuideAction"/>
+    </actions>
 </idea-plugin>
