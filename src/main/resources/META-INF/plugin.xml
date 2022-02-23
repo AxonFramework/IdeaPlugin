@@ -22,9 +22,10 @@
 
     <description>
         <![CDATA[
-        Supports developers while writing applications using <a href="https://axoniq.io/">Axon Framework</a>. <br/><br/>
-        Axon Framework helps build scalable, extensible and maintainable applications by supporting developers apply the Command Query
-        Responsibility Separation (CQRS) architectural pattern.<br/><br/>
+        Supports developers while writing applications using <a href="https://axoniq.io/">Axon Framework</a> version 4.x.<br/><br/>
+
+        Axon Framework helps build scalable, extensible, and maintainable applications by supporting developers to apply Domain-Driven Design (DDD), Command-Query Responsibility Separation (CQRS),
+         and Event Sourcing. The framework provides a message-driven architecture with dedicated command, event, and query messages, to support these paradigms.<br/><br/>
 
         The plugin provides the following features:
         <ul>
@@ -34,7 +35,7 @@
         <li>Easy access to the reference guide (ctrl+shift+a and type axon)
         </ul>
 
-        If you have a feature request, or want to report a bug, please report this at our <a href="https://github.com/AxonFramework/IdeaPlugin/issues">Github issue tracker</a>.<br/>
+        If you have a feature request or want to report a bug, please report this at our <a href="https://github.com/AxonFramework/IdeaPlugin/issues">Github issue tracker</a>.<br/>
         For questions on Axon Framework usage, or about the plugin, please visit our <a href="https://discuss.axoniq.io/">Discuss</a>.
      ]]>
     </description>
