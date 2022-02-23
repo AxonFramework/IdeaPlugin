@@ -2,6 +2,12 @@
 
 # Axon Framework plugin Changelog
 
+## [0.5.1]
+
+### Fixed
+
+- Fix popup on deadline manager methods when there are qualified references as arguments. Fixes #16
+
 ## [0.5.0]
 
 ### Changed

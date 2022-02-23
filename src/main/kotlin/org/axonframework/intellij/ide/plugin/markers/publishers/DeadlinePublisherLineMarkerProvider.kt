@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.USimpleNameReferenceExpression
+import org.jetbrains.uast.UQualifiedReferenceExpression
 import org.jetbrains.uast.evaluateString
 import org.jetbrains.uast.getParentOfType
 import org.jetbrains.uast.toUElement
@@ -93,7 +94,12 @@ class DeadlinePublisherLineMarkerProvider : LineMarkerProvider {
 
     private fun getDeadlineNameForJava(element: PsiElement): String? {
         val methodCall = element.toUElementOfType<UIdentifier>()
-            ?.getParentOfType(UCallExpression::class.java, true, USimpleNameReferenceExpression::class.java)
+            ?.getParentOfType(
+                UCallExpression::class.java,
+                true,
+                USimpleNameReferenceExpression::class.java,
+                UQualifiedReferenceExpression::class.java
+            )
             ?: return null
         val referencedMethod = methodCall.resolve() ?: return null
         val methods = element.deadlineMethodResolver().getAllReferencedMethods()
