@@ -19,18 +19,21 @@ jobs:
                 with:
                     java-version: '11'
                     distribution: 'adopt'
+
             -   name: Validate Gradle wrapper
                 uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-                if: !contains(github.ref, 'refs/tags/')
+                if: contains(github.ref, 'refs/tags/') == false
+
             -   name: Build plugin
                 uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
                 with:
                     arguments: build
+
             -   name: Verify plugin
                 uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
                 with:
                     arguments: runPluginVerifier
-                if: !contains(github.ref, 'refs/tags/')
+                if: contains(github.ref, 'refs/tags/') == false
 
             # If it is a tag push, release it automatically to the Jetbrains marketplace
             -   name: Publish plugin
