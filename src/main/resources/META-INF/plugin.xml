@@ -89,36 +89,36 @@
         <implicitUsageProvider implementation="org.axonframework.intellij.ide.plugin.usage.AxonImplicitUsageProvider"/>
 
         <!-- Java inspections -->
-        <localInspection displayName="Aggregate has an identifier" shortName="JavaAggregateIdInspection"
+        <localInspection displayName="Aggregate has an identifier (Java)" shortName="JavaAggregateIdInspection"
                          groupName="Axon Framework usage" language="JAVA"
                          implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.JavaAggregateIdInspection"
-                         enabledByDefault="true"/>
-        <localInspection displayName="Aggregate has no-argument constructor"
+                         enabledByDefault="true" hasStaticDescription="true"/>
+        <localInspection displayName="Aggregate has no-argument constructor (Java)"
                          shortName="JavaAggregateConstructorInspection" groupName="Axon Framework usage"
                          language="JAVA"
                          implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.JavaAggregateConstructorInspection"
-                         enabledByDefault="true"/>
-        <localInspection displayName="Aggregate members have an ID"
+                         enabledByDefault="true" hasStaticDescription="true"/>
+        <localInspection displayName="Aggregate members have an ID (Java)"
                          shortName="JavaAggregateMemberRoutingKeyInspection" groupName="Axon Framework usage"
                          language="JAVA"
                          implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.JavaAggregateMemberRoutingKeyInspection"
-                         enabledByDefault="true"/>
+                         enabledByDefault="true" hasStaticDescription="true"/>
 
         <!-- Kotlin inspections -->
-        <localInspection displayName="Aggregate has an identifier" shortName="KotlinAggregateIdInspection"
+        <localInspection displayName="Aggregate has an identifier (Kotlin)" shortName="KotlinAggregateIdInspection"
                          groupName="Axon Framework usage" language="kotlin"
                          implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.KotlinAggregateIdInspection"
-                         enabledByDefault="true"/>
-        <localInspection displayName="Aggregate has no-argument constructor"
+                         enabledByDefault="true" hasStaticDescription="true"/>
+        <localInspection displayName="Aggregate has no-argument constructor (Kotlin)"
                          shortName="KotlinAggregateConstructorInspection" groupName="Axon Framework usage"
                          language="kotlin"
                          implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.KotlinAggregateConstructorInspection"
-                         enabledByDefault="true"/>
-        <localInspection displayName="Aggregate members have an ID"
+                         enabledByDefault="true" hasStaticDescription="true"/>
+        <localInspection displayName="Aggregate members have an ID (Kotlin)"
                          shortName="KotlinAggregateMemberRoutingKeyInspection" groupName="Axon Framework usage"
                          language="JAVA"
                          implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.KotlinAggregateMemberRoutingKeyInspection"
-                         enabledByDefault="true"/>
+                         enabledByDefault="true" hasStaticDescription="true"/>
     </extensions>
 
     <actions>
