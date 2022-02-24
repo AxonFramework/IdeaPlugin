@@ -21,6 +21,7 @@ jobs:
                     distribution: 'adopt'
             -   name: Validate Gradle wrapper
                 uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+                if: !contains(github.ref, 'refs/tags/') # Don't run on tags
             -   name: Build plugin
                 uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
                 with:
@@ -29,10 +30,16 @@ jobs:
                 uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
                 with:
                     arguments: runPluginVerifier
+                if: !contains(github.ref, 'refs/tags/') # Don't run on tags
 
             # If it is a tag push, release it automatically to the Jetbrains marketplace
             -   name: Publish plugin
                 uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
                 with:
                     arguments: publishPlugin
+                env: # Or as an environment variable
+                    PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+                    PRIVATE_KEY_PASSWORD: ${{ secrets.PRIVATE_KEY_PASSWORD }}
+                    PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+                    CERTIFICATE_CHAIN: ${{ secrets.CERTIFICATE_CHAIN }}
                 if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
