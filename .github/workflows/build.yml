@@ -1,4 +1,4 @@
-name: Plugin Verifier
+name: Build and Publish
 
 on:
     workflow_dispatch:
