@@ -7,6 +7,7 @@
 ### Fixed
 
 - Fix popup on deadline manager methods when there are qualified references as arguments. Fixes #16
+- Fix empty inspection description in inspection window. Fixes #21
 
 ## [0.5.0]
 
