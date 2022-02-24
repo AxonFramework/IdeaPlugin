@@ -32,7 +32,14 @@ annotations it recognizes. You can click on the icons on the left of the sourcec
 
 ## Local development
 
-You can run an IntelliJ instance with the plugin locally with `./gradlew runIde`. This will bootstrap a clean instance
-and load the plugin. While the instance is running, you can run `./gradlew buildPlugin` for a hot reload of the plugin.
+You can run an IntelliJ instance with the plugin locally with `./gradlew runIde`. This will bootstrap a clean instance and load the plugin.
+While the instance is running, you can run `./gradlew buildPlugin` for a hot reload of the plugin.
 
 To check compatibility with the most common IntelliJ versions run `./gradlew runPluginVerifier`.
+
+## Development process
+
+- Features are developed on branches
+- The pull request should contain a changelog entry added to the "Unreleased" section
+- When ready for release, `CHANGELOG.md` and `gradle.properties` are updated with the new version
+- A tag is created on that commit and pushed. Github Actions will automatically publish that version
