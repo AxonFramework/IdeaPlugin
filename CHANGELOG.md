@@ -2,6 +2,12 @@
 
 # Axon Framework plugin Changelog
 
+## [unreleased]
+
+### Changed
+
+- Query handlers are more easily identifiable in line marker popup
+
 ## [0.5.1]
 
 ### Fixed

@@ -19,6 +19,7 @@ package org.axonframework.intellij.ide.plugin.resolving.handlers.types
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
+import org.axonframework.intellij.ide.plugin.util.containingClassname
 
 /**
  * Represents a method being able to handle a query.
@@ -34,6 +35,10 @@ data class QueryHandler(
     override val handlerType: MessageHandlerType = MessageHandlerType.QUERY
 
     override fun renderText(): String {
+        return "${element.containingClassname()}.${element.name}"
+    }
+
+    override fun renderContainerText(): String {
         return componentName
     }
 }
