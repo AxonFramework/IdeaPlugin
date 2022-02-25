@@ -42,4 +42,8 @@ To check compatibility with the most common IntelliJ versions run `./gradlew run
 - Features are developed on branches
 - The pull request should contain a changelog entry added to the "Unreleased" section
 - When ready for release, `CHANGELOG.md` and `gradle.properties` are updated with the new version
-- A tag is created on that commit and pushed. Github Actions will automatically publish that version
+- A tag is created with name `vx.x.x` on that commit and pushed. Github Actions will automatically publish that version
+
+There are no minor release branches, since we don't need patch versions on older versions of the plugin. Users will always update to the
+latest version and will ignore earlier patches, so the `master` branch is leading.
+
