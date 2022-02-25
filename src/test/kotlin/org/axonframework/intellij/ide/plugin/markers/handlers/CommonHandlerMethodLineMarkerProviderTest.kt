@@ -52,7 +52,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Handler)
+            OptionSummary("MyCommand", null, AxonIcons.Publisher)
         )
     }
 
@@ -81,7 +81,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Handler)
+            OptionSummary("MyCommand", null, AxonIcons.Publisher)
         )
     }
 
@@ -109,7 +109,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("EventSourcingHandler MyAggregate", null, AxonIcons.Handler)
+            OptionSummary("EventSourcingHandler MyAggregate", null, AxonIcons.Publisher)
         )
     }
 
@@ -142,7 +142,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("EventSourcingHandler MyAggregate", null, AxonIcons.Handler)
+            OptionSummary("EventSourcingHandler MyAggregate", null, AxonIcons.Publisher)
         )
     }
 
@@ -170,7 +170,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Handler)
+            OptionSummary("MyCommand", null, AxonIcons.Publisher)
         )
     }
 
@@ -210,7 +210,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Handler)
+            OptionSummary("MyCommand", null, AxonIcons.Publisher)
         )
     }
 
@@ -239,7 +239,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Handler)
+            OptionSummary("MyCommand", null, AxonIcons.Publisher)
         )
     }
 }

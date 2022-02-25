@@ -140,7 +140,7 @@ class CommandHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase()
 
         assertThat(hasLineMarker(CommandHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommandHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("Saga: test", null, AxonIcons.Handler)
+            OptionSummary("Saga: test", null, AxonIcons.Publisher)
         )
     }
 
@@ -175,7 +175,7 @@ class CommandHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase()
 
         assertThat(hasLineMarker(CommandHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommandHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("Saga: test", null, AxonIcons.Handler)
+            OptionSummary("Saga: test", null, AxonIcons.Publisher)
         )
     }
 }
