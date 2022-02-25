@@ -10,7 +10,6 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
-
         steps:
             -   uses: actions/checkout@v2
             -   name: Set up JDK 11
@@ -26,3 +25,6 @@ jobs:
                 uses: gradle/gradle-build-action@v1
                 with:
                     arguments: runPluginVerifier
+concurrency:
+    group: ${{github.workflow}}-${{github.head_ref || github.run_id }}
+    cancel-in-progress: true
