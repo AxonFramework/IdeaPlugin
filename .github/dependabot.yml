@@ -16,7 +16,7 @@ updates:
         directory: "/"
         schedule:
         # Check for updates to GitHub Actions every weekday
-        interval: "daily"
+            interval: "daily"
         labels:
             - "Type: Dependency Upgrade"
             - "Priority 1: Must"
