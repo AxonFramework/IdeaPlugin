@@ -37,7 +37,7 @@ class JavaAggregateIdInspection : AbstractBaseJavaLocalInspectionTool() {
         isOnTheFly: Boolean
     ): Array<ProblemDescriptor>? {
         if (!aClass.isAggregate()) {
-            return emptyArray()
+            return null
         }
         val isMissingFieldWithAnnotation = aClass.fields.none { field -> field.isAnnotated(AxonAnnotation.ENTITY_ID) }
         if (isMissingFieldWithAnnotation) {
@@ -51,7 +51,7 @@ class JavaAggregateIdInspection : AbstractBaseJavaLocalInspectionTool() {
                 )
             )
         }
-        return emptyArray()
+        return null
     }
 
     override fun getStaticDescription(): String {
