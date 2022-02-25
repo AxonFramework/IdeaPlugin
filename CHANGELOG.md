@@ -8,6 +8,11 @@
 
 - Fix popup on deadline manager methods when there are qualified references as arguments. Fixes #16
 - Fix empty inspection description in inspection window. Fixes #21
+- The correct icon is now shown for publishers in line marker popup. Fixes #18
+
+### Changed
+
+- Query handlers are more easily identifiable in line marker popup
 
 ## [0.5.0]
 

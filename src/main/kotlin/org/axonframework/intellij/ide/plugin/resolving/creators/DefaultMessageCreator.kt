@@ -41,9 +41,6 @@ data class DefaultMessageCreator(
      * Returns the correct icon for the creator
      */
     override fun getIcon(): Icon {
-        if (parentHandler != null) {
-            return parentHandler.getIcon()
-        }
         return AxonIcons.Publisher
     }
 
