@@ -2,6 +2,12 @@
 
 # Axon Framework plugin Changelog
 
+## [0.5.2]
+
+### Added
+
+- Recommend plugin when Axon Framework is found in project
+
 ## [0.5.1]
 
 ### Fixed

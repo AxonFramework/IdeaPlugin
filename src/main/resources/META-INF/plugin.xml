@@ -27,6 +27,10 @@
     <idea-version since-build="203"/>
 
     <extensions defaultExtensionNs="com.intellij">
+        <!-- IntelliJ shows as invalid, but it is valid. The extension point is defined here, not in the IDE:
+        https://github.com/JetBrains/intellij-plugin-verifier/blob/master/intellij-feature-extractor/src/main/java/com/jetbrains/intellij/feature/extractor/ExtensionPointFeatures.kt  -->
+        <dependencySupport kind="java" coordinate="org.axonframework:axon-messaging" displayName="Axon Framework"/>
+
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.publishers.PublishMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="JAVA"
