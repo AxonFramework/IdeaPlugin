@@ -16,6 +16,7 @@
 
 package org.axonframework.intellij.ide.plugin.support
 
+import com.intellij.diagnostic.AbstractMessage
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
@@ -26,15 +27,10 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.Consumer
-import io.sentry.Sentry
 import java.awt.Component
 
 class AxonErrorReportSubmitter : ErrorReportSubmitter() {
-    init {
-        Sentry.init { options ->
-            options.dsn = "https://examplePublicKey@o0.ingest.sentry.io/0"
-        }
-    }
+    private val service = ApplicationManager.getApplication().getService(ReportingService::class.java)
 
     override fun getReportActionText(): String {
         return "Report to AxonIQ"
@@ -54,9 +50,8 @@ class AxonErrorReportSubmitter : ErrorReportSubmitter() {
         object : Task.Backgroundable(project, "Sending error report") {
             override fun run(indicator: ProgressIndicator) {
                 try {
-                    events.forEach { event ->
-                        Sentry.captureException(event.throwable, additionalInfo)
-                    }
+                    val original: Throwable = (events[0].data as AbstractMessage?)?.throwable ?: return
+                    service.reportException(project!!, original, additionalInfo)
                     consumer.consume(SubmittedReportInfo(SubmittedReportInfo.SubmissionStatus.NEW_ISSUE))
                     showThankYou()
                 } catch (e: Exception) {

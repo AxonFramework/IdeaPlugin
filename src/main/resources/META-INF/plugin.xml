@@ -69,6 +69,10 @@
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.DeadlineManagerReferenceResolver"/>
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver"/>
 
+        <!-- Application services -->
+        <applicationService
+                serviceImplementation="org.axonframework.intellij.ide.plugin.support.ReportingService"/>
+
         <!-- Usage providers -->
         <implicitUsageProvider implementation="org.axonframework.intellij.ide.plugin.usage.AxonImplicitUsageProvider"/>
 
@@ -114,7 +118,11 @@
                 class="org.axonframework.intellij.ide.plugin.actions.DumpAxonPerformanceAction"/>
         <action id="AxonReferenceGuideAction" text="Axon Reference Guide"
                 class="org.axonframework.intellij.ide.plugin.actions.AxonReferenceGuideAction">
-            <add-to-group group-id="ToolsMenu" anchor="first"/>
+            <add-to-group group-id="ToolsMenu" relative-to-action="GenerateJavadoc" anchor="after"/>
+        </action>
+        <action id="ReportFeedbackAction" text="Axon Plugin Feedback"
+                class="org.axonframework.intellij.ide.plugin.actions.ReportFeedbackAction">
+            <add-to-group group-id="ToolsMenu" relative-to-action="GenerateJavadoc" anchor="after"/>
         </action>
 
         <action id="AxonSimulateErrorAction" text="Axon Simulate Error"
