@@ -22,13 +22,13 @@ import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.util.CachedValue
 import org.axonframework.intellij.ide.plugin.api.MessageCreator
 import org.axonframework.intellij.ide.plugin.resolving.creators.DefaultMessageCreator
-import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
 import org.axonframework.intellij.ide.plugin.util.areAssignable
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 import org.axonframework.intellij.ide.plugin.util.findParentHandlers
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.javaFacade
+import org.axonframework.intellij.ide.plugin.util.measure
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -106,7 +106,7 @@ class MessageCreationResolver(private val project: Project) {
     }
 
     private fun createCreators(payload: String, element: PsiElement): List<MessageCreator> {
-        val parentHandlers = PerformanceRegistry.measure("MessageCreationResolver.findParentHandlers") {
+        val parentHandlers = project.measure("MessageCreationResolver", "findParentHandlers") {
             element.findParentHandlers()
         }
         if (parentHandlers.isEmpty()) {

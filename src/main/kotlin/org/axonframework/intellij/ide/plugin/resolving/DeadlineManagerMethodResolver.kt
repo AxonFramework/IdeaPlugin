@@ -23,11 +23,11 @@ import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ClassInheritorsSearch
-import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
 import org.axonframework.intellij.ide.plugin.util.allScope
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 import org.axonframework.intellij.ide.plugin.util.javaFacade
+import org.axonframework.intellij.ide.plugin.util.measure
 
 
 /**
@@ -59,10 +59,10 @@ class DeadlineManagerMethodResolver(val project: Project) {
         project.javaFacade().findClass("org.axonframework.deadline.DeadlineManager", project.allScope())
     }
     private val deadlineScheduleCache = project.createCachedValue {
-        PerformanceRegistry.measure("DeadlineManagerResolver.computeSchedule") { computeDeadlineScheduleMethods() }
+        project.measure("DeadlineManagerResolver", "computeDeadlineScheduleMethods") { computeDeadlineScheduleMethods() }
     }
     private val cancelCache = project.createCachedValue {
-        PerformanceRegistry.measure("DeadlineManagerResolver.computeCancel") { computeDeadlineCancelMethods() }
+        project.measure("DeadlineManagerResolver", "computeDeadlineCancelMethods") { computeDeadlineCancelMethods() }
     }
 
     fun getAllReferencedMethods(): List<PsiMethod> = deadlineScheduleCache.value + cancelCache.value
@@ -140,7 +140,7 @@ class DeadlineManagerMethodResolver(val project: Project) {
         }
 
         private fun updateLibraryAnnotations() =
-            PerformanceRegistry.measure("DeadlineManagerResolver.libraryManagers") {
+            project.measure("DeadlineManagerResolver", "updateLibraryAnnotations") {
                 scheduleMethods = scanForSchedulers(project.allScope())
                 cancelMethods = scanForCancelMethods(project.allScope())
                 libraryInitialized = true

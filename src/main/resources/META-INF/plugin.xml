@@ -112,10 +112,6 @@
     </extensions>
 
     <actions>
-        <action id="DumpAxonInfoAction" text="Dump Axon Plugin Information"
-                class="org.axonframework.intellij.ide.plugin.actions.DumpAxonInformationAction"/>
-        <action id="DumpAxonPerformanceAction" text="Dump Axon Plugin Performance"
-                class="org.axonframework.intellij.ide.plugin.actions.DumpAxonPerformanceAction"/>
         <action id="AxonReferenceGuideAction" text="Axon Reference Guide"
                 class="org.axonframework.intellij.ide.plugin.actions.AxonReferenceGuideAction">
             <add-to-group group-id="ToolsMenu" relative-to-action="GenerateJavadoc" anchor="after"/>

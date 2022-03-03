@@ -37,6 +37,7 @@ class ReportingService {
             options.release = pluginDescriptor?.version
             options.isAttachServerName = false
             options.sampleRate = 1.0
+            options.tracesSampleRate = 1.0
         }
     }
 
