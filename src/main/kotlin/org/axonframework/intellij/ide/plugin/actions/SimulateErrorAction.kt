@@ -16,22 +16,23 @@
 
 package org.axonframework.intellij.ide.plugin.actions
 
-import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ReadAction
 import org.axonframework.intellij.ide.plugin.AxonIcons
 
 /**
- * Action that can be invoked using the "Open Axon Reference Guide" in IntelliJ.
- *
- * Opens the reference guide.
+ * Action that can be invoked using the "Simulate exception" action.
+ * Only enabled on system property `axon.simulate` to true.
  */
-class AxonReferenceGuideAction : AnAction(AxonIcons.Axon) {
+class SimulateErrorAction : AnAction(AxonIcons.Axon) {
     override fun update(e: AnActionEvent) {
-        e.presentation.isEnabledAndVisible = true
+        e.presentation.isEnabledAndVisible = System.getProperty("axon.simulate") == "true"
     }
 
     override fun actionPerformed(e: AnActionEvent) {
-        BrowserUtil.browse("https://docs.axoniq.io/reference-guide/")
+        ReadAction.run<Exception> {
+            throw IllegalStateException("This is a test exception!")
+        }
     }
 }

@@ -24,6 +24,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.testFramework.LightVirtualFile
+import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
@@ -43,7 +44,7 @@ import org.jetbrains.kotlin.idea.debugger.getService
  *
  * Note: This will contain all commands and events of an application; might be sensitive.
  */
-class DumpAxonInformationAction : AnAction() {
+class DumpAxonInformationAction : AnAction(AxonIcons.Axon) {
     override fun update(e: AnActionEvent) {
         e.presentation.isEnabledAndVisible = true
     }

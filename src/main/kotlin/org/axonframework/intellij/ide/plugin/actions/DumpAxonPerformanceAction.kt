@@ -24,6 +24,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.testFramework.LightVirtualFile
+import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
 
 /**
@@ -36,7 +37,7 @@ import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
  *
  * @see org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
  */
-class DumpAxonPerformanceAction : AnAction() {
+class DumpAxonPerformanceAction : AnAction(AxonIcons.Axon) {
     override fun update(e: AnActionEvent) {
         e.presentation.isEnabledAndVisible = true
     }

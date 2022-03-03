@@ -103,6 +103,8 @@
                          language="JAVA"
                          implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.KotlinAggregateMemberRoutingKeyInspection"
                          enabledByDefault="true" hasStaticDescription="true"/>
+
+        <errorHandler implementation="org.axonframework.intellij.ide.plugin.support.AxonErrorReportSubmitter"/>
     </extensions>
 
     <actions>
@@ -111,6 +113,11 @@
         <action id="DumpAxonPerformanceAction" text="Dump Axon Plugin Performance"
                 class="org.axonframework.intellij.ide.plugin.actions.DumpAxonPerformanceAction"/>
         <action id="AxonReferenceGuideAction" text="Axon Reference Guide"
-                class="org.axonframework.intellij.ide.plugin.actions.AxonReferenceGuideAction"/>
+                class="org.axonframework.intellij.ide.plugin.actions.AxonReferenceGuideAction">
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
+        </action>
+
+        <action id="AxonSimulateErrorAction" text="Axon Simulate Error"
+                class="org.axonframework.intellij.ide.plugin.actions.SimulateErrorAction"/>
     </actions>
 </idea-plugin>
