@@ -16,13 +16,15 @@
 
 package org.axonframework.intellij.ide.plugin.util
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import io.sentry.Sentry
-import org.jetbrains.kotlin.idea.debugger.coroutine.util.isInUnitTest
+import org.axonframework.intellij.ide.plugin.settings.AxonPluginSettings
 
 fun <T> Project.measure(subject: String, task: String, block: () -> T): T {
-    if (isInUnitTest()) {
-        // Don't report to Sentry for unit tests!
+    val settings = ApplicationManager.getApplication().getService(AxonPluginSettings::class.java)
+    if (!settings.isAllowedToCollectMetrics()) {
+        // Don't report to Sentry if user has not given permission
         return block.invoke()
     }
     val transaction = Sentry.getSpan()?.startChild("$subject.$task", task)

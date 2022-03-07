@@ -72,6 +72,10 @@
         <!-- Application services -->
         <applicationService
                 serviceImplementation="org.axonframework.intellij.ide.plugin.support.ReportingService"/>
+        <applicationService
+                serviceImplementation="org.axonframework.intellij.ide.plugin.settings.AxonPluginSettings"/>
+        <postStartupActivity
+                implementation="org.axonframework.intellij.ide.plugin.support.AskPermissionStartupActivity"/>
 
         <!-- Usage providers -->
         <implicitUsageProvider implementation="org.axonframework.intellij.ide.plugin.usage.AxonImplicitUsageProvider"/>

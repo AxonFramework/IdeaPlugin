@@ -37,7 +37,7 @@ class ReportingService {
             options.release = pluginDescriptor?.version
             options.isAttachServerName = false
             options.sampleRate = 1.0
-            options.tracesSampleRate = 1.0
+            options.tracesSampleRate = 0.1
         }
     }
 
@@ -62,7 +62,7 @@ class ReportingService {
         OrderEnumerator.orderEntries(this)
             .librariesOnly()
             .productionOnly()
-            .satisfying { it.presentableName.matches(Regex(".*(axon|spring)+.*")) }
+            .satisfying { it.presentableName.matches(Regex(".*(axon)+.*")) }
             .classes()
             .roots
             .forEach {
