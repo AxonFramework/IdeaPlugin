@@ -27,7 +27,6 @@ import org.axonframework.intellij.ide.plugin.util.allScope
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 import org.axonframework.intellij.ide.plugin.util.javaFacade
-import org.axonframework.intellij.ide.plugin.util.measure
 
 
 /**
@@ -58,12 +57,8 @@ class DeadlineManagerMethodResolver(val project: Project) {
     private val deadlineManagerClass = project.createCachedValue {
         project.javaFacade().findClass("org.axonframework.deadline.DeadlineManager", project.allScope())
     }
-    private val deadlineScheduleCache = project.createCachedValue {
-        project.measure("DeadlineManagerResolver", "computeDeadlineScheduleMethods") { computeDeadlineScheduleMethods() }
-    }
-    private val cancelCache = project.createCachedValue {
-        project.measure("DeadlineManagerResolver", "computeDeadlineCancelMethods") { computeDeadlineCancelMethods() }
-    }
+    private val deadlineScheduleCache = project.createCachedValue { computeDeadlineScheduleMethods() }
+    private val cancelCache = project.createCachedValue { computeDeadlineCancelMethods() }
 
     fun getAllReferencedMethods(): List<PsiMethod> = deadlineScheduleCache.value + cancelCache.value
     fun getAllScheduleMethods(): List<PsiMethod> = deadlineScheduleCache.value
@@ -139,11 +134,10 @@ class DeadlineManagerMethodResolver(val project: Project) {
             return block.invoke()
         }
 
-        private fun updateLibraryAnnotations() =
-            project.measure("DeadlineManagerResolver", "updateLibraryAnnotations") {
-                scheduleMethods = scanForSchedulers(project.allScope())
-                cancelMethods = scanForCancelMethods(project.allScope())
-                libraryInitialized = true
-            }
+        private fun updateLibraryAnnotations() {
+            scheduleMethods = scanForSchedulers(project.allScope())
+            cancelMethods = scanForCancelMethods(project.allScope())
+            libraryInitialized = true
+        }
     }
 }

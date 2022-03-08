@@ -25,7 +25,6 @@ import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 import org.axonframework.intellij.ide.plugin.util.deadlineMethodResolver
 import org.axonframework.intellij.ide.plugin.util.findParentHandlers
-import org.axonframework.intellij.ide.plugin.util.measure
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.evaluateString
@@ -118,9 +117,7 @@ class DeadlineManagerReferenceResolver(val project: Project) {
     }
 
     private fun createCreators(payload: String, element: PsiElement): List<MessageCreator> {
-        val parentHandlers = project.measure("DeadlineReferenceResolver", "findParentHandlers") {
-            element.findParentHandlers()
-        }
+        val parentHandlers = element.findParentHandlers()
         if (parentHandlers.isEmpty()) {
             return listOf(DefaultMessageCreator(element, payload, null))
         }

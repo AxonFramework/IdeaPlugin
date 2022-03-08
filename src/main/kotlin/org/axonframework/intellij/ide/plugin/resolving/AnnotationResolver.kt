@@ -28,8 +28,6 @@ import org.axonframework.intellij.ide.plugin.util.allScope
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 import org.axonframework.intellij.ide.plugin.util.javaFacade
-import org.axonframework.intellij.ide.plugin.util.measure
-import org.axonframework.intellij.ide.plugin.util.toShortName
 
 /**
  * Responsible for managing (and caching) information regarding Axon annotations.
@@ -45,9 +43,7 @@ import org.axonframework.intellij.ide.plugin.util.toShortName
  */
 class AnnotationResolver(val project: Project) {
     private val libraryAnnotationCache = LibraryAnnotationCache()
-    private val annotationCache = project.createCachedValue {
-        project.measure("AnnotationResolver", "computeAnnotations") { computeAnnotations() }
-    }
+    private val annotationCache = project.createCachedValue { computeAnnotations() }
 
     /**
      * Gets all annotation classes for a certain MessageHandlerType
@@ -130,11 +126,13 @@ class AnnotationResolver(val project: Project) {
         annotation: AxonAnnotation,
         parent: ResolvedAnnotation,
         scope: GlobalSearchScope
-    ): List<ResolvedAnnotation> = project.measure("AnnotationResolver", "scanDescendants.${parent.qualifiedName.toShortName()}") {
-        listOf(parent) + AnnotatedElementsSearch.searchPsiClasses(parent.psiClass, scope).findAll()
+    ): List<ResolvedAnnotation> {
+        val descendants = AnnotatedElementsSearch.searchPsiClasses(parent.psiClass, scope)
+            .findAll()
             .filter { it.isAnnotationType }
             .filter { ht -> !MessageHandlerType.exists(ht.qualifiedName) }
             .flatMap { scanDescendants(annotation, ResolvedAnnotation(annotation, it, parent), scope) }
+        return listOf(parent) + descendants
     }
 
     /**
@@ -166,7 +164,7 @@ class AnnotationResolver(val project: Project) {
             return libraryAnnotations
         }
 
-        private fun updateLibraryAnnotations() = project.measure("AnnotationResolver", "updateLibraryAnnotations") {
+        private fun updateLibraryAnnotations() {
             libraryAnnotations = AxonAnnotation.values().flatMap { scanAnnotation(it, project.allScope()) }
             libraryInitialized = true
         }

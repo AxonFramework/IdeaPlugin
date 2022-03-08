@@ -29,7 +29,6 @@ import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 import org.axonframework.intellij.ide.plugin.util.isAnnotated
 import org.axonframework.intellij.ide.plugin.util.javaFacade
-import org.axonframework.intellij.ide.plugin.util.measure
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 
 /**
@@ -64,11 +63,12 @@ class AggregateStructureResolver(private val project: Project) {
 
     private fun Model.flatten() = listOf(this) + children.map { it.member }
 
-    private fun resolve(): List<Model> = project.measure("AggregateStructureResolver", "resolve") {
-        project.annotationResolver().getAnnotationClasses(AxonAnnotation.AGGREGATE_ROOT).flatMap {
+    private fun resolve(): List<Model> = project.annotationResolver()
+        .getAnnotationClasses(AxonAnnotation.AGGREGATE_ROOT)
+        .flatMap {
             AnnotatedElementsSearch.searchPsiClasses(it.psiClass, project.axonScope()).findAll()
-        }.mapNotNull { inspect(it) }
-    }
+        }
+        .mapNotNull { inspect(it) }
 
     private fun inspect(clazz: PsiClass): Model? {
         if (clazz.isEnum) {

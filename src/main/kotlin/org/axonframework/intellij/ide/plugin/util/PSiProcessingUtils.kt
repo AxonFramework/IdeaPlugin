@@ -156,8 +156,6 @@ fun PsiElement.findParentHandlers(depth: Int = 0): List<Handler> {
         return listOf(parentHandler)
     }
 
-    return project.measure("MessageCreationResolver", "findParentHandlers") {
-        val references = MethodReferencesSearch.search(parent, project.axonScope(), true)
-        references.flatMap { it.element.findParentHandlers(depth + 1) }
-    }
+    val references = MethodReferencesSearch.search(parent, project.axonScope(), true)
+    return references.flatMap { it.element.findParentHandlers(depth + 1) }
 }
