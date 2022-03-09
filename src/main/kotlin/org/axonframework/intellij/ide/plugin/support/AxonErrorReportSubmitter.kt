@@ -66,7 +66,7 @@ class AxonErrorReportSubmitter : ErrorReportSubmitter() {
     private fun showThankYou() {
         ApplicationManager.getApplication().invokeLater() {
             Messages.showInfoMessage(
-                "Thank you for reporting the bug to AxonIQ. We will get working on it as soon as possible!",
+                "Thank you for reporting this error to AxonIQ. We will get working on it as soon as possible!",
                 "Thank You!"
             )
         }
