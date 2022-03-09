@@ -2,6 +2,12 @@
 
 # Axon Framework plugin Changelog
 
+## [0.7.0]
+
+### Added
+
+- Inspection when associationProperty on @SagaEventHandler is missing in the message
+
 ## [0.6.1]
 
 ### Fixed

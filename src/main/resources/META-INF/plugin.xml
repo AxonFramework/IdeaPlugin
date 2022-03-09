@@ -92,6 +92,11 @@
                          language="JAVA"
                          implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.JavaAggregateMemberRoutingKeyInspection"
                          enabledByDefault="true" hasStaticDescription="true"/>
+        <localInspection displayName="Saga messages contain association property (Java)"
+                         shortName="JavaSagaAssociationPropertyInspection" groupName="Axon Framework usage"
+                         language="JAVA"
+                         implementationClass="org.axonframework.intellij.ide.plugin.inspections.saga.JavaSagaAssociationPropertyInspection"
+                         enabledByDefault="true" hasStaticDescription="true"/>
 
         <!-- Kotlin inspections -->
         <localInspection displayName="Aggregate has an identifier (Kotlin)" shortName="KotlinAggregateIdInspection"
@@ -105,8 +110,13 @@
                          enabledByDefault="true" hasStaticDescription="true"/>
         <localInspection displayName="Aggregate members have an ID (Kotlin)"
                          shortName="KotlinAggregateMemberRoutingKeyInspection" groupName="Axon Framework usage"
-                         language="JAVA"
+                         language="kotlin"
                          implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.KotlinAggregateMemberRoutingKeyInspection"
+                         enabledByDefault="true" hasStaticDescription="true"/>
+        <localInspection displayName="Saga messages contain association property (Kotlin)"
+                         shortName="KotlinSagaAssociationPropertyInspection" groupName="Axon Framework usage"
+                         language="kotlin"
+                         implementationClass="org.axonframework.intellij.ide.plugin.inspections.saga.KotlinSagaAssociationPropertyInspection"
                          enabledByDefault="true" hasStaticDescription="true"/>
 
         <errorHandler implementation="org.axonframework.intellij.ide.plugin.support.AxonErrorReportSubmitter"/>

@@ -71,6 +71,19 @@ fun PsiModifierListOwner.hasAnnotation(annotation: AxonAnnotation): Boolean {
     return annotations.any { hasAnnotation(it.qualifiedName) }
 }
 
+fun PsiModifierListOwner.resolveAnnotationValue(annotation: AxonAnnotation, attributeName: String): PsiAnnotationMemberValue? {
+    val relevantAnnotation = resolveAnnotation(annotation) ?: return null
+    val attribute = relevantAnnotation.findDeclaredAttributeValue(attributeName)
+    if (attribute != null) {
+        return attribute
+    }
+    // The annotation itself might be annotated with one that contains the value
+    // Note: resolveAnnotationType() does not work with kotlin code somehow. Resolve class by qualified name
+    val qualifiedName = relevantAnnotation.qualifiedName ?: return null
+    val annClass = project.javaFacade().findClass(qualifiedName, project.allScope()) ?: return null
+    return annClass.resolveAnnotationValue(annotation, attributeName)
+}
+
 /**
  * Resolve the string attribute value of one of the Axon Annotations.
  * Since they are meta, the annotations can be annotated, which can in turn contain the value. So we have to do it
@@ -80,16 +93,8 @@ fun PsiModifierListOwner.hasAnnotation(annotation: AxonAnnotation): Boolean {
  * @param attributeName key of annotation to look for. Most of the time this is "value"
  */
 fun PsiModifierListOwner.resolveAnnotationStringValue(annotation: AxonAnnotation, attributeName: String): String? {
-    val relevantAnnotation = resolveAnnotation(annotation) ?: return null
-    val attribute = relevantAnnotation.findDeclaredAttributeValue(attributeName)
-    if (attribute != null) {
-        return resolveAttributeStringValue(attribute)
-    }
-    // The annotation itself might be annotated with one that contains the value
-    // Note: resolveAnnotationType() does not work with kotlin code somehow. Resolve class by qualified name
-    val qualifiedName = relevantAnnotation.qualifiedName ?: return null
-    val annClass = project.javaFacade().findClass(qualifiedName, project.allScope()) ?: return null
-    return annClass.resolveAnnotationStringValue(annotation, attributeName)?.ifEmpty { null }
+    val attribute = resolveAnnotationValue(annotation, attributeName)
+    return resolveAttributeStringValue(attribute)?.ifEmpty { null }
 }
 
 private fun resolveAttributeStringValue(attribute: PsiAnnotationMemberValue?): String? {

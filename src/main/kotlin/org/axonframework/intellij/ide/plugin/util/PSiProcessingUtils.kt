@@ -84,6 +84,11 @@ fun PsiMethod.resolvePayloadType(): PsiType? {
     }
 }
 
+fun Project.toClass(type: PsiType): PsiClass? {
+    val toQualifiedName = type.toQualifiedName() ?: return null
+    return javaFacade().findClass(toQualifiedName, axonScope())
+}
+
 /**
  * Checks whether A can be assigned to B. For example:
  * A extends B, then A is assignable to B. Used for matching of java supertypes in handlers.
