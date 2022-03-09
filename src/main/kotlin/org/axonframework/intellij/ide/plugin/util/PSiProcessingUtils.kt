@@ -65,18 +65,18 @@ fun PsiType?.toQualifiedName(): String? = this?.let {
  *
  * @return Payload Type
  */
-fun PsiMethod.resolvePayloadType(): PsiType? = PerformanceRegistry.measure("PsiMethod.resolvePayloadType") {
+fun PsiMethod.resolvePayloadType(): PsiType? {
     val annotationResolver = this.project.getService(AnnotationResolver::class.java)
     val annotation = annotations
         .firstOrNull { it.qualifiedName != null && annotationResolver.getClassByAnnotationName(it.qualifiedName!!) != null }
     if (annotation != null) {
         val value = annotation.findDeclaredAttributeValue("payloadType")
         if (value is PsiClassObjectAccessExpression) {
-            return@measure value.type
+            return value.type
         }
     }
-    val type = toUElement(UMethod::class.java)?.uastParameters?.getOrNull(0)?.typeReference?.type ?: return@measure null
-    if (type is PsiClassType && type.hasParameters()) {
+    val type = toUElement(UMethod::class.java)?.uastParameters?.getOrNull(0)?.typeReference?.type ?: return null
+    return if (type is PsiClassType && type.hasParameters()) {
         // For example, CommandMessage<Class>
         type.parameters[0]
     } else {
@@ -92,11 +92,9 @@ fun areAssignable(project: Project, qualifiedNameA: String, qualifiedNameB: Stri
     if (qualifiedNameA == qualifiedNameB) {
         return true
     }
-    return PerformanceRegistry.measure("areAssignable") {
-        val classesA = JavaPsiFacade.getInstance(project).findClasses(qualifiedNameA, project.axonScope())
+    val classesA = JavaPsiFacade.getInstance(project).findClasses(qualifiedNameA, project.axonScope())
 
-        classesA.any { a -> a.supers.any { b -> b.qualifiedName == qualifiedNameB } }
-    }
+    return classesA.any { a -> a.supers.any { b -> b.qualifiedName == qualifiedNameB } }
 }
 
 /**
@@ -158,8 +156,6 @@ fun PsiElement.findParentHandlers(depth: Int = 0): List<Handler> {
         return listOf(parentHandler)
     }
 
-    return PerformanceRegistry.measure("MessageCreationResolver.findParentHandlers") {
-        val references = MethodReferencesSearch.search(parent, project.axonScope(), true)
-        references.flatMap { it.element.findParentHandlers(depth + 1) }
-    }
+    val references = MethodReferencesSearch.search(parent, project.axonScope(), true)
+    return references.flatMap { it.element.findParentHandlers(depth + 1) }
 }

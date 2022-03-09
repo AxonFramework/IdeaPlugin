@@ -2,6 +2,13 @@
 
 # Axon Framework plugin Changelog
 
+## [0.6.0]
+
+### Added
+
+- Users can now report their exceptions and will be stored in our Sentry installation
+- Add option for people to report feedback through the Tools menu
+
 ## [0.5.2]
 
 ### Added

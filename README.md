@@ -30,6 +30,16 @@ annotations it recognizes. You can click on the icons on the left of the sourcec
 
 ![Axon Hotel Demo Screenshot With Annotations](.github/screenshot.png)
 
+### Submitting Errors and Feedback
+
+When an error happens while using the plugin, IntelliJ will show an error report window. Please send us these reports. They are anonymous
+and are sent to [Sentry.io](https://sentry.io). We would like to thank Sentry for the Sponsored account!
+
+In addition, you can report feedback on usage of the plugin via the "Tools" menu, as illustrated below. This feedback is also processed
+in [Sentry.io](https://sentry.io).
+
+![Axon Hotel Demo Screenshot With Annotations](.github/tools_menu.png)
+
 ## Local development
 
 You can run an IntelliJ instance with the plugin locally with `./gradlew runIde`. This will bootstrap a clean instance and load the plugin.

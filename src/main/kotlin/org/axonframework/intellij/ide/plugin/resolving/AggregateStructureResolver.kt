@@ -24,7 +24,6 @@ import com.intellij.psi.search.searches.AnnotatedElementsSearch
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.api.Model
 import org.axonframework.intellij.ide.plugin.api.ModelChild
-import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
 import org.axonframework.intellij.ide.plugin.util.annotationResolver
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
@@ -64,11 +63,12 @@ class AggregateStructureResolver(private val project: Project) {
 
     private fun Model.flatten() = listOf(this) + children.map { it.member }
 
-    private fun resolve(): List<Model> = PerformanceRegistry.measure("AggregateStructureResolver.resolve") {
-        project.annotationResolver().getAnnotationClasses(AxonAnnotation.AGGREGATE_ROOT).flatMap {
+    private fun resolve(): List<Model> = project.annotationResolver()
+        .getAnnotationClasses(AxonAnnotation.AGGREGATE_ROOT)
+        .flatMap {
             AnnotatedElementsSearch.searchPsiClasses(it.psiClass, project.axonScope()).findAll()
-        }.mapNotNull { inspect(it) }
-    }
+        }
+        .mapNotNull { inspect(it) }
 
     private fun inspect(clazz: PsiClass): Model? {
         if (clazz.isEnum) {

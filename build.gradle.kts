@@ -140,6 +140,8 @@ tasks {
 }
 
 dependencies {
+    implementation("io.sentry:sentry:5.6.1")
+
     testImplementation("org.axonframework:axon-modelling:4.5.8")
     testImplementation("org.axonframework:axon-messaging:4.5.8")
     testImplementation("org.axonframework:axon-eventsourcing:4.5.8")

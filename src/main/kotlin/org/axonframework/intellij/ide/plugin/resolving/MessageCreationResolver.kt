@@ -22,7 +22,6 @@ import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.util.CachedValue
 import org.axonframework.intellij.ide.plugin.api.MessageCreator
 import org.axonframework.intellij.ide.plugin.resolving.creators.DefaultMessageCreator
-import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
 import org.axonframework.intellij.ide.plugin.util.areAssignable
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
@@ -106,9 +105,7 @@ class MessageCreationResolver(private val project: Project) {
     }
 
     private fun createCreators(payload: String, element: PsiElement): List<MessageCreator> {
-        val parentHandlers = PerformanceRegistry.measure("MessageCreationResolver.findParentHandlers") {
-            element.findParentHandlers()
-        }
+        val parentHandlers = element.findParentHandlers()
         if (parentHandlers.isEmpty()) {
             return listOf(DefaultMessageCreator(element, payload, null))
         }

@@ -24,7 +24,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.AnnotatedElementsSearch
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.util.PerformanceRegistry
 import org.axonframework.intellij.ide.plugin.util.allScope
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
@@ -44,9 +43,7 @@ import org.axonframework.intellij.ide.plugin.util.javaFacade
  */
 class AnnotationResolver(val project: Project) {
     private val libraryAnnotationCache = LibraryAnnotationCache()
-    private val annotationCache = project.createCachedValue {
-        PerformanceRegistry.measure("AnnotationResolver.computeAnnotations") { computeAnnotations() }
-    }
+    private val annotationCache = project.createCachedValue { computeAnnotations() }
 
     /**
      * Gets all annotation classes for a certain MessageHandlerType
@@ -130,10 +127,12 @@ class AnnotationResolver(val project: Project) {
         parent: ResolvedAnnotation,
         scope: GlobalSearchScope
     ): List<ResolvedAnnotation> {
-        return listOf(parent) + AnnotatedElementsSearch.searchPsiClasses(parent.psiClass, scope).findAll()
+        val descendants = AnnotatedElementsSearch.searchPsiClasses(parent.psiClass, scope)
+            .findAll()
             .filter { it.isAnnotationType }
             .filter { ht -> !MessageHandlerType.exists(ht.qualifiedName) }
             .flatMap { scanDescendants(annotation, ResolvedAnnotation(annotation, it, parent), scope) }
+        return listOf(parent) + descendants
     }
 
     /**
@@ -165,7 +164,7 @@ class AnnotationResolver(val project: Project) {
             return libraryAnnotations
         }
 
-        private fun updateLibraryAnnotations() = PerformanceRegistry.measure("AnnotationResolver.libraryAnnotation") {
+        private fun updateLibraryAnnotations() {
             libraryAnnotations = AxonAnnotation.values().flatMap { scanAnnotation(it, project.allScope()) }
             libraryInitialized = true
         }

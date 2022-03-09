@@ -16,22 +16,35 @@
 
 package org.axonframework.intellij.ide.plugin.actions
 
-import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.ui.Messages
 import org.axonframework.intellij.ide.plugin.AxonIcons
+import org.axonframework.intellij.ide.plugin.support.ReportingService
 
 /**
- * Action that can be invoked using the "Open Axon Reference Guide" in IntelliJ.
- *
- * Opens the reference guide.
+ * Action that shows a feedback window, so the user can report it to us!
  */
-class AxonReferenceGuideAction : AnAction(AxonIcons.Axon) {
+class ReportFeedbackAction : AnAction(AxonIcons.Axon) {
+    private val service = ApplicationManager.getApplication().getService(ReportingService::class.java)
+
     override fun update(e: AnActionEvent) {
         e.presentation.isEnabledAndVisible = true
     }
 
     override fun actionPerformed(e: AnActionEvent) {
-        BrowserUtil.browse("https://docs.axoniq.io/reference-guide/")
+        ApplicationManager.getApplication().invokeLater() {
+            val feedback = Messages.showInputDialog(
+                e.project,
+                "Thank you for providing feedback about the Axon Framework plugin to AxonIQ, what is your feedback?",
+                "Axon Framework Plugin Feedback",
+                AxonIcons.Axon
+            )
+            if (feedback.isNullOrEmpty()) {
+                return@invokeLater
+            }
+            service.reportFeedback(e.project, feedback)
+        }
     }
 }

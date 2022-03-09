@@ -69,6 +69,10 @@
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.DeadlineManagerReferenceResolver"/>
         <projectService serviceImplementation="org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver"/>
 
+        <!-- Application services -->
+        <applicationService
+                serviceImplementation="org.axonframework.intellij.ide.plugin.support.ReportingService"/>
+
         <!-- Usage providers -->
         <implicitUsageProvider implementation="org.axonframework.intellij.ide.plugin.usage.AxonImplicitUsageProvider"/>
 
@@ -103,14 +107,18 @@
                          language="JAVA"
                          implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.KotlinAggregateMemberRoutingKeyInspection"
                          enabledByDefault="true" hasStaticDescription="true"/>
+
+        <errorHandler implementation="org.axonframework.intellij.ide.plugin.support.AxonErrorReportSubmitter"/>
     </extensions>
 
     <actions>
-        <action id="DumpAxonInfoAction" text="Dump Axon Plugin Information"
-                class="org.axonframework.intellij.ide.plugin.actions.DumpAxonInformationAction"/>
-        <action id="DumpAxonPerformanceAction" text="Dump Axon Plugin Performance"
-                class="org.axonframework.intellij.ide.plugin.actions.DumpAxonPerformanceAction"/>
         <action id="AxonReferenceGuideAction" text="Axon Reference Guide"
-                class="org.axonframework.intellij.ide.plugin.actions.AxonReferenceGuideAction"/>
+                class="org.axonframework.intellij.ide.plugin.actions.AxonReferenceGuideAction">
+            <add-to-group group-id="ToolsMenu" relative-to-action="GenerateJavadoc" anchor="after"/>
+        </action>
+        <action id="ReportFeedbackAction" text="Axon Plugin Feedback"
+                class="org.axonframework.intellij.ide.plugin.actions.ReportFeedbackAction">
+            <add-to-group group-id="ToolsMenu" relative-to-action="GenerateJavadoc" anchor="after"/>
+        </action>
     </actions>
 </idea-plugin>
