@@ -64,4 +64,6 @@ interface PsiElementWrapper {
      * @return The correct icon to be used in a line marker popup
      */
     fun getIcon(): Icon
+
+    fun getSortKey() = getIcon().toString() + renderText()
 }

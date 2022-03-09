@@ -43,6 +43,14 @@ class AggregateStructureResolver(private val project: Project) {
 
     fun getFlattendedModelsAndEntities(): List<Model> = getModels().flatMap { it.flatten() }
 
+    fun getHierarchyOwnerForName(name: String): Model? {
+        val member = getMemberForName(name) ?: return null
+        if (member.parent != null) {
+            return getHierarchyOwnerForName(member.parent)
+        }
+        return member
+    }
+
     fun getAllModelsRelatedToName(name: String): List<Model> {
         getMemberForName(name) ?: return emptyList()
         return getModels().firstOrNull { it.contains(name) }?.flatten() ?: emptyList()
@@ -68,9 +76,9 @@ class AggregateStructureResolver(private val project: Project) {
         .flatMap {
             AnnotatedElementsSearch.searchPsiClasses(it.psiClass, project.axonScope()).findAll()
         }
-        .mapNotNull { inspect(it) }
+        .mapNotNull { inspect(it, null) }
 
-    private fun inspect(clazz: PsiClass): Model? {
+    private fun inspect(clazz: PsiClass, parent: PsiClass?): Model? {
         if (clazz.isEnum) {
             return null
         }
@@ -82,13 +90,13 @@ class AggregateStructureResolver(private val project: Project) {
                 val qualifiedName = psiType.toQualifiedName() ?: return@mapNotNull null
                 val targetClass = clazz.javaFacade().findClass(qualifiedName, clazz.project.axonScope())
                     ?: return@mapNotNull null
-                val modelMember = inspect(targetClass) ?: return@mapNotNull null
-                ModelChild(field.name, modelMember, isCollection)
+                val modelMember = inspect(targetClass, clazz) ?: return@mapNotNull null
+                ModelChild(field, field.name, modelMember, isCollection)
             }
         val entityIdPresent = clazz.fields.any { it.isAnnotated(AxonAnnotation.ENTITY_ID) } || clazz.methods.any {
             it.isAnnotated(AxonAnnotation.ENTITY_ID)
         }
-        return Model(clazz.qualifiedName!!, entityIdPresent, children)
+        return Model(clazz.qualifiedName!!, clazz, parent?.qualifiedName, entityIdPresent, children)
     }
 
     /**

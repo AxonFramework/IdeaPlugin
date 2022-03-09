@@ -16,17 +16,35 @@
 
 package org.axonframework.intellij.ide.plugin.api
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiField
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import javax.swing.Icon
 
 /**
- * Represents a class, used in marker lists
+ * Represents a class, which can also be in a hierarchy. If it has a parent that references it, supply a PsiField.
+ * The depth determines how many hyphens are shown in front of the name
  */
-class ClassReference(
-    override val element: PsiElement
+class ClassReferenceHierarcyItem(
+    private val clazz: PsiClass,
+    private val field: PsiField?,
+    override val element: PsiElement = field ?: clazz,
+    val depth: Int
 ) : PsiElementWrapper {
+
     override fun getIcon(): Icon {
         return AxonIcons.Axon
+    }
+
+    override fun renderText(): String {
+        if (depth == 0) {
+            return clazz.name!!
+        }
+        return 1.rangeTo(depth).joinToString(separator = "") { "-" } + " ${clazz.name}"
+    }
+
+    override fun getSortKey(): String {
+        return "" // Disable sort to keep the list stable
     }
 }

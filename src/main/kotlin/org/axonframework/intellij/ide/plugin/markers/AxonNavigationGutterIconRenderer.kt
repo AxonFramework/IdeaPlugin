@@ -42,7 +42,7 @@ class AxonNavigationGutterIconRenderer(
     emptyText: String?,
     private val elements: NotNullLazyValue<List<PsiElementWrapper>>,
 ) : NavigationGutterIconRenderer(popupTitle, emptyText, { AxonCellRenderer(elements) }, NotNullLazyValue.createValue {
-    elements.value.sortedBy { it.getIcon().toString() + it.renderText() }.map { p ->
+    elements.value.sortedBy { it.getSortKey() }.map { p ->
         val spm = SmartPointerManager.getInstance(p.element.project)
         spm.createSmartPsiElementPointer(p.element)
     }

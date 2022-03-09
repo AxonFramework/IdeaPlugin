@@ -2,6 +2,12 @@
 
 # Axon Framework plugin Changelog
 
+## [0.7.0]
+
+### Added
+
+- Aggregate structure hierarchy is now shown in model popup
+
 ## [0.6.1]
 
 ### Fixed
