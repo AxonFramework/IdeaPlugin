@@ -26,7 +26,7 @@ import io.sentry.UserFeedback
 import io.sentry.protocol.Message
 
 /**
- * Responsible for reporting feedback and exceptions
+ * Responsible for reporting feedback and exceptions to Sentry.
  */
 class ReportingService {
     init {
@@ -41,16 +41,22 @@ class ReportingService {
         }
     }
 
-    fun reportException(project: Project, throwable: Throwable, userInput: String?) {
-        project.addLibraryVersionsToExtras()
+    /**
+     * Reports the given Throwable to Sentry as an error.
+     */
+    fun reportException(project: Project?, throwable: Throwable, userInput: String?) {
+        project?.addLibraryVersionsToExtras()
         Sentry.captureException(throwable)
         if (userInput != null) {
             Sentry.captureUserFeedback(UserFeedback(Sentry.getLastEventId(), null, null, userInput))
         }
     }
 
-    fun reportFeedback(project: Project, feedback: String) {
-        project.addLibraryVersionsToExtras()
+    /**
+     * Reports the given feedback to Sentry
+     */
+    fun reportFeedback(project: Project?, feedback: String) {
+        project?.addLibraryVersionsToExtras()
         val sentryEvent = SentryEvent()
         sentryEvent.message = Message()
         sentryEvent.message!!.message = "Feedback: $feedback"
@@ -62,7 +68,7 @@ class ReportingService {
         OrderEnumerator.orderEntries(this)
             .librariesOnly()
             .productionOnly()
-            .satisfying { it.presentableName.matches(Regex(".*(axon)+.*")) }
+            .satisfying { it.presentableName.matches(Regex(".*(org\\.axonframework)+.*")) }
             .classes()
             .roots
             .forEach {

@@ -131,8 +131,6 @@ tasks {
     }
     runIde {
         jvmArgs("-Xmx2G")
-        // Specify axon.simulate so the exception submitter becomes testable
-        systemProperty("axon.simulate", "true")
     }
 
     buildSearchableOptions {

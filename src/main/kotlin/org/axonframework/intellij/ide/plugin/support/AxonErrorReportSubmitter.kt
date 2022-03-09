@@ -29,6 +29,10 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.util.Consumer
 import java.awt.Component
 
+/**
+ * Extens IntelliJ with our own ErrorReportSubmitter. When an error is detected (uncaught exception) a window is show to the user.
+ * When the user decides to press the "Report to AxonIQ" button, the report will be sent to Sentry.
+ */
 class AxonErrorReportSubmitter : ErrorReportSubmitter() {
     private val service = ApplicationManager.getApplication().getService(ReportingService::class.java)
 
@@ -51,7 +55,7 @@ class AxonErrorReportSubmitter : ErrorReportSubmitter() {
             override fun run(indicator: ProgressIndicator) {
                 try {
                     val original: Throwable = (events[0].data as AbstractMessage?)?.throwable ?: return
-                    service.reportException(project!!, original, additionalInfo)
+                    service.reportException(project, original, additionalInfo)
                     consumer.consume(SubmittedReportInfo(SubmittedReportInfo.SubmissionStatus.NEW_ISSUE))
                     showThankYou()
                 } catch (e: Exception) {

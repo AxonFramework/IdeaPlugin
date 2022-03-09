@@ -36,7 +36,7 @@ class ReportFeedbackAction : AnAction(AxonIcons.Axon) {
     override fun actionPerformed(e: AnActionEvent) {
         ApplicationManager.getApplication().invokeLater() {
             val feedback = Messages.showInputDialog(
-                e.project!!,
+                e.project,
                 "Thank you for providing feedback about the Axon Framework plugin to AxonIQ, what is your feedback?",
                 "Axon Framework Plugin Feedback",
                 AxonIcons.Axon
@@ -44,7 +44,7 @@ class ReportFeedbackAction : AnAction(AxonIcons.Axon) {
             if (feedback.isNullOrEmpty()) {
                 return@invokeLater
             }
-            service.reportFeedback(e.project!!, feedback)
+            service.reportFeedback(e.project, feedback)
         }
     }
 }
