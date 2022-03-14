@@ -29,6 +29,8 @@ import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 import org.axonframework.intellij.ide.plugin.util.isAnnotated
 import org.axonframework.intellij.ide.plugin.util.javaFacade
+import org.axonframework.intellij.ide.plugin.util.resolveAnnotationStringValue
+import org.axonframework.intellij.ide.plugin.util.toFieldRepresentation
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 
 /**
@@ -46,6 +48,12 @@ class AggregateStructureResolver(private val project: Project) {
     fun getAllModelsRelatedToName(name: String): List<Model> {
         getMemberForName(name) ?: return emptyList()
         return getModels().firstOrNull { it.contains(name) }?.flatten() ?: emptyList()
+    }
+
+    fun getParentOfModelChild(name: String): List<ModelChild> {
+        return getFlattendedModelsAndEntities()
+            .flatMap { it.children }
+            .filter { c -> c.member.name == name }
     }
 
     private fun Model.contains(name: String): Boolean {
@@ -83,12 +91,21 @@ class AggregateStructureResolver(private val project: Project) {
                 val targetClass = clazz.javaFacade().findClass(qualifiedName, clazz.project.axonScope())
                     ?: return@mapNotNull null
                 val modelMember = inspect(targetClass) ?: return@mapNotNull null
-                ModelChild(field.name, modelMember, isCollection)
+                val routingKey = field.resolveAnnotationStringValue(AxonAnnotation.AGGREGATE_MEMBER, "routingKey")
+                ModelChild(field.name, modelMember, isCollection, routingKey)
             }
-        val entityIdPresent = clazz.fields.any { it.isAnnotated(AxonAnnotation.ENTITY_ID) } || clazz.methods.any {
-            it.isAnnotated(AxonAnnotation.ENTITY_ID)
+
+        val annotatedField = clazz.fields.firstOrNull { it.isAnnotated(AxonAnnotation.ENTITY_ID) }
+        val annotatedMethod = clazz.methods.firstOrNull { it.isAnnotated(AxonAnnotation.ENTITY_ID) }
+        val routingKey = if (annotatedField != null) {
+            annotatedField.resolveAnnotationStringValue(AxonAnnotation.ENTITY_ID, "routingKey") ?: annotatedField.name
+        } else if (annotatedMethod != null) {
+            annotatedMethod.resolveAnnotationStringValue(AxonAnnotation.ENTITY_ID, "routingKey")
+                ?: annotatedMethod.name.toFieldRepresentation()
+        } else {
+            null
         }
-        return Model(clazz.qualifiedName!!, entityIdPresent, children)
+        return Model(clazz.qualifiedName!!, routingKey, children)
     }
 
     /**

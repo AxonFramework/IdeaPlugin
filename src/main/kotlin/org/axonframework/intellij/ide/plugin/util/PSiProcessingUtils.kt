@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.getContainingUMethod
 import org.jetbrains.uast.toUElement
+import java.util.Locale
 
 /**
  * Convenience method to fully qualified name of type.
@@ -164,3 +165,13 @@ fun PsiElement.findParentHandlers(depth: Int = 0): List<Handler> {
     val references = MethodReferencesSearch.search(parent, project.axonScope(), true)
     return references.flatMap { it.element.findParentHandlers(depth + 1) }
 }
+
+fun String.toGetterRepresentation(): String {
+    return "get${this.capitalize()}"
+}
+
+fun String.toFieldRepresentation(): String {
+    val removedGet = this.removePrefix("get")
+    return removedGet.decapitalize(Locale.getDefault())
+}
+

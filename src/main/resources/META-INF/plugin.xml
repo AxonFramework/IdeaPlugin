@@ -97,6 +97,11 @@
                          language="JAVA"
                          implementationClass="org.axonframework.intellij.ide.plugin.inspections.saga.JavaSagaAssociationPropertyInspection"
                          enabledByDefault="true" hasStaticDescription="true"/>
+        <localInspection displayName="Routing key is present in payload (Java)"
+                         shortName="JavaMissingRoutingKeyOnAggregateMemberInspection" groupName="Axon Framework usage"
+                         language="JAVA"
+                         implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.JavaMissingRoutingKeyOnAggregateMemberInspection"
+                         enabledByDefault="true" hasStaticDescription="true"/>
 
         <!-- Kotlin inspections -->
         <localInspection displayName="Aggregate has an identifier (Kotlin)" shortName="KotlinAggregateIdInspection"

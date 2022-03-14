@@ -42,3 +42,9 @@ const val missingEntityIdDescription =
     """<html>Axon Framework requires a field or method annotated with @EntityId in aggregate members of collection types to be able to route messages to it.
 Also see <a href=\"https://docs.axoniq.io/reference-guide/axon-framework/axon-framework-commands/modeling/multi-entity-aggregates\"> the reference guide</a> for more information.
 </html>"""
+
+const val missingRoutingKeyStaticDescription =
+    """Inspects Java aggregate classes to check messages targeted at entities have their routingKey in the payload."""
+
+const val missingRoutingKeyDescription =
+    """<html>${missingRoutingKeyStaticDescription}</html>"""

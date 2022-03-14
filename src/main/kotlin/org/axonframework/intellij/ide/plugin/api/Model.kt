@@ -23,7 +23,7 @@ package org.axonframework.intellij.ide.plugin.api
  */
 data class Model(
     val name: String,
-    val entityIdPresent: Boolean,
+    val routingKey: String?,
     val children: List<ModelChild>
 )
 
@@ -34,5 +34,6 @@ data class Model(
 data class ModelChild(
     val fieldName: String,
     val member: Model,
-    val isCollection: Boolean
+    val isCollection: Boolean,
+    val routingKey: String?,
 )
