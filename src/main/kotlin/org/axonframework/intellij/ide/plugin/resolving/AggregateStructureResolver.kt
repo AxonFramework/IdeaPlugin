@@ -29,6 +29,7 @@ import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 import org.axonframework.intellij.ide.plugin.util.isAnnotated
 import org.axonframework.intellij.ide.plugin.util.javaFacade
+import org.axonframework.intellij.ide.plugin.util.resolveAnnotationClassValue
 import org.axonframework.intellij.ide.plugin.util.resolveAnnotationStringValue
 import org.axonframework.intellij.ide.plugin.util.toFieldRepresentation
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
@@ -92,7 +93,8 @@ class AggregateStructureResolver(private val project: Project) {
                     ?: return@mapNotNull null
                 val modelMember = inspect(targetClass) ?: return@mapNotNull null
                 val routingKey = field.resolveAnnotationStringValue(AxonAnnotation.AGGREGATE_MEMBER, "routingKey")
-                ModelChild(field.name, modelMember, isCollection, routingKey)
+                val eventForwardingMode = field.resolveAnnotationClassValue(AxonAnnotation.AGGREGATE_MEMBER, "eventForwardingMode")
+                ModelChild(field.name, modelMember, isCollection, routingKey, eventForwardingMode)
             }
 
         val annotatedField = clazz.fields.firstOrNull { it.isAnnotated(AxonAnnotation.ENTITY_ID) }

@@ -85,9 +85,9 @@ fun PsiMethod.resolvePayloadType(): PsiType? {
     }
 }
 
-fun Project.toClass(type: PsiType): PsiClass? {
+fun Project.toClass(type: PsiType, scope: GlobalSearchScope = this.axonScope()): PsiClass? {
     val toQualifiedName = type.toQualifiedName() ?: return null
-    return javaFacade().findClass(toQualifiedName, axonScope())
+    return javaFacade().findClass(toQualifiedName, scope)
 }
 
 /**

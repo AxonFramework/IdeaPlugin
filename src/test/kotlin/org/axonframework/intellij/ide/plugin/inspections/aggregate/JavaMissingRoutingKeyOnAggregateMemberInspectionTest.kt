@@ -187,7 +187,7 @@ class JavaMissingRoutingKeyOnAggregateMemberInspectionTest : AbstractAxonFixture
         }
     }
 
-    fun `test will show error when is wrong key in aggregate member annotation2`() {
+    fun `test will not show error when is right key in aggregate member annotation`() {
         addFile(
             "MyCommand.java", """
             class MyCommand {
@@ -229,7 +229,7 @@ class JavaMissingRoutingKeyOnAggregateMemberInspectionTest : AbstractAxonFixture
         }
     }
 
-    fun `test will show error when is wrong key in aggregate member annotation3`() {
+    fun `test will not show error when routingKey in entityId annotation is correct`() {
         addFile(
             "MyCommand.java", """
             class MyCommand {
@@ -355,6 +355,91 @@ class JavaMissingRoutingKeyOnAggregateMemberInspectionTest : AbstractAxonFixture
         myFixture.enableInspections(JavaMissingRoutingKeyOnAggregateMemberInspection())
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).noneMatch {
+            it.text == "handle" && it.description.contains("targeted at entities have their")
+        }
+    }
+
+
+    fun `test will not show problem when is event sourcing handler without matching forward mode`() {
+        addFile(
+            "MyCommand.java", """
+            class MyEvent {
+            }
+        """.trimIndent()
+        )
+
+        addFile(
+            "MyEntity.java", """
+            import test.MyEvent;
+            
+            class MyEntity {
+              @EntityId
+              private String myEntityId;
+              
+              @EventSourcingHandler
+              public void handle(MyEvent event) {}
+            }
+        """.trimIndent(), open = true
+        )
+
+        addFile(
+            "MyAggregate.java", """
+            import test.MyEntity;
+            import java.util.List;
+            
+            @AggregateRoot
+            class MyAggregate {
+              @AggregateMember
+              List<MyEntity> entities;
+        """.trimIndent()
+        )
+
+        myFixture.enableInspections(JavaMissingRoutingKeyOnAggregateMemberInspection())
+        val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
+        Assertions.assertThat(highlights).noneMatch {
+            it.text == "handle" && it.description.contains("targeted at entities have their")
+        }
+    }
+
+
+    fun `test will show problem when is event sourcing handler and has ForwardMatchingInstances`() {
+        addFile(
+            "MyCommand.java", """
+            class MyEvent {
+            }
+        """.trimIndent()
+        )
+
+        addFile(
+            "MyEntity.java", """
+            import test.MyEvent;
+            
+            class MyEntity {
+              @EntityId
+              private String myEntityId;
+              
+              @EventSourcingHandler
+              public void handle(MyEvent event) {}
+            }
+        """.trimIndent(), open = true
+        )
+
+        addFile(
+            "MyAggregate.java", """
+            import test.MyEntity;
+            import java.util.List;
+            import org.axonframework.modelling.command.ForwardMatchingInstances;
+            
+            @AggregateRoot
+            class MyAggregate {
+              @AggregateMember(routingKey="someKey", eventForwardingMode=ForwardMatchingInstances.class)
+              List<MyEntity> entities;
+        """.trimIndent()
+        )
+
+        myFixture.enableInspections(JavaMissingRoutingKeyOnAggregateMemberInspection())
+        val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
+        Assertions.assertThat(highlights).anyMatch {
             it.text == "handle" && it.description.contains("targeted at entities have their")
         }
     }

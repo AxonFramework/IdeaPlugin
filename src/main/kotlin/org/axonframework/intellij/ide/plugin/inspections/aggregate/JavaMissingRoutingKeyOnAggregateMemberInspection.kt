@@ -21,8 +21,10 @@ import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.psi.PsiMethod
+import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.util.aggregateResolver
 import org.axonframework.intellij.ide.plugin.util.containingClassFqn
+import org.axonframework.intellij.ide.plugin.util.hasAnnotation
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toClass
 import org.axonframework.intellij.ide.plugin.util.toGetterRepresentation
@@ -44,7 +46,13 @@ class JavaMissingRoutingKeyOnAggregateMemberInspection : AbstractBaseJavaLocalIn
         }
         val routingKey = parentModelChild.routingKey
             ?: model.routingKey
+            ?: return null
 
+        if (method.hasAnnotation(AxonAnnotation.EVENT_SOURCING_HANDLER) &&
+            parentModelChild.forwardingMode != "org.axonframework.modelling.command.ForwardMatchingInstances"
+        ) {
+            return null
+        }
         val payload = method.resolvePayloadType() ?: return null
         val payloadClass = method.project.toClass(payload) ?: return null
         val hasField =
@@ -57,7 +65,7 @@ class JavaMissingRoutingKeyOnAggregateMemberInspection : AbstractBaseJavaLocalIn
             manager.createProblemDescriptor(
                 method,
                 method.identifyingElement!!.textRangeInParent,
-                missingRoutingKeyDescription,
+                missingRoutingKeyDescription.replace("__ATT__", routingKey),
                 ProblemHighlightType.WARNING,
                 isOnTheFly,
             )

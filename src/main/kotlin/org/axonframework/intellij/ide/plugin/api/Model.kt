@@ -36,4 +36,5 @@ data class ModelChild(
     val member: Model,
     val isCollection: Boolean,
     val routingKey: String?,
+    val forwardingMode: String?
 )

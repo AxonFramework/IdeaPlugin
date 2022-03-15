@@ -24,6 +24,7 @@ import org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver
 import org.axonframework.intellij.ide.plugin.resolving.ResolvedAnnotation
 import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.getParentOfType
+import org.jetbrains.uast.java.JavaUClassLiteralExpression
 import org.jetbrains.uast.toUElement
 
 /**
@@ -95,6 +96,12 @@ fun PsiModifierListOwner.resolveAnnotationValue(annotation: AxonAnnotation, attr
 fun PsiModifierListOwner.resolveAnnotationStringValue(annotation: AxonAnnotation, attributeName: String): String? {
     val attribute = resolveAnnotationValue(annotation, attributeName)
     return resolveAttributeStringValue(attribute)?.ifEmpty { null }
+}
+
+fun PsiModifierListOwner.resolveAnnotationClassValue(annotation: AxonAnnotation, attributeName: String): String? {
+    val attribute = resolveAnnotationValue(annotation, attributeName)
+    val uElement = attribute.toUElement() as? JavaUClassLiteralExpression ?: return null
+    return project.toClass(uElement.type, project.allScope())?.qualifiedName
 }
 
 private fun resolveAttributeStringValue(attribute: PsiAnnotationMemberValue?): String? {

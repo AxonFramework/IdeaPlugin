@@ -47,4 +47,4 @@ const val missingRoutingKeyStaticDescription =
     """Inspects Java aggregate classes to check messages targeted at entities have their routingKey in the payload."""
 
 const val missingRoutingKeyDescription =
-    """<html>${missingRoutingKeyStaticDescription}</html>"""
+    """<html>The payload requires a __ATT__ property or getter for Axon Framework to direct it to the right entity. Also see <a href=\"https://docs.axoniq.io/reference-guide/axon-framework/axon-framework-commands/modeling/multi-entity-aggregates\"> the reference guide</a> for more information.</html>"""
