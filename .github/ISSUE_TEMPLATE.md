@@ -22,7 +22,7 @@ After that's done, your issue will typically fall under one of the following opt
 3. It's an `enhancement` request
 
 It is recommended that for either of the three you use one of the prepared issue template.
-You can find all three of them [here](https://github.com/AxonIQ/IdeaPlugin/issues/new/choose). 
+You can find all three of them [here](https://github.com/AxonFramework/IdeaPlugin/issues/new/choose). 
 
 ## None of the above fit!
 
