@@ -1,5 +1,7 @@
 ---
-name: 'Bug report' about: 'Report a bug for the IntelliJ plugin' title:
+name: 'Bug report' 
+about: 'Report a bug for the IntelliJ plugin' 
+title:
 labels: 'Type: Bug'
 ---
 

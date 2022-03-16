@@ -1,5 +1,7 @@
 ---
-name: 'Enhancement request' about: 'Suggest an enhancement/change to an existing feature for the IntelliJ plugin' title:
+name: 'Enhancement request' 
+about: 'Suggest an enhancement/change to an existing feature for the IntelliJ plugin' 
+title:
 labels: 'Type: Enhancement'
 ---
 
