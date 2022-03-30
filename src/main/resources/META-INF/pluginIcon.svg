@@ -1,63 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 430.743 430" style="enable-background:new 0 0 1077 430;"
-     xmlns="http://www.w3.org/2000/svg">
-    <style type="text/css">
-        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:#21252B;}
-        .st1{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Shape_bot_00000180326695253590905170000012209531999772717189_);}
-        .st2{fill-rule:evenodd;clip-rule:evenodd;fill:#1374CF;}
-        .st3{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Shape_bot-2_00000084530908501180527850000014031081650282790024_);}
-        .st4{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Shape_bot_copy_00000105426165573344538890000000495730748251974018_);}
-        .st5{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Shape_top-2_00000085958739192615300310000018051850318385691294_);}
-        .st6{fill-rule:evenodd;clip-rule:evenodd;fill:#FE5E00;}
-    </style>
-    <g id="Axon_-_Dark">
-        <g id="Clean_copy_3">
-            <path id="DOts_copy" class="st0"
-                  d="M214.9,365.6c17.7,0,32.1,14.4,32.1,32.1c0,17.7-14.4,32.1-32.1,32.1s-32.1-14.4-32.1-32.1 l0,0C182.8,380,197.2,365.6,214.9,365.6z M247,33.1c0,17.7-14.4,32.1-32.1,32.1c-17.7,0-32.1-14.4-32.1-32.1 c0-17.7,14.4-32.1,32.1-32.1C232.7,1,247,15.3,247,33.1L247,33.1z"/>
+<!--
+  -  Copyright (c) 2022. Axon Framework
+  -
+  -  Licensed under the Apache License, Version 2.0 (the "License");
+  -  you may not use this file except in compliance with the License.
+  -  You may obtain a copy of the License at
+  -
+  -      http://www.apache.org/licenses/LICENSE-2.0
+  -
+  -  Unless required by applicable law or agreed to in writing, software
+  -  distributed under the License is distributed on an "AS IS" BASIS,
+  -  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  -  See the License for the specific language governing permissions and
+  -  limitations under the License.
+  -->
+
+<!-- Generator: Adobe Illustrator 26.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+     viewBox="0 0 429 430" style="enable-background:new 0 0 429 430;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
+	.st1{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Shape_bot_00000024720603135266428220000003791657973532598669_);}
+	.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#FE5E00;}
+	.st3{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Shape_bot-2_00000048499508076338364040000006468142496782130622_);}
+</style>
+    <g id="Axon_Framework_-_light">
+        <g id="Clean">
+		<path id="DOts_copy" class="st0" d="M214.9,182.7c17.7,0,32.1,14.4,32.1,32.1s-14.4,32.1-32.1,32.1c-17.7,0-32.1-14.4-32.1-32.1
+			c0,0,0,0,0,0C182.8,197.1,197.2,182.7,214.9,182.7z M214.9,365c17.7,0,32.1,14.4,32.1,32.1s-14.4,32.1-32.1,32.1
+			c-17.7,0-32.1-14.4-32.1-32.1c0,0,0,0,0,0C182.8,379.4,197.2,365,214.9,365z M247,32.5c0,17.7-14.4,32.1-32.1,32.1
+			c-17.7,0-32.1-14.4-32.1-32.1c0-17.7,14.4-32.1,32.1-32.1c0,0,0,0,0,0C232.7,0.4,247,14.7,247,32.5z"/>
             <g id="Right">
-                <linearGradient id="Shape_bot_00000119110654719170802460000017460805144095356842_" gradientUnits="userSpaceOnUse"
-                                x1="385.4797" y1="-7624.0825" x2="261.5699" y2="-7500.1729" gradientTransform="matrix(1 0 0 -1 0 -7421)">
-                    <stop offset="0" style="stop-color:#001223"/>
-                    <stop offset="0.2" style="stop-color:#1374CF"/>
-                    <stop offset="1" style="stop-color:#1374CF"/>
-                </linearGradient>
-                <path id="Shape_bot"
-                      style="fill-rule:evenodd;clip-rule:evenodd;fill:url(#Shape_bot_00000119110654719170802460000017460805144095356842_);"
-                      d=" M399.3,171.2L352.7,216l-65.6-65.6C280,144,274,134.7,274,124.2c0-17.7,14.3-32.1,32-32.1c7.8,0,15.3,2.8,21.2,8L399.3,171.2z"/>
-                <path id="Shape_top" class="st2"
-                      d="M429.4,215.4c0,8.5-3.4,16.6-9.4,22.6l-92.3,92.2c-13,12-33.3,11.1-45.3-1.9 c-5.4-5.9-8.5-13.7-8.4-21.7c0-10.8,5.2-19.5,13.2-26.7l110.4-110.4l22.5,23.4v0C426,198.9,429.4,207,429.4,215.4z"/>
-            </g>
+
+				<linearGradient id="Shape_bot_00000094592461446301810820000001680014268164277143_" gradientUnits="userSpaceOnUse" x1="3937.4724" y1="-4792.4756" x2="3813.5623" y2="-4668.5654" gradientTransform="matrix(1 0 0 -1 -3552 -4590)">
+				<stop  offset="0" style="stop-color:#3D1700"/>
+                    <stop  offset="0.2" style="stop-color:#FE5E00"/>
+                    <stop  offset="1" style="stop-color:#FE5E00"/>
+			</linearGradient>
+
+                <path id="Shape_bot" style="fill-rule:evenodd;clip-rule:evenodd;fill:url(#Shape_bot_00000094592461446301810820000001680014268164277143_);" d="
+				M399.3,170.6l-46.6,44.9l-65.6-65.6c-7.2-6.4-13.2-15.8-13.2-26.2c0-17.7,14.3-32.1,32-32.1c7.8,0,15.3,2.8,21.2,8L399.3,170.6z"
+                />
+                <path id="Shape_top" class="st2" d="M429.4,214.8c0,8.5-3.4,16.6-9.4,22.6l-92.3,92.2c-13,12-33.3,11.1-45.3-1.9
+				c-5.4-5.9-8.4-13.7-8.4-21.7c0-10.8,5.2-19.5,13.2-26.7l110.4-110.4l22.5,23.4v0.1C426,198.3,429.4,206.4,429.4,214.8z"/>
+		</g>
             <g id="Left">
-                <linearGradient id="Shape_bot-2_00000132781691693023338480000009342857227596919729_" gradientUnits="userSpaceOnUse"
-                                x1="31.4768" y1="-7635.3994" x2="155.5058" y2="-7759.4292" gradientTransform="matrix(1 0 0 -1 0 -7421)">
-                    <stop offset="0" style="stop-color:#3D1700"/>
-                    <stop offset="0.33" style="stop-color:#FE5E00"/>
-                    <stop offset="1" style="stop-color:#FE5E00"/>
-                </linearGradient>
-                <path id="Shape_bot-2"
-                      style="fill-rule:evenodd;clip-rule:evenodd;fill:url(#Shape_bot-2_00000132781691693023338480000009342857227596919729_);"
-                      d=" M30.8,259.4l46.6-44.9l65.5,65.6c7.2,6.5,13.2,15.8,13.2,26.2c0.1,17.7-14.2,32.1-31.9,32.1c-7.8,0-15.4-2.8-21.3-8L30.8,259.4z"/>
-                <linearGradient id="Shape_bot_copy_00000018228532360300376480000000926045762850978708_" gradientUnits="userSpaceOnUse"
-                                x1="203.9699" y1="-7647.6963" x2="79.7505" y2="-7771.9155" gradientTransform="matrix(1 0 0 -1 0 -7421)">
-                    <stop offset="0" style="stop-color:#3D1700"/>
-                    <stop offset="0.2" style="stop-color:#FE5E00"/>
-                    <stop offset="1" style="stop-color:#FE5E00"/>
-                </linearGradient>
-                <path id="Shape_bot_copy"
-                      style="fill-rule:evenodd;clip-rule:evenodd;fill:url(#Shape_bot_copy_00000018228532360300376480000000926045762850978708_);"
-                      d=" M172,212.7l45,46.8l-65.7,65.9c-6.5,7.2-15.8,13.2-26.3,13.2c-17.8,0-32.2-14.5-32.2-32.3c0-7.8,2.9-15.3,8-21.2L172,212.7z"/>
-                <linearGradient id="Shape_top-2_00000011030933222875708100000017097374507578621859_" gradientUnits="userSpaceOnUse"
-                                x1="115.522" y1="-7553.5752" x2="-9.54" y2="-7678.6372" gradientTransform="matrix(1 0 0 -1 0 -7421)">
-                    <stop offset="0" style="stop-color:#3D1700"/>
-                    <stop offset="0.2" style="stop-color:#FE5E00"/>
-                    <stop offset="1" style="stop-color:#FE5E00"/>
-                </linearGradient>
-                <path id="Shape_top-2"
-                      style="fill-rule:evenodd;clip-rule:evenodd;fill:url(#Shape_top-2_00000011030933222875708100000017097374507578621859_);"
-                      d=" M0.7,215.2c0-8.5,3.4-16.7,9.4-22.7l70.3-70.3l45.5,45.5l-93.3,93.5L10,237.8v-0.1C4.1,231.7,0.7,223.6,0.7,215.2z"/>
-                <path id="Shape_top_copy_2" class="st6"
-                      d="M78.2,123.6l23.4-22.5h0.1c12.5-12.4,32.7-12.3,45.1,0.1l91.6,91.6 c12.4,12.5,12.5,32.6,0.1,45.1v0L216,261.4L78.2,123.6z"/>
-            </g>
-        </g>
-    </g>
+
+				<linearGradient id="Shape_bot-2_00000114058679804465721010000011979966887610230405_" gradientUnits="userSpaceOnUse" x1="3583.4785" y1="-4803.8066" x2="3707.5085" y2="-4927.8364" gradientTransform="matrix(1 0 0 -1 -3552 -4590)">
+				<stop  offset="0" style="stop-color:#3D1700"/>
+                    <stop  offset="0.33" style="stop-color:#FE5E00"/>
+                    <stop  offset="1" style="stop-color:#FE5E00"/>
+			</linearGradient>
+
+                <path id="Shape_bot-2" style="fill-rule:evenodd;clip-rule:evenodd;fill:url(#Shape_bot-2_00000114058679804465721010000011979966887610230405_);" d="
+				M30.8,258.8l46.6-44.9l65.6,65.6c7.2,6.4,13.2,15.8,13.2,26.2c0,17.7-14.3,32.1-32,32.1c-7.8,0-15.4-2.8-21.2-8L30.8,258.8z"/>
+                <path id="Shape_top-2" class="st2" d="M0.7,214.6c0-8.5,3.4-16.6,9.4-22.7l92.2-92.2c13-12,33.3-11.1,45.3,1.9
+				c5.5,5.9,8.5,13.7,8.4,21.8c0,10.8-5.2,19.5-13.2,26.7L32.5,260.6L10,237.2v0C4,231.1,0.7,223,0.7,214.6z"/>
+		</g>
+	</g>
+</g>
 </svg>
