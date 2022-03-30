@@ -20,6 +20,6 @@ package org.axonframework.intellij.ide.plugin.inspections.saga
 const val associationPropertyStaticDescription = """The message does not contain the specified associationProperty."""
 
 const val associationPropertyDescription =
-    """<html>The message does not contain the specified associationProperty. This is required by the @SagaEventHandler annotation.
-Please add such a field to the message. Also see <a href="https://docs.axoniq.io/reference-guide/axon-framework/sagas/associations"> the reference guide</a> for more information.
+    """<html>The message does not declare a property for the specified associationProperty in the @SagaEventHandler annotation. 
+        Please ensure an accessor method is available for this property. Also see <a href="https://docs.axoniq.io/reference-guide/axon-framework/sagas/associations"> the reference guide</a> for more information.
 </html>"""

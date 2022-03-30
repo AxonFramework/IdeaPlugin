@@ -57,7 +57,7 @@ class JavaMissingRoutingKeyOnAggregateMemberInspectionTest : AbstractAxonFixture
         myFixture.enableInspections(JavaMissingRoutingKeyOnAggregateMemberInspection())
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).anyMatch {
-            it.text == "handle" && it.description.contains("targeted at entities have their")
+            it.text == "handle" && it.description.contains("The payload requires a myEntityId property or getter")
         }
     }
 
@@ -99,7 +99,51 @@ class JavaMissingRoutingKeyOnAggregateMemberInspectionTest : AbstractAxonFixture
         myFixture.enableInspections(JavaMissingRoutingKeyOnAggregateMemberInspection())
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).noneMatch {
-            it.text == "handle" && it.description.contains("targeted at entities have their")
+            it.text == "handle" && it.description.contains("The payload requires a myEntityId property or getter")
+        }
+    }
+
+    fun `test will not show problem when key is present with getter`() {
+        addFile(
+            "MyCommand.java", """
+            class MyCommand {
+                public String getMyEntityId() {
+                return ""
+                };
+            }
+        """.trimIndent()
+        )
+
+        addFile(
+            "MyEntity.java", """
+            import test.MyCommand;
+            
+            class MyEntity {
+              @EntityId
+              private String myEntityId;
+              
+              @CommandHandler
+              public void handle(MyCommand command) {}
+            }
+        """.trimIndent(), open = true
+        )
+
+        addFile(
+            "MyAggregate.java", """
+            import test.MyEntity;
+            import java.util.List;
+            
+            @AggregateRoot
+            class MyAggregate {
+              @AggregateMember
+              List<MyEntity> entities;
+        """.trimIndent()
+        )
+
+        myFixture.enableInspections(JavaMissingRoutingKeyOnAggregateMemberInspection())
+        val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
+        Assertions.assertThat(highlights).noneMatch {
+            it.text == "handle" && it.description.contains("The payload requires a myEntityId property or getter")
         }
     }
 
@@ -141,7 +185,7 @@ class JavaMissingRoutingKeyOnAggregateMemberInspectionTest : AbstractAxonFixture
         myFixture.enableInspections(JavaMissingRoutingKeyOnAggregateMemberInspection())
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).anyMatch {
-            it.text == "handle" && it.description.contains("targeted at entities have their")
+            it.text == "handle" && it.description.contains("The payload requires a wrongKey property or getter")
         }
     }
 
@@ -183,7 +227,7 @@ class JavaMissingRoutingKeyOnAggregateMemberInspectionTest : AbstractAxonFixture
         myFixture.enableInspections(JavaMissingRoutingKeyOnAggregateMemberInspection())
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).anyMatch {
-            it.text == "handle" && it.description.contains("targeted at entities have their")
+            it.text == "handle" && it.description.contains("The payload requires a wrongKey property or getter")
         }
     }
 
@@ -225,7 +269,7 @@ class JavaMissingRoutingKeyOnAggregateMemberInspectionTest : AbstractAxonFixture
         myFixture.enableInspections(JavaMissingRoutingKeyOnAggregateMemberInspection())
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).noneMatch {
-            it.text == "handle" && it.description.contains("targeted at entities have their")
+            it.text == "handle" && it.description.contains("The payload requires a myEntityId property or getter")
         }
     }
 
@@ -267,7 +311,7 @@ class JavaMissingRoutingKeyOnAggregateMemberInspectionTest : AbstractAxonFixture
         myFixture.enableInspections(JavaMissingRoutingKeyOnAggregateMemberInspection())
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).noneMatch {
-            it.text == "handle" && it.description.contains("targeted at entities have their")
+            it.text == "handle" && it.description.contains("The payload requires a myEntityId property or getter")
         }
     }
 
@@ -311,7 +355,7 @@ class JavaMissingRoutingKeyOnAggregateMemberInspectionTest : AbstractAxonFixture
         myFixture.enableInspections(JavaMissingRoutingKeyOnAggregateMemberInspection())
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).noneMatch {
-            it.text == "handle" && it.description.contains("targeted at entities have their")
+            it.text == "handle" && it.description.contains("The payload requires a myEntityId property or getter")
         }
     }
 
@@ -355,7 +399,7 @@ class JavaMissingRoutingKeyOnAggregateMemberInspectionTest : AbstractAxonFixture
         myFixture.enableInspections(JavaMissingRoutingKeyOnAggregateMemberInspection())
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).noneMatch {
-            it.text == "handle" && it.description.contains("targeted at entities have their")
+            it.text == "handle" && it.description.contains("The payload requires a myEntityId property or getter")
         }
     }
 
@@ -397,7 +441,7 @@ class JavaMissingRoutingKeyOnAggregateMemberInspectionTest : AbstractAxonFixture
         myFixture.enableInspections(JavaMissingRoutingKeyOnAggregateMemberInspection())
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).noneMatch {
-            it.text == "handle" && it.description.contains("targeted at entities have their")
+            it.text == "handle" && it.description.contains("The payload requires a myEntityId property or getter")
         }
     }
 
@@ -440,7 +484,7 @@ class JavaMissingRoutingKeyOnAggregateMemberInspectionTest : AbstractAxonFixture
         myFixture.enableInspections(JavaMissingRoutingKeyOnAggregateMemberInspection())
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).anyMatch {
-            it.text == "handle" && it.description.contains("targeted at entities have their")
+            it.text == "handle" && it.description.contains("The payload requires a someKey property or getter")
         }
     }
 }

@@ -18,13 +18,17 @@ package org.axonframework.intellij.ide.plugin.inspections.saga
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
+import org.axonframework.intellij.ide.plugin.util.hasAccessor
+import org.axonframework.intellij.ide.plugin.util.resolveAnnotation
 import org.axonframework.intellij.ide.plugin.util.resolveAnnotationStringValue
 import org.axonframework.intellij.ide.plugin.util.resolveAnnotationValue
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toClass
+import org.jetbrains.kotlin.asJava.elements.KtLightPsiLiteral
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.uast.UMethod
@@ -55,15 +59,16 @@ class KotlinSagaAssociationPropertyInspection : AbstractKotlinInspection() {
                     return
                 val payload = method.resolvePayloadType() ?: return
                 val payloadClass = method.project.toClass(payload) ?: return
-                val hasField = payloadClass.fields.any { it.name == attribute }
-                if (hasField) {
+                if (payloadClass.hasAccessor(attribute)) {
                     return
                 }
+                val annotation = method.resolveAnnotation(AxonAnnotation.SAGA_EVENT_HANDLER) ?: return
+                val property = annotation.findAttributeValue("associationProperty") as KtLightPsiLiteral? ?: return
                 holder.registerProblem(
-                    element,
+                    property.kotlinOrigin,
                     associationPropertyDescription,
                     ProblemHighlightType.WARNING,
-                    element.identifyingElement!!.textRangeInParent,
+                    null as TextRange?,
                 )
             }
         }

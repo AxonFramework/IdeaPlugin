@@ -21,11 +21,14 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
+import org.axonframework.intellij.ide.plugin.util.hasAccessor
 import org.axonframework.intellij.ide.plugin.util.hasAnnotation
+import org.axonframework.intellij.ide.plugin.util.resolveAnnotation
 import org.axonframework.intellij.ide.plugin.util.resolveAnnotationStringValue
 import org.axonframework.intellij.ide.plugin.util.resolveAnnotationValue
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toClass
+import org.jetbrains.kotlin.idea.util.textRangeIn
 
 /**
  * Checks whether the associationProperty defined in the annotation exists on the message.
@@ -47,14 +50,15 @@ class JavaSagaAssociationPropertyInspection : AbstractBaseJavaLocalInspectionToo
             return null
         val payload = method.resolvePayloadType() ?: return null
         val payloadClass = method.project.toClass(payload) ?: return null
-        val hasField = payloadClass.fields.any { it.name == attribute }
-        if (hasField) {
+        if (payloadClass.hasAccessor(attribute)) {
             return null
         }
+        val annotation = method.resolveAnnotation(AxonAnnotation.SAGA_EVENT_HANDLER) ?: return null
+        val property = annotation.findAttributeValue("associationProperty") ?: return null
         return arrayOf(
             manager.createProblemDescriptor(
-                method,
-                method.identifyingElement!!.textRangeInParent,
+                property,
+                null,
                 associationPropertyDescription,
                 ProblemHighlightType.WARNING,
                 isOnTheFly,

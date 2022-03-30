@@ -37,7 +37,7 @@ class KotlinSagaAssociationPropertyInspectionTest : AbstractAxonFixtureTestCase(
         myFixture.openFileInEditor(file)
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).anyMatch {
-            it.text == "handle" && it.description.contains("does not contain the specified associationProperty")
+            it.text == "\"some\"" && it.description.contains("The message does not declare a property")
         }
     }
 
@@ -57,7 +57,7 @@ class KotlinSagaAssociationPropertyInspectionTest : AbstractAxonFixtureTestCase(
         myFixture.openFileInEditor(file)
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).noneMatch {
-            it.text == "handle" && it.description.contains("does not contain the specified associationProperty")
+            it.text == "handle" && it.description.contains("The message does not declare a property")
         }
     }
 
@@ -77,7 +77,29 @@ class KotlinSagaAssociationPropertyInspectionTest : AbstractAxonFixtureTestCase(
         myFixture.openFileInEditor(file)
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).noneMatch {
-            it.text == "handle" && it.description.contains("does not contain the specified associationProperty")
+            it.text == "handle" && it.description.contains("The message does not declare a property")
+        }
+    }
+
+    fun `test detect defined getter`() {
+        val file = addFile(
+            "file.kt", """
+                class MyMessage {
+                   fun getSome() = ""
+                }
+                
+                class MyHandler {
+                    @SagaEventHandler(associationProperty = "some")
+                    fun handle(message: MyMessage) {}
+                }
+        """.trimIndent()
+        )
+
+        myFixture.enableInspections(KotlinSagaAssociationPropertyInspection())
+        myFixture.openFileInEditor(file)
+        val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
+        Assertions.assertThat(highlights).noneMatch {
+            it.text == "handle" && it.description.contains("The message does not declare a property")
         }
     }
 }

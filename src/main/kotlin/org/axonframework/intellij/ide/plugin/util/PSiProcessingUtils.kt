@@ -23,6 +23,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassObjectAccessExpression
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiField
 import com.intellij.psi.PsiJvmModifiersOwner
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
@@ -88,6 +89,12 @@ fun PsiMethod.resolvePayloadType(): PsiType? {
 fun Project.toClass(type: PsiType, scope: GlobalSearchScope = this.axonScope()): PsiClass? {
     val toQualifiedName = type.toQualifiedName() ?: return null
     return javaFacade().findClass(toQualifiedName, scope)
+}
+
+fun PsiClass.hasAccessor(name: String): Boolean = this.getAccessor(name) != null
+
+fun PsiClass.getAccessor(name: String): PsiElement? {
+    return fields.firstOrNull { it.name == name } ?: methods.firstOrNull { it.name == name.toGetterRepresentation() }
 }
 
 /**

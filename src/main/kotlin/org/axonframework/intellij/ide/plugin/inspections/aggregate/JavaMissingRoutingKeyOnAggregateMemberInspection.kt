@@ -24,6 +24,7 @@ import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.util.aggregateResolver
 import org.axonframework.intellij.ide.plugin.util.containingClassFqn
+import org.axonframework.intellij.ide.plugin.util.hasAccessor
 import org.axonframework.intellij.ide.plugin.util.hasAnnotation
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toClass
@@ -55,9 +56,7 @@ class JavaMissingRoutingKeyOnAggregateMemberInspection : AbstractBaseJavaLocalIn
         }
         val payload = method.resolvePayloadType() ?: return null
         val payloadClass = method.project.toClass(payload) ?: return null
-        val hasField =
-            payloadClass.fields.any { it.name == routingKey } || payloadClass.methods.any { it.name == routingKey?.toGetterRepresentation() }
-        if (hasField) {
+        if (payloadClass.hasAccessor(routingKey)) {
             return null
         }
 
