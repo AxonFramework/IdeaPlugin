@@ -4,6 +4,9 @@
 
 ## [0.6.0]
 
+### Fixed
+- Solved memory leak by excessive caching of handler calculation result
+
 ### Added
 
 - Users can now report their exceptions and will be stored in our Sentry installation

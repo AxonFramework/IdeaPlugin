@@ -17,29 +17,9 @@
 package org.axonframework.intellij.ide.plugin.util
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
-import com.intellij.psi.PsiElement
-import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-
-
-/**
- * Used to cache data on a PsiElement using the user data map.
- *
- * Uses PsiModificationTracker under the hood, so everything is re-computed when code changes.
- */
-fun <T> PsiElement.cacheData(key: String, supplier: () -> T): T {
-    val cacheKey = Key<CachedValue<T>>(key)
-    val cache = getUserData(cacheKey)
-    if (cache == null) {
-        val createCachedValue = project.createCachedValue(supplier)
-        putUserData(cacheKey, createCachedValue)
-        return createCachedValue.value
-    }
-    return cache.value
-}
 
 /**
  * Convenience method to quickly create a cached value for a project based on PSI modifications.
