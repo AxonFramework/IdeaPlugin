@@ -14,7 +14,8 @@
   ~  limitations under the License.
   -->
 
-<idea-plugin require-restart="false">
+<!-- If we don't require the restart, there will be classcast exceptions. -->
+<idea-plugin require-restart="true">
     <id>io.axoniq.ide.intellij</id>
     <name>Axon Framework</name>
     <version>${project.version}</version>

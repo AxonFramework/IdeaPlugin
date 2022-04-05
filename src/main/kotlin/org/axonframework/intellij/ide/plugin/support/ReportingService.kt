@@ -38,6 +38,7 @@ class ReportingService {
             options.isAttachServerName = false
             options.sampleRate = 1.0
             options.tracesSampleRate = 0.1
+            options.enableUncaughtExceptionHandler = false
         }
     }
 
