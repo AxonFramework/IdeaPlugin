@@ -2,6 +2,12 @@
 
 # Axon Framework plugin Changelog
 
+## [0.6.1]
+
+### Fixed
+- Uncaught exceptions were reported to Sentry, even ones not caused by the plugin. Disabled uncaught exception handling. 
+- Require restart on plugin installation. Otherwise, ClassCastExceptions or Duplicate PluginExceptions can occur. 
+
 ## [0.6.0]
 
 ### Fixed
