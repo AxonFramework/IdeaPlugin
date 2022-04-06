@@ -28,7 +28,6 @@ import org.axonframework.intellij.ide.plugin.util.hasAccessor
 import org.axonframework.intellij.ide.plugin.util.hasAnnotation
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toClass
-import org.axonframework.intellij.ide.plugin.util.toGetterRepresentation
 
 /**
  * Inspects that the routingKey specified by the EntityId annotation is present in all commands and events

@@ -123,6 +123,11 @@
                          language="kotlin"
                          implementationClass="org.axonframework.intellij.ide.plugin.inspections.saga.KotlinSagaAssociationPropertyInspection"
                          enabledByDefault="true" hasStaticDescription="true"/>
+        <localInspection displayName="Routing key is present in payload (Kotlin)"
+                         shortName="KotlinMissingRoutingKeyOnAggregateMemberInspection" groupName="Axon Framework usage"
+                         language="kotlin"
+                         implementationClass="org.axonframework.intellij.ide.plugin.inspections.aggregate.KotlinMissingRoutingKeyOnAggregateMemberInspection"
+                         enabledByDefault="true" hasStaticDescription="true"/>
 
         <errorHandler implementation="org.axonframework.intellij.ide.plugin.support.AxonErrorReportSubmitter"/>
     </extensions>
