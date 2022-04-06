@@ -16,7 +16,6 @@
 
 package org.axonframework.intellij.ide.plugin.api
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
 
@@ -27,7 +26,6 @@ import com.intellij.psi.PsiField
  */
 data class Model(
     val name: String,
-    @JsonIgnore
     val clazz: PsiClass,
     val parent: String?,
     val entityIdPresent: Boolean,

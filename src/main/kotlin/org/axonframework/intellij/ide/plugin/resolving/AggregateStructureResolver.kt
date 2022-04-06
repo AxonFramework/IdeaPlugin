@@ -39,10 +39,10 @@ import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 class AggregateStructureResolver(private val project: Project) {
     private val cache = project.createCachedValue { resolve() }
 
-    fun getModels(): List<Model> = cache.value
-
-    fun getFlattendedModelsAndEntities(): List<Model> = getModels().flatMap { it.flatten() }
-
+    /**
+     * Finds the uppermost Model owning the Model with this name.
+     * So, If Aggregate A owns entity B, which in turns owns entity C. When requesting the owner for C, it will return A.
+     */
     fun getHierarchyOwnerForName(name: String): Model? {
         val member = getMemberForName(name) ?: return null
         if (member.parent != null) {
@@ -51,22 +51,26 @@ class AggregateStructureResolver(private val project: Project) {
         return member
     }
 
-    fun getAllModelsRelatedToName(name: String): List<Model> {
-        getMemberForName(name) ?: return emptyList()
-        return getModels().firstOrNull { it.contains(name) }?.flatten() ?: emptyList()
-    }
-
-    private fun Model.contains(name: String): Boolean {
-        return this.name == name || children.any { child -> child.member.contains(name) }
-    }
-
+    /**
+     * Returns the Model for this name
+     */
     fun getMemberForName(name: String): Model? {
-        return getFlattendedModelsAndEntities().firstOrNull { it.name == name }
+        return cache.value.firstOrNull { it.name == name }
     }
 
+    /**
+     * Finds the model with given name and all it's sub-entities down in the hierarchy.
+     */
     fun getMemberWithSubEntities(name: String): List<Model> {
         val member = getMemberForName(name) ?: return emptyList()
-        return member.flatten()
+        return getMemberWithSubEntities(member)
+    }
+
+    private fun getMemberWithSubEntities(model: Model): List<Model> {
+        if(model.children.isEmpty()) {
+            return listOf(model)
+        }
+        return model.children.flatMap { getMemberWithSubEntities(it.member) }
     }
 
     private fun Model.flatten() = listOf(this) + children.map { it.member }
@@ -77,6 +81,7 @@ class AggregateStructureResolver(private val project: Project) {
             AnnotatedElementsSearch.searchPsiClasses(it.psiClass, project.axonScope()).findAll()
         }
         .mapNotNull { inspect(it, null) }
+        .flatMap { it.flatten() }
 
     private fun inspect(clazz: PsiClass, parent: PsiClass?): Model? {
         if (clazz.isEnum) {

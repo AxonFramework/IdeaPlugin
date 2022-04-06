@@ -65,5 +65,9 @@ interface PsiElementWrapper {
      */
     fun getIcon(): Icon
 
+    /**
+     * Retrieve the key to sort the list with. By default takes icon and text into account to show it nicely categorized.
+     * Override this method for customized behavior.
+     */
     fun getSortKey() = getIcon().toString() + renderText()
 }
