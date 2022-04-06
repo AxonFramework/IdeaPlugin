@@ -74,7 +74,10 @@ class ClassLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
             "MyAggregate.kt", """
             
             class MyAggregateMemberSingle {}
-            class MyAggregateMemberList {}
+            class MyAggregateMemberList {
+                @AggregateMember
+                private lateinit var singleMember: MyAggregateMemberSingle
+            }
             class MyAggregateMemberMap {}
             
             @AggregateRoot
@@ -93,9 +96,10 @@ class ClassLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
         Assertions.assertThat(hasLineMarker(ClassLineMarkerProvider::class.java)).isTrue
         Assertions.assertThat(getLineMarkerOptions(ClassLineMarkerProvider::class.java)).containsExactly(
             OptionSummary("MyAggregate", null, AxonIcons.Axon),
-            OptionSummary("MyAggregateMemberSingle", null, AxonIcons.Axon),
-            OptionSummary("MyAggregateMemberList", null, AxonIcons.Axon),
-            OptionSummary("MyAggregateMemberMap", null, AxonIcons.Axon),
+            OptionSummary("- MyAggregateMemberSingle", null, AxonIcons.Axon),
+            OptionSummary("- MyAggregateMemberList", null, AxonIcons.Axon),
+            OptionSummary("-- MyAggregateMemberSingle", null, AxonIcons.Axon),
+            OptionSummary("- MyAggregateMemberMap", null, AxonIcons.Axon),
         )
     }
 
@@ -123,9 +127,9 @@ class ClassLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
         Assertions.assertThat(hasLineMarker(ClassLineMarkerProvider::class.java)).isTrue
         Assertions.assertThat(getLineMarkerOptions(ClassLineMarkerProvider::class.java)).containsExactly(
             OptionSummary("MyAggregate", null, AxonIcons.Axon),
-            OptionSummary("MyAggregateMemberSingle", null, AxonIcons.Axon),
-            OptionSummary("MyAggregateMemberList", null, AxonIcons.Axon),
-            OptionSummary("MyAggregateMemberMap", null, AxonIcons.Axon),
+            OptionSummary("- MyAggregateMemberSingle", null, AxonIcons.Axon),
+            OptionSummary("- MyAggregateMemberList", null, AxonIcons.Axon),
+            OptionSummary("- MyAggregateMemberMap", null, AxonIcons.Axon),
         )
     }
 }
