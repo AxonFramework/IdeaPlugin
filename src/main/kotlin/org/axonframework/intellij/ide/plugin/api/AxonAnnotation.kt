@@ -27,6 +27,7 @@ enum class AxonAnnotation(val annotationName: String) {
     COMMAND_HANDLER_INTERCEPTOR("org.axonframework.modelling.command.CommandHandlerInterceptor"),
     SAGA_EVENT_HANDLER("org.axonframework.modelling.saga.SagaEventHandler"),
     DEADLINE_HANDLER("org.axonframework.deadline.annotation.DeadlineHandler"),
+    RESET_HANDLER("org.axonframework.eventhandling.ResetHandler"),
 
     AGGREGATE_ROOT("org.axonframework.modelling.command.AggregateRoot"),
     AGGREGATE_MEMBER("org.axonframework.modelling.command.AggregateMember"),

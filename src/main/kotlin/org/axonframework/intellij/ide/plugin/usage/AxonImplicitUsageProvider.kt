@@ -19,7 +19,6 @@ package org.axonframework.intellij.ide.plugin.usage
 import com.intellij.codeInsight.daemon.ImplicitUsageProvider
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
-import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.util.isAggregate
 import org.axonframework.intellij.ide.plugin.util.isAnnotated
 import org.jetbrains.uast.UClass
@@ -75,8 +74,8 @@ class AxonImplicitUsageProvider : ImplicitUsageProvider {
     }
 
 
-    private fun UMethod.isAnnotatedWithAxon() = MessageHandlerType.values().any {
-        isAnnotated(it.annotation)
+    private fun UMethod.isAnnotatedWithAxon() = AxonAnnotation.values().any {
+        isAnnotated(it)
     }
 
     private fun UField.hasRelevantAnnotation() = fieldAnnotations.any {

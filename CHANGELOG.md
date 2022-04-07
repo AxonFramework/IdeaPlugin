@@ -6,7 +6,8 @@
 
 ### Added
 
-- Aggregate structure hierarchy is now shown in model popup
+- [#38] Aggregate structure hierarchy is now shown in model popup
+- [#41] Mark methods annotated with @ResetHandler as used
 
 ## [0.6.2]
 
