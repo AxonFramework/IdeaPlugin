@@ -22,8 +22,8 @@ import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiType
 import com.intellij.psi.search.searches.AnnotatedElementsSearch
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
-import org.axonframework.intellij.ide.plugin.api.Model
-import org.axonframework.intellij.ide.plugin.api.ModelChild
+import org.axonframework.intellij.ide.plugin.api.Entity
+import org.axonframework.intellij.ide.plugin.api.EntityMember
 import org.axonframework.intellij.ide.plugin.util.annotationResolver
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
@@ -35,7 +35,7 @@ import org.axonframework.intellij.ide.plugin.util.toFieldRepresentation
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 
 /**
- * Scans the application for aggregates and its members, analyzing whether they have been configured correctly.
+ * Scans the application for entities (including aggregates) and their members, analyzing whether they have been configured correctly.
  *
  * Used for multiple inspections to understand the model.
  */
@@ -43,42 +43,53 @@ class AggregateStructureResolver(private val project: Project) {
     private val cache = project.createCachedValue { resolve() }
 
     /**
-     * Finds the uppermost Model owning the Model with this name.
-     * So, If Aggregate A owns entity B, which in turns owns entity C. When requesting the owner for C, it will return A.
+     * Finds the uppermost Entity owning the Entity with this name.
+     * So, If Entity A owns Entity B, which in turns owns Entity C. When requesting the owner for C, it will return A.
      */
-    fun getHierarchyOwnerForName(name: String): Model? {
-        val member = getMemberForName(name) ?: return null
-        if (member.parent != null) {
-            return getHierarchyOwnerForName(member.parent)
+    fun getTopEntityOfEntityWithName(name: String): Entity? {
+        val entity = getEntityByName(name) ?: return null
+        if (entity.parent != null) {
+            return getTopEntityOfEntityWithName(entity.parent)
         }
-        return member
+        return entity
+    }
+
+
+    /**
+     * Returns the models representing the child field in the parent. Not the parent itself!
+     * The structure is Entity A -> EntityMember -> Entity B.
+     */
+    fun getEntityMembersByName(name: String): List<EntityMember> {
+        return cache.value
+            .flatMap { it.members }
+            .filter { c -> c.member.name == name }
     }
 
     /**
-     * Returns the Model for this name
+     * Returns the Entity for this name
      */
-    fun getMemberForName(name: String): Model? {
+    fun getEntityByName(name: String): Entity? {
         return cache.value.firstOrNull { it.name == name }
     }
 
     /**
-     * Finds the model with given name and all it's sub-entities down in the hierarchy.
+     * Finds the entity with given name and all it's sub-entities down in the hierarchy.
      */
-    fun getMemberWithSubEntities(name: String): List<Model> {
-        val member = getMemberForName(name) ?: return emptyList()
-        return getMemberWithSubEntities(member)
+    fun getEntityAndAllChildrenRecursively(name: String): List<Entity> {
+        val member = getEntityByName(name) ?: return emptyList()
+        return getEntityAndAllChildrenRecursively(member)
     }
 
-    private fun getMemberWithSubEntities(model: Model): List<Model> {
-        if(model.children.isEmpty()) {
+    private fun getEntityAndAllChildrenRecursively(model: Entity): List<Entity> {
+        if(model.members.isEmpty()) {
             return listOf(model)
         }
-        return model.children.flatMap { getMemberWithSubEntities(it.member) }
+        return model.members.flatMap { getEntityAndAllChildrenRecursively(it.member) }
     }
 
-    private fun Model.flatten() = listOf(this) + children.map { it.member }
+    private fun Entity.flatten() = listOf(this) + members.map { it.member }
 
-    private fun resolve(): List<Model> = project.annotationResolver()
+    private fun resolve(): List<Entity> = project.annotationResolver()
         .getAnnotationClasses(AxonAnnotation.AGGREGATE_ROOT)
         .flatMap {
             AnnotatedElementsSearch.searchPsiClasses(it.psiClass, project.axonScope()).findAll()
@@ -86,7 +97,7 @@ class AggregateStructureResolver(private val project: Project) {
         .mapNotNull { inspect(it, null) }
         .flatMap { it.flatten() }
 
-    private fun inspect(clazz: PsiClass, parent: PsiClass?): Model? {
+    private fun inspect(clazz: PsiClass, parent: PsiClass?): Entity? {
         if (clazz.isEnum) {
             return null
         }
@@ -101,7 +112,7 @@ class AggregateStructureResolver(private val project: Project) {
                 val modelMember = inspect(targetClass, clazz) ?: return@mapNotNull null
                 val routingKey = field.resolveAnnotationStringValue(AxonAnnotation.AGGREGATE_MEMBER, "routingKey")
                 val eventForwardingMode = field.resolveAnnotationClassValue(AxonAnnotation.AGGREGATE_MEMBER, "eventForwardingMode")
-                ModelChild(field, field.name, modelMember, isCollection, routingKey, eventForwardingMode)
+                EntityMember(field, field.name, modelMember, isCollection, routingKey, eventForwardingMode)
             }
 
         val annotatedField = clazz.fields.firstOrNull { it.isAnnotated(AxonAnnotation.ENTITY_ID) }
@@ -114,7 +125,7 @@ class AggregateStructureResolver(private val project: Project) {
         } else {
             null
         }
-        return Model(clazz.qualifiedName!!, clazz, parent?.qualifiedName, entityIdPresent, children)
+        return Entity(clazz.qualifiedName!!, clazz, parent?.qualifiedName, routingKey, children)
     }
 
     /**

@@ -20,28 +20,27 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
 
 /**
- * Represents a model in the Aggregate hierarchy. Can be the Aggregate root (top-level)
+ * Represents an Entity in the Aggregate hierarchy. Can be the Aggregate root (top-level)
  * or an aggregate member.
  * Is used by inspections and line markers.
  */
-data class Model(
+data class Entity(
     val name: String,
     val clazz: PsiClass,
     val parent: String?,
-    val entityIdPresent: Boolean,
     val routingKey: String?,
-    val children: List<ModelChild>
+    val members: List<EntityMember>
 )
 
 /**
- * Models the child of a Model with additional information, such as if it's in a collection.
- * Used by inspections mostly, to determine warnings.
+ * Models the child of an Entity with additional information, such as if it's in a collection.
+ * Used by inspections to determine warnings.
  */
-data class ModelChild(
+data class EntityMember(
     val field: PsiField,
     val fieldName: String,
-    val member: Model,
+    val member: Entity,
     val isCollection: Boolean,
     val routingKey: String?,
-    val forwardingMode: String?
+    val eventForwardingMode: String?
 )

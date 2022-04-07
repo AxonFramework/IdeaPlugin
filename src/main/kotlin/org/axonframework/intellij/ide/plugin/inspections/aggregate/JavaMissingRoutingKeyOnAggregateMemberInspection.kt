@@ -38,18 +38,18 @@ import org.axonframework.intellij.ide.plugin.util.toClass
 class JavaMissingRoutingKeyOnAggregateMemberInspection : AbstractBaseJavaLocalInspectionTool() {
 
     override fun checkMethod(method: PsiMethod, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
-        val model = method.aggregateResolver().getMemberForName(method.containingClassFqn()) ?: return null
+        val entity = method.aggregateResolver().getEntityByName(method.containingClassFqn()) ?: return null
 
-        val parentModelChild = method.aggregateResolver().getParentOfModelChild(method.containingClassFqn()).firstOrNull() ?: return null
-        if (!parentModelChild.isCollection) {
+        val entityMember = method.aggregateResolver().getEntityMembersByName(method.containingClassFqn()).firstOrNull() ?: return null
+        if (!entityMember.isCollection) {
             return null
         }
-        val routingKey = parentModelChild.routingKey
-            ?: model.routingKey
+        val routingKey = entityMember.routingKey
+            ?: entity.routingKey
             ?: return null
 
         if (method.hasAnnotation(AxonAnnotation.EVENT_SOURCING_HANDLER) &&
-            parentModelChild.forwardingMode != "org.axonframework.modelling.command.ForwardMatchingInstances"
+            entityMember.eventForwardingMode != "org.axonframework.modelling.command.ForwardMatchingInstances"
         ) {
             return null
         }

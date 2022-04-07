@@ -73,6 +73,10 @@ fun PsiModifierListOwner.hasAnnotation(annotation: AxonAnnotation): Boolean {
     return annotations.any { hasAnnotation(it.qualifiedName) }
 }
 
+/**
+ * Resolves the value of a PsiModifierListOwner's AxonAnnotation. Similar to `PsiModifierListOwner.resolveAnnotationStringValue`,
+ * but does not resolve the String value, so the PsiAnnotationMemberValue can be of any type.
+ */
 fun PsiModifierListOwner.resolveAnnotationValue(annotation: AxonAnnotation, attributeName: String): PsiAnnotationMemberValue? {
     val relevantAnnotation = resolveAnnotation(annotation) ?: return null
     val attribute = relevantAnnotation.findDeclaredAttributeValue(attributeName)

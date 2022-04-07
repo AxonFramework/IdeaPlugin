@@ -28,7 +28,6 @@ import org.axonframework.intellij.ide.plugin.util.resolveAnnotationStringValue
 import org.axonframework.intellij.ide.plugin.util.resolveAnnotationValue
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toClass
-import org.jetbrains.kotlin.idea.util.textRangeIn
 
 /**
  * Checks whether the associationProperty defined in the annotation exists on the message.

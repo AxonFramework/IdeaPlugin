@@ -35,8 +35,8 @@ class JavaAggregateMemberRoutingKeyInspection : AbstractBaseJavaLocalInspectionT
         isOnTheFly: Boolean
     ): Array<ProblemDescriptor>? {
         val name = aClass.qualifiedName ?: return null
-        val member = aClass.aggregateResolver().getMemberForName(name) ?: return null
-        return member.children.filter { it.isCollection && it.member.routingKey == null }.map { child ->
+        val entity = aClass.aggregateResolver().getEntityByName(name) ?: return null
+        return entity.members.filter { it.isCollection && it.member.routingKey == null }.map { child ->
             val classField = aClass.fields.first { it.name == child.fieldName }
             manager.createProblemDescriptor(
                 classField,

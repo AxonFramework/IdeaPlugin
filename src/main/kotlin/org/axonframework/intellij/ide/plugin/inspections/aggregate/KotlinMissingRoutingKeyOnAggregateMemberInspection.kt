@@ -25,7 +25,6 @@ import org.axonframework.intellij.ide.plugin.util.aggregateResolver
 import org.axonframework.intellij.ide.plugin.util.containingClassFqn
 import org.axonframework.intellij.ide.plugin.util.hasAccessor
 import org.axonframework.intellij.ide.plugin.util.hasAnnotation
-import org.axonframework.intellij.ide.plugin.util.resolveAnnotation
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toClass
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
@@ -49,17 +48,17 @@ class KotlinMissingRoutingKeyOnAggregateMemberInspection : AbstractKotlinInspect
                 }
                 val method = element.toUElementOfType<UMethod>() ?: return
                 val containingClassName = method.containingClassFqn()
-                val model = element.aggregateResolver().getMemberForName(containingClassName) ?: return
-                val parentModelChild = element.aggregateResolver().getParentOfModelChild(containingClassName).firstOrNull() ?: return
-                if (!parentModelChild.isCollection) {
+                val entity = element.aggregateResolver().getEntityByName(containingClassName) ?: return
+                val entityMember = element.aggregateResolver().getEntityMembersByName(containingClassName).firstOrNull() ?: return
+                if (!entityMember.isCollection) {
                     return
                 }
 
-                val routingKey = parentModelChild.routingKey
-                    ?: model.routingKey
+                val routingKey = entityMember.routingKey
+                    ?: entity.routingKey
                     ?: return
                 if (method.hasAnnotation(AxonAnnotation.EVENT_SOURCING_HANDLER) &&
-                    parentModelChild.forwardingMode != "org.axonframework.modelling.command.ForwardMatchingInstances"
+                    entityMember.eventForwardingMode != "org.axonframework.modelling.command.ForwardMatchingInstances"
                 ) {
                     return
                 }
