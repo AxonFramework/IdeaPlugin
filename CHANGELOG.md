@@ -2,6 +2,11 @@
 
 # Axon Framework plugin Changelog
 
+## [0.6.2]
+
+### Fixed
+- [#59] Fixed ClassCastException during querying provider ClassLineMarkerProvider (thanks @kaleev for reporting the error)
+
 ## [0.6.1]
 
 ### Fixed
