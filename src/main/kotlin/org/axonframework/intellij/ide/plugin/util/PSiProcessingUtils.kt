@@ -47,15 +47,18 @@ import org.jetbrains.uast.toUElement
 
 /**
  * Convenience method to fully qualified name of type.
- * Throws if we get a type we do not expect so we can support it.
  */
 fun PsiType?.toQualifiedName(): String? = this?.let {
-    return when (this) {
-        is PsiClassReferenceType -> this.resolve()?.qualifiedName
-        // Class<SomeClass> object. Extract the <SomeClass> and call this method recursively to resolve it
-        is PsiImmediateClassType -> (this.parameters.firstOrNull() as PsiClassType?)?.toQualifiedName()
-        is PsiWildcardType -> "java.lang.Object"
-        else -> null
+    return try {
+        when (this) {
+            is PsiClassReferenceType -> this.resolve()?.qualifiedName
+            // Class<SomeClass> object. Extract the <SomeClass> and call this method recursively to resolve it
+            is PsiImmediateClassType -> this.parameters.firstOrNull()?.toQualifiedName()
+            is PsiWildcardType -> "java.lang.Object"
+            else -> null
+        }
+    } catch (e: Exception) {
+        throw IllegalArgumentException("Was unable to resolve qualifiedName type ${it.canonicalText} due to exception: ${e.message}", e)
     }
 }
 

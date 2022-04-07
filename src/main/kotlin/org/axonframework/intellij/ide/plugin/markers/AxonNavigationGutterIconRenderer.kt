@@ -62,7 +62,7 @@ class AxonNavigationGutterIconRenderer(
 
     override fun navigateToItems(event: MouseEvent?) {
         if (event != null) {
-            val elements = PsiUtilCore.toPsiElementArray(targetElements)
+            val elements = PsiUtilCore.toPsiElementArray(targetElements.filter { it.isValid })
             val popup = NavigationUtil.getPsiElementPopup(elements, myCellRenderer.compute(), myPopupTitle)
             popup.show(RelativePoint(event))
         }
@@ -76,7 +76,11 @@ class AxonNavigationGutterIconRenderer(
             { tooltipText },
             this,
             alignment,
-            { elements.value.map { WrappedGoToRelatedItem(it) } }
+            {
+                elements.value
+                    .filter { it.element.isValid }
+                    .map { WrappedGoToRelatedItem(it) }
+            }
         )
     }
 }
