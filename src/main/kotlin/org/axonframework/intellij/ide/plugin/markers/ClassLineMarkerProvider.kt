@@ -20,14 +20,14 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiField
 import org.axonframework.intellij.ide.plugin.AxonIcons
-import org.axonframework.intellij.ide.plugin.api.ClassReference
+import org.axonframework.intellij.ide.plugin.api.ClassReferenceHierarcyItem
+import org.axonframework.intellij.ide.plugin.api.Model
 import org.axonframework.intellij.ide.plugin.util.aggregateResolver
-import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.creatorResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.isAggregate
-import org.axonframework.intellij.ide.plugin.util.javaFacade
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.getUParentForIdentifier
 
@@ -58,23 +58,24 @@ class ClassLineMarkerProvider : LineMarkerProvider {
             }
         }
 
-        val parents = element.aggregateResolver()
-            .getAllModelsRelatedToName(qualifiedName)
-            .mapNotNull {
-                element.javaFacade().findClass(it.name, element.project.axonScope())
-            }
-            .map { ClassReference(it) }
-        if (parents.isNotEmpty()) {
+        val owner = element.aggregateResolver().getHierarchyOwnerForName(qualifiedName) ?: return null
+        val items = createHierarchy(owner, null, 0)
+        if (items.isNotEmpty()) {
             return AxonNavigationGutterIconRenderer(
                 icon = AxonIcons.Axon,
                 popupTitle = "Related Models",
                 tooltipText = "Navigate to members in the same model hierarchy",
                 emptyText = "No related models were found",
                 elements = NotNullLazyValue.createValue {
-                    parents
+                    items
                 }).createLineMarkerInfo(element)
         }
 
         return null
+    }
+
+    private fun createHierarchy(model: Model, field: PsiField?, depth: Int): List<ClassReferenceHierarcyItem> {
+        val children = model.children.flatMap { createHierarchy(it.member, it.field, depth + 1) }
+        return listOf(ClassReferenceHierarcyItem(model.clazz, field, depth = depth)) + children
     }
 }

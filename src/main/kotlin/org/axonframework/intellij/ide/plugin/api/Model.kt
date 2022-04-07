@@ -16,6 +16,9 @@
 
 package org.axonframework.intellij.ide.plugin.api
 
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiField
+
 /**
  * Represents a model in the Aggregate hierarchy. Can be the Aggregate root (top-level)
  * or an aggregate member.
@@ -23,6 +26,9 @@ package org.axonframework.intellij.ide.plugin.api
  */
 data class Model(
     val name: String,
+    val clazz: PsiClass,
+    val parent: String?,
+    val entityIdPresent: Boolean,
     val routingKey: String?,
     val children: List<ModelChild>
 )
@@ -32,6 +38,7 @@ data class Model(
  * Used by inspections mostly, to determine warnings.
  */
 data class ModelChild(
+    val field: PsiField,
     val fieldName: String,
     val member: Model,
     val isCollection: Boolean,
