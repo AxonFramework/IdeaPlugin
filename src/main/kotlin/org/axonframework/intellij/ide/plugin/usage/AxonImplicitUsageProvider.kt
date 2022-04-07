@@ -48,7 +48,9 @@ class AxonImplicitUsageProvider : ImplicitUsageProvider {
         }
         if (uastElement is UParameter && uastElement.uastParent is UMethod) {
             val uMethod = uastElement.uastParent as UMethod
-            return uMethod.uastParameters[0] == uastElement && uMethod.isAnnotatedWithAxon()
+            // Apparently, when using Groovy UAST the method can have 0 parameters at this point (Sentry issue AXONIQ-18)
+            val parameter = uMethod.uastParameters.getOrNull(0)
+            return parameter != null && parameter == uastElement && uMethod.isAnnotatedWithAxon()
         }
         if (uastElement is UField) {
             return uastElement.hasRelevantAnnotation()

@@ -8,6 +8,7 @@
 
 - [#38] Aggregate structure hierarchy is now shown in model popup
 - [#41] Mark methods annotated with @ResetHandler as used
+- Fix OutOfBoundException in AxonImplicitUsageProvider when using Groovy
 
 ## [0.6.2]
 
