@@ -8,6 +8,12 @@
 
 - Aggregate structure hierarchy is now shown in model popup
 
+## [0.6.2]
+
+### Fixed
+- [#59] Fixed ClassCastException during querying provider ClassLineMarkerProvider (thanks @kaleev for reporting the error)
+- Fix various occasions where invalid PsiElements could be shown in line marker popups by filtering on validity
+
 ## [0.6.1]
 
 ### Fixed
