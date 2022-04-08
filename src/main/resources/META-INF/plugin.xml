@@ -121,5 +121,9 @@
                 class="org.axonframework.intellij.ide.plugin.actions.ReportFeedbackAction">
             <add-to-group group-id="ToolsMenu" relative-to-action="GenerateJavadoc" anchor="after"/>
         </action>
+        <action id="GenerateEventModelAction" text="Generate Event Model"
+                class="org.axonframework.intellij.ide.plugin.actions.GenerateEventModelAction">
+            <add-to-group group-id="ToolsMenu" relative-to-action="GenerateJavadoc" anchor="after"/>
+        </action>
     </actions>
 </idea-plugin>
