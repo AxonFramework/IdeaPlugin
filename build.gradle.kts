@@ -140,7 +140,7 @@ tasks {
 }
 
 dependencies {
-    implementation("io.sentry:sentry:5.7.1")
+    implementation("io.sentry:sentry:5.7.2")
 
     testImplementation("org.axonframework:axon-modelling:4.5.9")
     testImplementation("org.axonframework:axon-messaging:4.5.9")
