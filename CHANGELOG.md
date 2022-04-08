@@ -7,6 +7,7 @@
 ### Added
 
 - Aggregate structure hierarchy is now shown in model popup
+- [#43] Support builder method references, both ways
 
 ## [0.6.2]
 

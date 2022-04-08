@@ -229,4 +229,51 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
             OptionSummary("MyProcessingGroup", "test", AxonIcons.Handler)
         )
     }
+
+    fun `test shows publish icon on builder method`() {
+        addFile("MyBuilderBasedEvent.java", """
+            public class MyBuilderBasedEvent {
+                public static class Builder {
+                    public MyBuilderBasedEvent build() {
+                        return new MyBuilderBasedEvent();
+                    }
+                }
+                
+                public Builder builder() {
+                    return new Builder();
+                }
+            }
+        """.trimIndent())
+
+        addFile(
+            "MyAggregate.java", """        
+            import test.MyBuilderBasedEvent;
+            
+            @AggregateRoot
+            class MyAggregate {
+               @CommandHandler
+               public void handle(MyCommand command) {
+                    AggregateLifecycle.apply(MyBuilderBasedEvent.builder().build());<caret>
+               }
+           }
+        """.trimIndent(), open = true
+        )
+
+        addFile(
+            "MyProcessingGroup.java", """        
+            import test.MyBuilderBasedEvent;
+            
+            class MyProcessingGroup {
+               @EventHandler
+               public void handle(MyBuilderBasedEvent event) {
+               }
+           }
+        """.trimIndent()
+        )
+
+        assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
+        assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
+            OptionSummary("MyProcessingGroup", "test", AxonIcons.Handler)
+        )
+    }
 }

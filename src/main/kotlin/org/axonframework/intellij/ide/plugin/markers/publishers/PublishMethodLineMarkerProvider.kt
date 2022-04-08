@@ -21,12 +21,15 @@ import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiIdentifier
+import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.markers.AxonNavigationGutterIconRenderer
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.axonframework.intellij.ide.plugin.resolving.handlers.types.CommandHandlerInterceptor
 import org.axonframework.intellij.ide.plugin.resolving.handlers.types.DeadlineHandler
+import org.axonframework.intellij.ide.plugin.util.containingClassFqn
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -34,6 +37,7 @@ import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UClassLiteralExpression
 import org.jetbrains.uast.UIdentifier
+import org.jetbrains.uast.UQualifiedReferenceExpression
 import org.jetbrains.uast.USimpleNameReferenceExpression
 import org.jetbrains.uast.UTypeReferenceExpression
 import org.jetbrains.uast.UastCallKind
@@ -81,6 +85,11 @@ class PublishMethodLineMarkerProvider : LineMarkerProvider {
 
     private fun qualifiedNameForKotlin(element: PsiElement): String? {
         val uElement = element.toUElementOfType<UIdentifier>() ?: return null
+        if (element.text.contains("build", ignoreCase = true)) {
+            // If the method is a builder, show handlers of that class
+            val referenceExpression = uElement.getParentOfType<UQualifiedReferenceExpression>() ?: return null
+            return (referenceExpression.resolve() as? PsiMethod?)?.containingClassFqn()
+        }
         val callExpression = uElement.getParentOfType(UCallExpression::class.java, false, USimpleNameReferenceExpression::class.java)
         if (callExpression != null && callExpression.kind == UastCallKind.CONSTRUCTOR_CALL) {
             return callExpression.classReference.getQualifiedName()
@@ -93,6 +102,11 @@ class PublishMethodLineMarkerProvider : LineMarkerProvider {
     }
 
     private fun qualifiedNameForJava(element: PsiElement): String? {
+        if (element is PsiIdentifier && element.text.contains("build", ignoreCase = true)) {
+            // If the method is a builder, show handlers of that class
+            val referenceExpression = element.toUElement()?.getParentOfType<UQualifiedReferenceExpression>() ?: return null
+            return (referenceExpression.resolve() as? PsiMethod?)?.containingClassFqn()
+        }
         val referenceExpression = getUParentForIdentifier(element) as? USimpleNameReferenceExpression ?: return null
         val uElementParent = element.parent.parent.toUElement()
         val isConstructor = uElementParent is UCallExpression && uElementParent.kind == UastCallKind.CONSTRUCTOR_CALL
