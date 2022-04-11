@@ -19,11 +19,11 @@ package org.axonframework.intellij.ide.plugin.support
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.OrderEnumerator
 import io.sentry.Sentry
 import io.sentry.SentryEvent
 import io.sentry.UserFeedback
 import io.sentry.protocol.Message
+import org.axonframework.intellij.ide.plugin.util.getAxonVersions
 
 /**
  * Responsible for reporting feedback and exceptions to Sentry.
@@ -66,18 +66,8 @@ class ReportingService {
     }
 
     private fun Project.addLibraryVersionsToExtras() {
-        OrderEnumerator.orderEntries(this)
-            .librariesOnly()
-            .productionOnly()
-            .satisfying { it.presentableName.matches(Regex(".*(org\\.axonframework)+.*")) }
-            .classes()
-            .roots
-            .forEach {
-                val name = it.name.replace(".jar", "")
-                val version = name.split("-").last()
-                val actualName = name.replace("-${version}", "")
-                Sentry.setExtra(actualName, version)
-            }
-
+        getAxonVersions().forEach { (actualName, version) ->
+            Sentry.setExtra(actualName, version)
+        }
     }
 }
