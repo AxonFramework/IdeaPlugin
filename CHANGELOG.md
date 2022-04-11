@@ -6,6 +6,7 @@
 
 ### Fixed
 - [#66] Fix possible race condition between primary and secondary cache computations in annotation resolver
+- [#68] Remove unnecessary catching of errors during resolving a qualifiedName in PsiProcessingUtil
 
 ### Added
 
