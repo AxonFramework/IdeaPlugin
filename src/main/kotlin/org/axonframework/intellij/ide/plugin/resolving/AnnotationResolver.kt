@@ -158,7 +158,7 @@ class AnnotationResolver(val project: Project) {
          * Get all annotations in the library cache. If the cache is out-of-date, executes a scan.
          */
         fun getLibraryAnnotations(): List<ResolvedAnnotation> {
-            if (!libraryInitialized) {
+            if (!libraryInitialized || libraryAnnotations.any { !it.psiClass.isValid }) {
                 updateLibraryAnnotations()
             }
             return libraryAnnotations

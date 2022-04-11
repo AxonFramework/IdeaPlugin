@@ -4,9 +4,12 @@
 
 ## [0.7.0]
 
+### Fixed
+- [#66] Fix possible race condition between primary and secondary cache computations in annotation resolver
+
 ### Added
 
-- Aggregate structure hierarchy is now shown in model popup
+- [#31] Aggregate structure hierarchy is now shown in model popup
 
 ## [0.6.2]
 
