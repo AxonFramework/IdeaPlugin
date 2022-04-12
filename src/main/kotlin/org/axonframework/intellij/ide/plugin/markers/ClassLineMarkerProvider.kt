@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.ClassReferenceHierarcyItem
-import org.axonframework.intellij.ide.plugin.api.Model
+import org.axonframework.intellij.ide.plugin.api.Entity
 import org.axonframework.intellij.ide.plugin.util.aggregateResolver
 import org.axonframework.intellij.ide.plugin.util.creatorResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
@@ -58,14 +58,14 @@ class ClassLineMarkerProvider : LineMarkerProvider {
             }
         }
 
-        val owner = element.aggregateResolver().getHierarchyOwnerForName(qualifiedName) ?: return null
+        val owner = element.aggregateResolver().getTopEntityOfEntityWithName(qualifiedName) ?: return null
         val items = createHierarchy(owner, null, 0)
         if (items.isNotEmpty()) {
             return AxonNavigationGutterIconRenderer(
                 icon = AxonIcons.Axon,
                 popupTitle = "Related Models",
-                tooltipText = "Navigate to members in the same model hierarchy",
-                emptyText = "No related models were found",
+                tooltipText = "Navigate to entities in the same command model hierarchy",
+                emptyText = "No related entities were found",
                 elements = NotNullLazyValue.createValue {
                     items
                 }).createLineMarkerInfo(element)
@@ -74,8 +74,8 @@ class ClassLineMarkerProvider : LineMarkerProvider {
         return null
     }
 
-    private fun createHierarchy(model: Model, field: PsiField?, depth: Int): List<ClassReferenceHierarcyItem> {
-        val children = model.children.flatMap { createHierarchy(it.member, it.field, depth + 1) }
+    private fun createHierarchy(model: Entity, field: PsiField?, depth: Int): List<ClassReferenceHierarcyItem> {
+        val children = model.members.flatMap { createHierarchy(it.member, it.field, depth + 1) }
         return listOf(ClassReferenceHierarcyItem(model.clazz, field, depth = depth)) + children
     }
 }

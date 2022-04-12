@@ -7,6 +7,8 @@
 ### Added
 
 - Aggregate structure hierarchy is now shown in model popup
+- Inspection when associationProperty on @SagaEventHandler is missing in the message
+- Inspection when routingKey is missing in messages
 
 ## [0.6.2]
 
