@@ -22,9 +22,11 @@ import com.intellij.psi.PsiModifierListOwner
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver
 import org.axonframework.intellij.ide.plugin.resolving.ResolvedAnnotation
+import org.jetbrains.uast.UClassLiteralExpression
 import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.getParentOfType
 import org.jetbrains.uast.toUElement
+import org.jetbrains.uast.toUElementOfType
 
 /**
  * Find the most specific annotation of a specific type on a PsiElement.
@@ -72,6 +74,23 @@ fun PsiModifierListOwner.hasAnnotation(annotation: AxonAnnotation): Boolean {
 }
 
 /**
+ * Resolves the value of a PsiModifierListOwner's AxonAnnotation. Similar to `PsiModifierListOwner.resolveAnnotationStringValue`,
+ * but does not resolve the String value, so the PsiAnnotationMemberValue can be of any type.
+ */
+fun PsiModifierListOwner.resolveAnnotationValue(annotation: AxonAnnotation, attributeName: String): PsiAnnotationMemberValue? {
+    val relevantAnnotation = resolveAnnotation(annotation) ?: return null
+    val attribute = relevantAnnotation.findDeclaredAttributeValue(attributeName)
+    if (attribute != null) {
+        return attribute
+    }
+    // The annotation itself might be annotated with one that contains the value
+    // Note: resolveAnnotationType() does not work with kotlin code somehow. Resolve class by qualified name
+    val qualifiedName = relevantAnnotation.qualifiedName ?: return null
+    val annClass = project.javaFacade().findClass(qualifiedName, project.allScope()) ?: return null
+    return annClass.resolveAnnotationValue(annotation, attributeName)
+}
+
+/**
  * Resolve the string attribute value of one of the Axon Annotations.
  * Since they are meta, the annotations can be annotated, which can in turn contain the value. So we have to do it
  * the recursive way
@@ -80,16 +99,15 @@ fun PsiModifierListOwner.hasAnnotation(annotation: AxonAnnotation): Boolean {
  * @param attributeName key of annotation to look for. Most of the time this is "value"
  */
 fun PsiModifierListOwner.resolveAnnotationStringValue(annotation: AxonAnnotation, attributeName: String): String? {
-    val relevantAnnotation = resolveAnnotation(annotation) ?: return null
-    val attribute = relevantAnnotation.findDeclaredAttributeValue(attributeName)
-    if (attribute != null) {
-        return resolveAttributeStringValue(attribute)
-    }
-    // The annotation itself might be annotated with one that contains the value
-    // Note: resolveAnnotationType() does not work with kotlin code somehow. Resolve class by qualified name
-    val qualifiedName = relevantAnnotation.qualifiedName ?: return null
-    val annClass = project.javaFacade().findClass(qualifiedName, project.allScope()) ?: return null
-    return annClass.resolveAnnotationStringValue(annotation, attributeName)?.ifEmpty { null }
+    val attribute = resolveAnnotationValue(annotation, attributeName)
+    return resolveAttributeStringValue(attribute)?.ifEmpty { null }
+}
+
+fun PsiModifierListOwner.resolveAnnotationClassValue(annotation: AxonAnnotation, attributeName: String): String? {
+    val attribute = resolveAnnotationValue(annotation, attributeName)
+    val uElement = attribute.toUElementOfType<UClassLiteralExpression>() ?: return null
+    val type = uElement.type ?: return null
+    return project.toClass(type, project.allScope())?.qualifiedName
 }
 
 private fun resolveAttributeStringValue(attribute: PsiAnnotationMemberValue?): String? {

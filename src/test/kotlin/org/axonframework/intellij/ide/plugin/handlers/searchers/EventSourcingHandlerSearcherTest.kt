@@ -39,7 +39,7 @@ class EventSourcingHandlerSearcherTest : AbstractAxonFixtureTestCase() {
         val handlers = project.handlerResolver().findAllHandlers()
             .filterIsInstance<EventSourcingHandler>()
         Assertions.assertThat(handlers).anyMatch {
-            it.payload == "test.MyEvent" && it.model == "test.MyAggregate" && it.element.name == "handleMySpecialEvent"
+            it.payload == "test.MyEvent" && it.entity == "test.MyAggregate" && it.element.name == "handleMySpecialEvent"
         }
     }
 }

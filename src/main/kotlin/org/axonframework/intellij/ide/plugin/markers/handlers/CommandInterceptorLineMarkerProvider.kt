@@ -55,7 +55,7 @@ class CommandInterceptorLineMarkerProvider : AbstractHandlerLineMarkerProvider()
             tooltipText = "Navigate to command handlers that are intercepted",
             emptyText = "No intercepted command handlers were found",
             elements = NotNullLazyValue.createValue {
-                val members = element.aggregateResolver().getMemberWithSubEntities(className)
+                val members = element.aggregateResolver().getEntityAndAllChildrenRecursively(className)
                 element.handlerResolver().findHandlersForType(actualPayload, MessageType.COMMAND)
                     .filterIsInstance<CommandHandler>()
                     .filter {
