@@ -24,17 +24,17 @@ import org.axonframework.intellij.ide.plugin.util.toShortName
 /**
  * Represents a method being able to handle an event for sourcing an aggregate.
  *
- * @param model The fully qualified name of the aggregate class sourced by the event
+ * @param entity The fully qualified name of the aggregate class sourced by the event
  * @See org.axonframework.intellij.ide.plugin.handlers.searchers.EventSourcingHandlerSearcher
  */
 data class EventSourcingHandler(
     override val element: PsiMethod,
     override val payload: String,
-    val model: String,
+    val entity: String,
 ) : Handler {
     override val handlerType: MessageHandlerType = MessageHandlerType.EVENT_SOURCING
 
     override fun renderText(): String {
-        return "EventSourcingHandler " + model.toShortName()
+        return "EventSourcingHandler " + entity.toShortName()
     }
 }

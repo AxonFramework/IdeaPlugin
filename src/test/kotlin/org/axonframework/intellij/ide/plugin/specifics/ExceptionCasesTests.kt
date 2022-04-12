@@ -36,6 +36,6 @@ class ExceptionCasesTests : AbstractAxonFixtureTestCase() {
         """.trimIndent()
         )
 
-        project.aggregateResolver().getMemberForName("test.MyAggregate")
+        project.aggregateResolver().getMemberForName("text.MyAggregate")
     }
 }

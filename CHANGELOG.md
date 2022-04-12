@@ -4,10 +4,20 @@
 
 ## [0.7.0]
 
+### Fixed
+- [#66] Fix possible race condition between primary and secondary cache computations in annotation resolver
+- [#68] Remove unnecessary catching of errors during resolving a qualifiedName in PsiProcessingUtil
+- [#69] Disable plugin functionality when old versions are used
+- Fix OutOfBoundException in AxonImplicitUsageProvider when using Groovy
+
 ### Added
 
-- Aggregate structure hierarchy is now shown in model popup
 - [#43] Support builder method references, both ways
+- [#38] Aggregate structure hierarchy is now shown in model popup
+- [#41] Mark methods annotated with @ResetHandler as used
+- [#31] Aggregate structure hierarchy is now shown in model popup
+- [#27] Inspection when associationProperty on @SagaEventHandler is missing in the message
+- [#23] Inspection when routingKey is missing in messages
 
 ## [0.6.2]
 
