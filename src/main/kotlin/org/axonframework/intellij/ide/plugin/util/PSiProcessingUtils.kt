@@ -49,18 +49,12 @@ import java.util.Locale
 /**
  * Convenience method to fully qualified name of type.
  */
-fun PsiType?.toQualifiedName(): String? = this?.let {
-    return try {
-        when (this) {
-            is PsiClassReferenceType -> this.resolve()?.qualifiedName
-            // Class<SomeClass> object. Extract the <SomeClass> and call this method recursively to resolve it
-            is PsiImmediateClassType -> this.parameters.firstOrNull()?.toQualifiedName()
-            is PsiWildcardType -> "java.lang.Object"
-            else -> null
-        }
-    } catch (e: Exception) {
-        throw IllegalArgumentException("Was unable to resolve qualifiedName type ${it.canonicalText} due to exception: ${e.message}", e)
-    }
+fun PsiType?.toQualifiedName(): String? = when (this) {
+    is PsiClassReferenceType -> this.resolve()?.qualifiedName
+    // Class<SomeClass> object. Extract the <SomeClass> and call this method recursively to resolve it
+    is PsiImmediateClassType -> this.parameters.firstOrNull()?.toQualifiedName()
+    is PsiWildcardType -> "java.lang.Object"
+    else -> null
 }
 
 /**

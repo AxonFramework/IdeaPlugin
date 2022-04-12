@@ -4,9 +4,14 @@
 
 ## [0.7.0]
 
+### Fixed
+- [#66] Fix possible race condition between primary and secondary cache computations in annotation resolver
+- [#68] Remove unnecessary catching of errors during resolving a qualifiedName in PsiProcessingUtil
+- [#69] Disable plugin functionality when old versions are used
+
 ### Added
 
-- Aggregate structure hierarchy is now shown in model popup
+- [#31] Aggregate structure hierarchy is now shown in model popup
 - Inspection when associationProperty on @SagaEventHandler is missing in the message
 - Inspection when routingKey is missing in messages
 
