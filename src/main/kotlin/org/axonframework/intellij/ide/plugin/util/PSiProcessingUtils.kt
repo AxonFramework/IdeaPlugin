@@ -44,22 +44,17 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.getContainingUMethod
 import org.jetbrains.uast.toUElement
+import java.util.Locale
 
 /**
  * Convenience method to fully qualified name of type.
  */
-fun PsiType?.toQualifiedName(): String? = this?.let {
-    return try {
-        when (this) {
-            is PsiClassReferenceType -> this.resolve()?.qualifiedName
-            // Class<SomeClass> object. Extract the <SomeClass> and call this method recursively to resolve it
-            is PsiImmediateClassType -> this.parameters.firstOrNull()?.toQualifiedName()
-            is PsiWildcardType -> "java.lang.Object"
-            else -> null
-        }
-    } catch (e: Exception) {
-        throw IllegalArgumentException("Was unable to resolve qualifiedName type ${it.canonicalText} due to exception: ${e.message}", e)
-    }
+fun PsiType?.toQualifiedName(): String? = when (this) {
+    is PsiClassReferenceType -> this.resolve()?.qualifiedName
+    // Class<SomeClass> object. Extract the <SomeClass> and call this method recursively to resolve it
+    is PsiImmediateClassType -> this.parameters.firstOrNull()?.toQualifiedName()
+    is PsiWildcardType -> "java.lang.Object"
+    else -> null
 }
 
 /**
@@ -85,6 +80,26 @@ fun PsiMethod.resolvePayloadType(): PsiType? {
     } else {
         type
     }
+}
+
+/**
+ * Resolves the psiType to a name and then finds the PsiClass within the project.
+ */
+fun Project.toClass(type: PsiType, scope: GlobalSearchScope = this.axonScope()): PsiClass? {
+    val toQualifiedName = type.toQualifiedName() ?: return null
+    return javaFacade().findClass(toQualifiedName, scope)
+}
+
+/**
+ * Checks whether the PsiClass has an accessor with that name. That means either a field, or a function with getter-style naming
+ */
+fun PsiClass.hasAccessor(name: String): Boolean = this.getAccessor(name) != null
+
+/**
+ * Gets the PsiElement representing an accessor with that name. That means either a field, or a function with getter-style naming
+ */
+fun PsiClass.getAccessor(name: String): PsiElement? {
+    return fields.firstOrNull { it.name == name } ?: methods.firstOrNull { it.name == name.toGetterRepresentation() }
 }
 
 /**
@@ -162,3 +177,13 @@ fun PsiElement.findParentHandlers(depth: Int = 0): List<Handler> {
     val references = MethodReferencesSearch.search(parent, project.axonScope(), true)
     return references.flatMap { it.element.findParentHandlers(depth + 1) }
 }
+
+fun String.toGetterRepresentation(): String {
+    return "get${this.capitalize()}"
+}
+
+fun String.toFieldRepresentation(): String {
+    val removedGet = this.removePrefix("get")
+    return removedGet.decapitalize(Locale.getDefault())
+}
+

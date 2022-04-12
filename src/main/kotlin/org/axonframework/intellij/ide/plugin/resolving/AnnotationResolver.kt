@@ -27,6 +27,7 @@ import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.util.allScope
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
+import org.axonframework.intellij.ide.plugin.util.isAxon4Project
 import org.axonframework.intellij.ide.plugin.util.javaFacade
 
 /**
@@ -158,7 +159,11 @@ class AnnotationResolver(val project: Project) {
          * Get all annotations in the library cache. If the cache is out-of-date, executes a scan.
          */
         fun getLibraryAnnotations(): List<ResolvedAnnotation> {
-            if (!libraryInitialized) {
+            if(!project.isAxon4Project()) {
+                return emptyList()
+            }
+
+            if (!libraryInitialized || libraryAnnotations.any { !it.psiClass.isValid }) {
                 updateLibraryAnnotations()
             }
             return libraryAnnotations

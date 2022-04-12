@@ -39,11 +39,9 @@ class KotlinAggregateMemberRoutingKeyInspection : AbstractKotlinInspection() {
                 if (element !is KtClass) {
                     return
                 }
-                val member = element.aggregateResolver().getMemberForName(element.qualifiedClassNameForRendering())
-                    ?: return
-                member.children.filter { it.isCollection && !it.member.entityIdPresent }.map { child ->
-                    val ktField =
-                        element.declarations.filterIsInstance<KtProperty>().first { it.name == child.fieldName }
+                val entity = element.aggregateResolver().getEntityByName(element.qualifiedClassNameForRendering()) ?: return
+                entity.members.filter { it.isCollection && it.member.routingKey == null }.map { child ->
+                    val ktField = element.declarations.filterIsInstance<KtProperty>().first { it.name == child.fieldName }
                     holder.registerProblem(
                         ktField,
                         missingEntityIdDescription,
