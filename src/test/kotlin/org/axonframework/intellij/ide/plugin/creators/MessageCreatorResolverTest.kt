@@ -162,4 +162,41 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
             it.renderContainerText() == null
         }
     }
+
+    fun `test resolves builder method as payload creator`() {
+        addFile("MyBuilderBasedEvent.java", """
+            public class MyBuilderBasedEvent {
+                public static class Builder {
+                    public MyBuilderBasedEvent build() {
+                        return new MyBuilderBasedEvent();
+                    }
+                }
+                
+                public Builder builder() {
+                    return new Builder();
+                }
+            }
+        """.trimIndent())
+
+        addFile(
+            "MyAggregate.java", """        
+            import test.MyBuilderBasedEvent;
+            
+            @AggregateRoot
+            class MyAggregate {
+               @CommandHandler
+               public void handle(MyCommand command) {
+                    AggregateLifecycle.apply(MyBuilderBasedEvent.builder().build());
+               }
+           }
+        """.trimIndent(), open = true
+        )
+
+        val creators = project.creatorResolver().getCreatorsForPayload("test.MyBuilderBasedEvent")
+        Assertions.assertThat(creators).anyMatch {
+            it.payload == "test.MyBuilderBasedEvent" &&
+                    it.renderText() == "MyAggregate.handle"
+            it.renderContainerText() == null
+        }
+    }
 }

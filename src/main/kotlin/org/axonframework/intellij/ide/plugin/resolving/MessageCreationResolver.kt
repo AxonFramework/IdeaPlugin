@@ -67,41 +67,17 @@ class MessageCreationResolver(private val project: Project) {
         return resolveCreatorsForFqns(classesForQualifiedName)
     }
 
-    private fun findAll(): List<MessageCreator> {
-        val handlers = handlerResolver.findAllHandlers()
-        val payloads = handlers.map { it.payload }.distinct()
-        return payloads.flatMap { findByPayload(it) }
-    }
-
     private fun resolveCreatorsForFqns(fqns: List<String>): List<MessageCreator> {
         return fqns.flatMap { typeFqn ->
             psiFacade.findClasses(typeFqn, project.axonScope()).flatMap { clazz ->
-                clazz.constructors
+                // Account for constructors and builder methods (builder(), toBuilder(), etc)
+                val methods = clazz.constructors + clazz.methods.filter { it.name.contains("build", ignoreCase = true) }
+                methods
                     .flatMap { MethodReferencesSearch.search(it, project.axonScope(), true) }
                     .flatMap { ref -> createCreators(typeFqn, ref.element) }
                     .distinct()
             }
         }
-    }
-
-    /**
-     * Finds the already constructed/found creator in the caches. Useful for quick filtering in line marker popups.
-     */
-    fun findCreatorByElement(element: PsiElement): MessageCreator? {
-        return constructorsByPayloadCache.values.filter { it.hasUpToDateValue() }
-            .flatMap { it.value }
-            .firstOrNull { it.element == element }
-    }
-
-    /**
-     * This action is VERY expensive. Should only be used if the user does not depend on it or is expected to wait.
-     * For example, when creating an Event Modeling board based on this info.
-     *
-     * @return List of all message creators in an application
-     */
-    fun resolveAllCreators(): List<MessageCreator> {
-        return findAll()
-            .flatMap { createCreators(it.payload, it.element) }
     }
 
     private fun createCreators(payload: String, element: PsiElement): List<MessageCreator> {

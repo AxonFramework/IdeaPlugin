@@ -12,6 +12,7 @@
 
 ### Added
 
+- [#43] Support builder method references, both ways
 - [#38] Aggregate structure hierarchy is now shown in model popup
 - [#41] Mark methods annotated with @ResetHandler as used
 - [#31] Aggregate structure hierarchy is now shown in model popup

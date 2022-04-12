@@ -21,7 +21,6 @@ import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
 import org.axonframework.intellij.ide.plugin.AxonIcons
 
 class ClassLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
-
     fun `test shows line marker when is used in a command`() {
         addFile(
             "MyAggregate.kt", """
