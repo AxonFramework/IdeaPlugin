@@ -22,7 +22,7 @@ jobs:
                 uses: gradle/wrapper-validation-action@v1
 
             -   name: Verify plugin
-                uses: gradle/gradle-build-action@v2.1.6
+                uses: gradle/gradle-build-action@v2.1.7
                 with:
                     arguments: runPluginVerifier
 concurrency:
