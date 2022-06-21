@@ -17,12 +17,12 @@ jobs:
                     distribution: 'zulu'
 
             -   name: Verify plugin
-                uses: gradle/gradle-build-action@v2.1.7
+                uses: gradle/gradle-build-action@v2.2.1
                 with:
                     arguments: runPluginVerifier
 
             -   name: Publish plugin
-                uses: gradle/gradle-build-action@v2.1.7
+                uses: gradle/gradle-build-action@v2.2.1
                 with:
                     arguments: publishPlugin
                 env: # Or as an environment variable
