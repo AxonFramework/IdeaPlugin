@@ -144,7 +144,7 @@ dependencies {
 
     testImplementation("org.axonframework:axon-modelling:4.5.9")
     testImplementation("org.axonframework:axon-messaging:4.5.10")
-    testImplementation("org.axonframework:axon-eventsourcing:4.5.9")
+    testImplementation("org.axonframework:axon-eventsourcing:4.5.11")
     testImplementation("org.axonframework:axon-configuration:4.5.10")
     testImplementation("org.assertj:assertj-core:3.23.1")
 }
