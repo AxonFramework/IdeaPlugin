@@ -23,7 +23,7 @@ const val moduleNamePart = "^.*"
 const val versionPart = "4\\.\\d+\\.\\d"
 
 val versionRegex = Regex("^$versionPart$")
-val capturingRegex = Regex("($moduleNamePart)-($versionPart)(?:-.*)*")
+val capturingRegex = Regex("($moduleNamePart)-($versionPart)(?:-*.*)")
 
 fun Project.isAxon4Project() = getAxonVersions().values.any {
     return it.matches(versionRegex)
