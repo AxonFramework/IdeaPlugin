@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderEnumerator
 
 const val moduleNamePart = "^.*"
-const val versionPart = "4\\.\\d+\\.\\d"
+const val versionPart = "4\\.\\d+\\.\\d+"
 
 val versionRegex = Regex("^$versionPart$")
 val capturingRegex = Regex("($moduleNamePart)-($versionPart)(?:-*.*)")
