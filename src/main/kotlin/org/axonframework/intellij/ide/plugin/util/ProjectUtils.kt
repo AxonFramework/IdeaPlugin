@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderEnumerator
 
 const val moduleNamePart = "^.*"
-const val versionPart = "4\\.\\d+\\.\\d+"
+const val versionPart = "4\\.\\d+\\.\\d+(-.*)*"
 
 val versionRegex = Regex("^$versionPart$")
-val capturingRegex = Regex("($moduleNamePart)-($versionPart)(?:-*.*)")
+val capturingRegex = Regex("($moduleNamePart)-($versionPart)")
 
 fun Project.isAxon4Project() = getAxonVersions().values.any {
     return it.matches(versionRegex)
@@ -35,7 +35,11 @@ fun Project.getAxonVersions() = OrderEnumerator.orderEntries(this)
     .satisfying { it.presentableName.matches(Regex(".*(org\\.axonframework)+.*")) }
     .classes()
     .roots.associate {
-        val match = capturingRegex.find(it.name)!!
-        val (moduleName, version) = match.destructured
-        moduleName to version
+        extractVersion(it.name)
     }
+
+fun extractVersion(name: String): Pair<String, String> {
+    val match = capturingRegex.find(name.removeSuffix(".jar"))!!
+    val (moduleName, version) = match.destructured
+    return moduleName to version
+}
