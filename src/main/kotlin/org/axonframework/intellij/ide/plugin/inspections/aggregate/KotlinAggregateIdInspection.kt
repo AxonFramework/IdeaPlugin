@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,12 +45,22 @@ class KotlinAggregateIdInspection : AbstractKotlinInspection() {
                 if (!uClass.hasAnnotation(AxonAnnotation.AGGREGATE_ROOT)) {
                     return
                 }
-                val isMissingFieldWithAnnotation =
-                    uClass.fields.none { field -> field.isAnnotated(AxonAnnotation.ENTITY_ID) }
+                val hasField = uClass.fields.none { field -> field.isAnnotated(AxonAnnotation.ENTITY_ID) }
+                val method = uClass.methods.firstOrNull { method -> method.isAnnotated(AxonAnnotation.ENTITY_ID) }
+                val isMissingFieldWithAnnotation = !hasField && method == null
                 if (isMissingFieldWithAnnotation) {
                     holder.registerProblem(
                         element,
                         aggregateIdDescription,
+                        ProblemHighlightType.WARNING,
+                        element.identifyingElement!!.textRangeInParent,
+                    )
+                }
+
+                if(method != null && method.returnType?.presentableText == "void") {
+                    holder.registerProblem(
+                        element,
+                        aggregateIdVoidDescription,
                         ProblemHighlightType.WARNING,
                         element.identifyingElement!!.textRangeInParent,
                     )

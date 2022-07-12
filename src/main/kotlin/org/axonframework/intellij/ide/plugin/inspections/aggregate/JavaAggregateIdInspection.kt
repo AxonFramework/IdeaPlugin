@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,13 +39,27 @@ class JavaAggregateIdInspection : AbstractBaseJavaLocalInspectionTool() {
         if (!aClass.isAggregate()) {
             return null
         }
-        val isMissingFieldWithAnnotation = aClass.fields.none { field -> field.isAnnotated(AxonAnnotation.ENTITY_ID) }
-        if (isMissingFieldWithAnnotation) {
+        val method = aClass.methods.firstOrNull { method -> method.isAnnotated(AxonAnnotation.ENTITY_ID) }
+        val hasField = aClass.fields.any { field -> field.isAnnotated(AxonAnnotation.ENTITY_ID) }
+        val isMissingMember = !hasField && method == null
+        if (isMissingMember) {
             return arrayOf(
                 manager.createProblemDescriptor(
                     aClass,
                     aClass.identifyingElement!!.textRangeInParent,
                     aggregateIdDescription,
+                    ProblemHighlightType.WARNING,
+                    isOnTheFly,
+                )
+            )
+        }
+        // Show error when it's a void method
+        if (method != null && method.returnType?.presentableText == "void") {
+            return arrayOf(
+                manager.createProblemDescriptor(
+                    aClass,
+                    aClass.identifyingElement!!.textRangeInParent,
+                    aggregateIdVoidDescription,
                     ProblemHighlightType.WARNING,
                     isOnTheFly,
                 )
