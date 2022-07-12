@@ -32,7 +32,7 @@ fun Project.isAxon4Project() = getAxonVersions().values.any {
 fun Project.getAxonVersions() = OrderEnumerator.orderEntries(this)
     .librariesOnly()
     .productionOnly()
-    .satisfying { it.presentableName.matches(Regex(".*(org\\.axonframework)+.*")) }
+    .satisfying { it.presentableName.matches(Regex(".*(axon-).*")) }
     .classes()
     .roots.associate {
         extractVersion(it.name)
