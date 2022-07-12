@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -142,9 +142,9 @@ tasks {
 dependencies {
     implementation("io.sentry:sentry:6.1.4")
 
-    testImplementation("org.axonframework:axon-modelling:4.5.12")
-    testImplementation("org.axonframework:axon-messaging:4.5.12")
-    testImplementation("org.axonframework:axon-eventsourcing:4.5.12")
-    testImplementation("org.axonframework:axon-configuration:4.5.12")
+    testImplementation("org.axonframework:axon-modelling:${properties("axonVersion")}")
+    testImplementation("org.axonframework:axon-messaging:${properties("axonVersion")}")
+    testImplementation("org.axonframework:axon-eventsourcing:${properties("axonVersion")}")
+    testImplementation("org.axonframework:axon-configuration:${properties("axonVersion")}")
     testImplementation("org.assertj:assertj-core:3.23.1")
 }
