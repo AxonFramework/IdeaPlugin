@@ -21,9 +21,8 @@ import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.psi.PsiClass
-import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
+import org.axonframework.intellij.ide.plugin.util.aggregateResolver
 import org.axonframework.intellij.ide.plugin.util.isAggregate
-import org.axonframework.intellij.ide.plugin.util.isAnnotated
 
 /**
  * Inspects aggregate classes on whether they have an EntityId defined. If not, we show a warning.
@@ -39,10 +38,8 @@ class JavaAggregateIdInspection : AbstractBaseJavaLocalInspectionTool() {
         if (!aClass.isAggregate()) {
             return null
         }
-        val method = aClass.methods.firstOrNull { method -> method.isAnnotated(AxonAnnotation.ENTITY_ID) }
-        val hasField = aClass.fields.any { field -> field.isAnnotated(AxonAnnotation.ENTITY_ID) }
-        val isMissingMember = !hasField && method == null
-        if (isMissingMember) {
+        val entity = aClass.aggregateResolver().getEntityByName(aClass.qualifiedName!!)!!
+        if (entity.routingKey == null) {
             return arrayOf(
                 manager.createProblemDescriptor(
                     aClass,
@@ -54,7 +51,7 @@ class JavaAggregateIdInspection : AbstractBaseJavaLocalInspectionTool() {
             )
         }
         // Show error when it's a void method
-        if (method != null && method.returnType?.presentableText == "void") {
+        if (entity.routingKeyType == "void") {
             return arrayOf(
                 manager.createProblemDescriptor(
                     aClass,

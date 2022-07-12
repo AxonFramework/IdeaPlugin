@@ -34,7 +34,7 @@ class KotlinAggregateIdInspectionTest : AbstractAxonFixtureTestCase() {
         myFixture.openFileInEditor(file)
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).anyMatch {
-            it.text == "MyAggregate" && it.description.contains("requires a field annotated with @AggregateIdentifier")
+            it.text == "MyAggregate" && it.description.contains("requires a member annotated with @AggregateIdentifier")
         }
     }
 
@@ -79,6 +79,29 @@ class KotlinAggregateIdInspectionTest : AbstractAxonFixtureTestCase() {
             public class MyAggregate {
                 @AggregateIdentifier
                 fun getIdentifier(): String = "MyIdentifier"
+            }
+        """.trimIndent()
+        )
+
+        myFixture.enableInspections(KotlinAggregateIdInspection())
+        myFixture.openFileInEditor(file)
+        val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
+        Assertions.assertThat(highlights).noneMatch { it.text == "MyAggregate" }
+    }
+
+    fun `test should not detect when aggregate has an identifier defined in superclass`() {
+        val file = addFile(
+            "MyAggregate.kt", """    
+                        
+                        
+            @AggregateRoot
+            public class MySuperAggregate {
+                @AggregateIdentifier
+                fun getIdentifier(): String = "MyIdentifier"
+            }     
+            
+            @AggregateRoot
+            public class MyAggregate : MySuperAggregate() {
             }
         """.trimIndent()
         )

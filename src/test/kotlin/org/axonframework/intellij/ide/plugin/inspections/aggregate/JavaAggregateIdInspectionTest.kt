@@ -34,7 +34,7 @@ class JavaAggregateIdInspectionTest : AbstractAxonFixtureTestCase() {
         myFixture.openFileInEditor(file)
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         assertThat(highlights).anyMatch {
-            it.text == "MyAggregate" && it.description.contains("requires a field annotated with @AggregateIdentifier")
+            it.text == "MyAggregate" && it.description.contains("requires a member annotated with @AggregateIdentifier")
         }
     }
 
@@ -92,6 +92,39 @@ class JavaAggregateIdInspectionTest : AbstractAxonFixtureTestCase() {
         myFixture.openFileInEditor(file)
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         assertThat(highlights).noneMatch { it.text == "MyAggregate" }
+    }
+
+    fun `test should not detect when aggregate has a superclass with identifier`() {
+        addFile(
+            "MySuperAggregate.java", """            
+            @AggregateRoot
+            public class MySuperAggregate {
+                private String part1;
+                private String part2;
+    
+                @AggregateIdentifier
+                public String aggregateIdentifier() {
+                    return part1 + ":" + part2;
+                }
+                
+            }
+        """.trimIndent()
+        )
+        val file = addFile(
+            "MyNormalAggregate.java", """      
+            import test.MySuperAggregate;
+            
+            @AggregateRoot
+            public class MyNormalAggregate extends MySuperAggregate {
+                
+            }
+        """.trimIndent()
+        )
+
+        myFixture.enableInspections(JavaAggregateIdInspection())
+        myFixture.openFileInEditor(file)
+        val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
+        assertThat(highlights).noneMatch { it.text == "MyNormalAggregate" }
     }
 
     fun `test should detect when aggregate has an identifier defined by getter but has void return type`() {

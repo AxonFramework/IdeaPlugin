@@ -20,9 +20,8 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
-import org.axonframework.intellij.ide.plugin.util.hasAnnotation
-import org.axonframework.intellij.ide.plugin.util.isAnnotated
+import org.axonframework.intellij.ide.plugin.util.aggregateResolver
+import org.axonframework.intellij.ide.plugin.util.isAggregate
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.uast.UClass
@@ -42,13 +41,11 @@ class KotlinAggregateIdInspection : AbstractKotlinInspection() {
                     return
                 }
                 val uClass = element.toUElementOfType<UClass>() ?: return
-                if (!uClass.hasAnnotation(AxonAnnotation.AGGREGATE_ROOT)) {
+                if (!uClass.isAggregate()) {
                     return
                 }
-                val hasField = uClass.fields.none { field -> field.isAnnotated(AxonAnnotation.ENTITY_ID) }
-                val method = uClass.methods.firstOrNull { method -> method.isAnnotated(AxonAnnotation.ENTITY_ID) }
-                val isMissingFieldWithAnnotation = !hasField && method == null
-                if (isMissingFieldWithAnnotation) {
+                val entity = uClass.aggregateResolver().getEntityByName(uClass.qualifiedName!!)!!
+                if (entity.routingKey == null) {
                     holder.registerProblem(
                         element,
                         aggregateIdDescription,
@@ -57,7 +54,7 @@ class KotlinAggregateIdInspection : AbstractKotlinInspection() {
                     )
                 }
 
-                if(method != null && method.returnType?.presentableText == "void") {
+                if (entity.routingKeyType == "void") {
                     holder.registerProblem(
                         element,
                         aggregateIdVoidDescription,
