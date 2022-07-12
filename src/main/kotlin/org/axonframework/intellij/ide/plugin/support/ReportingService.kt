@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class ReportingService {
             options.isAttachServerName = false
             options.sampleRate = 1.0
             options.tracesSampleRate = 0.1
-            options.enableUncaughtExceptionHandler = false
+            options.isEnableUncaughtExceptionHandler = false
         }
     }
 
