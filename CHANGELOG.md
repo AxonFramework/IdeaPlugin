@@ -2,6 +2,20 @@
 
 # Axon Framework plugin Changelog
 
+## [0.7.2]
+
+### Fixed
+- Issue where Axon version detection did not work properly
+- Prevent infinite recursion in annotation scanning
+- Fix AggregateIdentifier inspection to include methods in addition to fields
+- Fix issue where element became invalid upon opening line marker popup
+
+### Added
+- AggregateIdentifier now warns if the method that was annotated returns void
+
+### Changed
+- Upgrade Sentry version
+
 ## [0.7.1]
 The plugin is now marked as compatible with IntelliJ 2022.1.
 
