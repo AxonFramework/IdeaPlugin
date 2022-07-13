@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,9 +42,11 @@ class AxonNavigationGutterIconRenderer(
     emptyText: String?,
     private val elements: NotNullLazyValue<List<PsiElementWrapper>>,
 ) : NavigationGutterIconRenderer(popupTitle, emptyText, { AxonCellRenderer(elements) }, NotNullLazyValue.createValue {
-    elements.value.sortedBy { it.getSortKey() }.map { p ->
-        val spm = SmartPointerManager.getInstance(p.element.project)
-        spm.createSmartPsiElementPointer(p.element)
+    elements.value.sortedBy { it.getSortKey() }.mapNotNull { p ->
+        if(p.element.isValid) {
+            val spm = SmartPointerManager.getInstance(p.element.project)
+            spm.createSmartPsiElementPointer(p.element)
+        } else null
     }
 }) {
 

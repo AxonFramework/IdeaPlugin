@@ -23,7 +23,7 @@ import io.sentry.Sentry
 import io.sentry.SentryEvent
 import io.sentry.UserFeedback
 import io.sentry.protocol.Message
-import org.axonframework.intellij.ide.plugin.util.getAxonVersions
+import org.axonframework.intellij.ide.plugin.util.versionService
 
 /**
  * Responsible for reporting feedback and exceptions to Sentry.
@@ -66,8 +66,8 @@ class ReportingService {
     }
 
     private fun Project.addLibraryVersionsToExtras() {
-        getAxonVersions().forEach { (actualName, version) ->
-            Sentry.setExtra(actualName, version)
+        versionService().getAxonVersions().forEach { dep ->
+            Sentry.setExtra(dep.name, dep.toVersionString())
         }
     }
 }

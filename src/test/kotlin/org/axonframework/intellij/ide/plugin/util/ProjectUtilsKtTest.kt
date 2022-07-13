@@ -16,14 +16,19 @@
 
 package org.axonframework.intellij.ide.plugin.util
 
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import org.assertj.core.api.Assertions.assertThat
+import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
 
 
-internal class ProjectUtilsKtTest : LightJavaCodeInsightFixtureTestCase() {
-    fun testDependencyExtraction() {
-        assertThat(extractVersion("axon-spring-boot-autoconfigure-4.5.10.jar")).isEqualTo("axon-spring-boot-autoconfigure" to "4.5.10")
-        assertThat(extractVersion("axon-spring-boot-autoconfigure-4.6.0-SNAPSHOT.jar")).isEqualTo("axon-spring-boot-autoconfigure" to "4.6.0-SNAPSHOT")
-        assertThat(extractVersion("axon-spring-boot-autoconfigure-4.6.0-20220622.093707-365.jar")).isEqualTo("axon-spring-boot-autoconfigure" to "4.6.0-20220622.093707-365")
+internal class ProjectUtilsKtTest : AbstractAxonFixtureTestCase() {
+    fun testGetAxonDependencies() {
+        val axonVersions = project.versionService().getAxonVersions()
+        assertThat(axonVersions).anySatisfy { it.name == "axon-eventsourcing" && it.major == 4 }
+        assertThat(axonVersions).anySatisfy { it.name == "axon-modelling" && it.major == 4 }
+        assertThat(axonVersions).anySatisfy { it.name == "axon-messaging" && it.major == 4 }
+        assertThat(axonVersions).anySatisfy { it.name == "axon-configuration" && it.major == 4 }
+
+        assertThat(project.versionService().isAxonEnabled()).isTrue
+        assertThat(project.versionService().isAxonEnabled(true)).isTrue
     }
 }

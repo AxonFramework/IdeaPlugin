@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.intellij.psi.PsiField
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.ClassReferenceHierarcyItem
 import org.axonframework.intellij.ide.plugin.api.Entity
+import org.axonframework.intellij.ide.plugin.markers.handlers.ValidatingLazyValue
 import org.axonframework.intellij.ide.plugin.util.aggregateResolver
 import org.axonframework.intellij.ide.plugin.util.creatorResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
@@ -66,7 +67,7 @@ class ClassLineMarkerProvider : LineMarkerProvider {
                 popupTitle = "Related Models",
                 tooltipText = "Navigate to entities in the same command model hierarchy",
                 emptyText = "No related entities were found",
-                elements = NotNullLazyValue.createValue {
+                elements = ValidatingLazyValue(element)  {
                     items
                 }).createLineMarkerInfo(element)
         }

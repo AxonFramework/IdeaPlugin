@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.util.allScope
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
-import org.axonframework.intellij.ide.plugin.util.isAxon4Project
+import org.axonframework.intellij.ide.plugin.util.isAxonEnabled
 import org.axonframework.intellij.ide.plugin.util.javaFacade
 
 /**
@@ -126,13 +126,18 @@ class AnnotationResolver(val project: Project) {
     private fun scanDescendants(
         annotation: AxonAnnotation,
         parent: ResolvedAnnotation,
-        scope: GlobalSearchScope
+        scope: GlobalSearchScope,
+        depth: Int = 0
     ): List<ResolvedAnnotation> {
+        if(depth > 5) {
+            // Recursion guard
+            return listOf(parent)
+        }
         val descendants = AnnotatedElementsSearch.searchPsiClasses(parent.psiClass, scope)
             .findAll()
             .filter { it.isAnnotationType }
             .filter { ht -> !MessageHandlerType.exists(ht.qualifiedName) }
-            .flatMap { scanDescendants(annotation, ResolvedAnnotation(annotation, it, parent), scope) }
+            .flatMap { scanDescendants(annotation, ResolvedAnnotation(annotation, it, parent), scope, depth + 1) }
         return listOf(parent) + descendants
     }
 
@@ -159,7 +164,7 @@ class AnnotationResolver(val project: Project) {
          * Get all annotations in the library cache. If the cache is out-of-date, executes a scan.
          */
         fun getLibraryAnnotations(): List<ResolvedAnnotation> {
-            if(!project.isAxon4Project()) {
+            if(!project.isAxonEnabled()) {
                 return emptyList()
             }
 
