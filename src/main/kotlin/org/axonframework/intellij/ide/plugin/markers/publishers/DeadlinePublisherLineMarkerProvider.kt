@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ package org.axonframework.intellij.ide.plugin.markers.publishers
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.markers.AxonNavigationGutterIconRenderer
+import org.axonframework.intellij.ide.plugin.markers.handlers.ValidatingLazyValue
 import org.axonframework.intellij.ide.plugin.resolving.handlers.types.DeadlineHandler
 import org.axonframework.intellij.ide.plugin.util.deadlineMethodResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UIdentifier
-import org.jetbrains.uast.USimpleNameReferenceExpression
 import org.jetbrains.uast.UQualifiedReferenceExpression
+import org.jetbrains.uast.USimpleNameReferenceExpression
 import org.jetbrains.uast.evaluateString
 import org.jetbrains.uast.getParentOfType
 import org.jetbrains.uast.toUElement
@@ -62,7 +62,7 @@ class DeadlinePublisherLineMarkerProvider : LineMarkerProvider {
             popupTitle = "Axon Deadline Handlers",
             tooltipText = "Navigate to Axon deadline handlers",
             emptyText = "No deadline handlers were found",
-            elements = NotNullLazyValue.createValue {
+            elements = ValidatingLazyValue(element)  {
                 element.project.handlerResolver().findAllHandlers()
                     .filterIsInstance<DeadlineHandler>()
                     .filter { it.deadlineName == deadlineName }

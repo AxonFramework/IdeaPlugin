@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import org.axonframework.intellij.ide.plugin.resolving.DeadlineManagerMethodReso
 import org.axonframework.intellij.ide.plugin.resolving.DeadlineManagerReferenceResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageCreationResolver
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
+import org.axonframework.intellij.ide.plugin.usage.AxonVersionService
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.getContainingUMethod
@@ -147,6 +148,9 @@ fun Project.deadlineReferenceResolver(): DeadlineManagerReferenceResolver = getS
 fun PsiElement.deadlineReferenceResolver(): DeadlineManagerReferenceResolver = project.deadlineReferenceResolver()
 fun Project.aggregateResolver(): AggregateStructureResolver = getService(AggregateStructureResolver::class.java)
 fun PsiElement.aggregateResolver(): AggregateStructureResolver = project.aggregateResolver()
+fun Project.versionService(): AxonVersionService = getService(AxonVersionService::class.java)
+fun Project.isAxonEnabled() = versionService().isAxonEnabled()
+fun PsiElement.isAxonEnabled() = project.versionService().isAxonEnabled()
 
 fun PsiClass?.isAggregate() = this?.hasAnnotation(AxonAnnotation.AGGREGATE_ROOT) == true
 

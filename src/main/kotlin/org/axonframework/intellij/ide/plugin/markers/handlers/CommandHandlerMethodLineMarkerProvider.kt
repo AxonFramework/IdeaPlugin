@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.axonframework.intellij.ide.plugin.markers.handlers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
-import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
@@ -49,10 +48,11 @@ class CommandHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvider
             popupTitle = "Payload Creators",
             tooltipText = "Navigate to creators of $payload",
             emptyText = "No creators of this message payload were found",
-            elements = NotNullLazyValue.createValue {
+            elements = ValidatingLazyValue(element) {
                 val creatingElements = element.creatorResolver().getCreatorsForPayload(payload)
                     .distinctBy { it.parentHandler }
                 interceptingElements + creatingElements
-            }).createLineMarkerInfo(element)
+            })
+            .createLineMarkerInfo(element)
     }
 }

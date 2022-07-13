@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.axonframework.intellij.ide.plugin.markers.handlers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
-import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
@@ -53,7 +52,7 @@ class DeadlineHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvide
             popupTitle = "Deadline Schedulers",
             tooltipText = "Navigate to schedule invocation of this deadline",
             emptyText = "No deadline schedule invocations could be found",
-            elements = NotNullLazyValue.createValue {
+            elements = ValidatingLazyValue(element) {
                 element.deadlineReferenceResolver().findByDeadlineName(deadlineName)
                     .distinctBy { it.parentHandler }
             }).createLineMarkerInfo(element)

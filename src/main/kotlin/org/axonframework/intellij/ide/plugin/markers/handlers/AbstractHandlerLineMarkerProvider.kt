@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package org.axonframework.intellij.ide.plugin.markers.handlers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
+import com.intellij.openapi.diagnostic.ControlFlowException
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.util.annotationResolver
@@ -37,11 +39,23 @@ import org.jetbrains.uast.toUElementOfType
  */
 abstract class AbstractHandlerLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
-        val info = getInfoForAnnotatedFunction(element)
-        if (info != null) {
-            return createLineMarker(element, info.first, info.second)
+        try {
+            val info = getInfoForAnnotatedFunction(element)
+            if (info != null) {
+                return createLineMarker(element, info.first, info.second)
+            }
+            return null
+        } catch (e: Exception) {
+            if(e is ControlFlowException) {
+                // Do nothing, IntelliJ does not even want us to log it
+                return null
+            }
+            // We don't want to do anything on errors here. As is shown by Sentry exception catching, the process is error-=prone
+            // mostly due to Kotlin plugin internals. We don't want to pester the user with it.
+            // Generally, the issue will resolve itself on the next line marker pass anyway.
+            logger<AbstractHandlerLineMarkerProvider>().error("Got an exception while analyzing line markers in class {}", e, this::class.java.name)
+            return null
         }
-        return null
     }
 
     protected abstract fun createLineMarker(

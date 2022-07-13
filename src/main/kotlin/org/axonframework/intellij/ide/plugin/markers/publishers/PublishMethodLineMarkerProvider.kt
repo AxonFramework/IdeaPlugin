@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ package org.axonframework.intellij.ide.plugin.markers.publishers
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.markers.AxonNavigationGutterIconRenderer
+import org.axonframework.intellij.ide.plugin.markers.handlers.ValidatingLazyValue
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.axonframework.intellij.ide.plugin.resolving.handlers.types.CommandHandlerInterceptor
 import org.axonframework.intellij.ide.plugin.resolving.handlers.types.DeadlineHandler
@@ -78,9 +78,10 @@ class PublishMethodLineMarkerProvider : LineMarkerProvider {
             popupTitle = "Axon Message Handlers",
             tooltipText = "Navigate to Axon message handlers",
             emptyText = "No message handlers were found",
-            elements = NotNullLazyValue.createValue {
+            elements = ValidatingLazyValue(element)  {
                 handlers
-            }).createLineMarkerInfo(element)
+            })
+            .createLineMarkerInfo(element)
     }
 
     private fun qualifiedNameForKotlin(element: PsiElement): String? {
