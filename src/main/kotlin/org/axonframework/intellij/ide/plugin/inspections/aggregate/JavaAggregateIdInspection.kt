@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,9 +21,8 @@ import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.psi.PsiClass
-import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
+import org.axonframework.intellij.ide.plugin.util.aggregateResolver
 import org.axonframework.intellij.ide.plugin.util.isAggregate
-import org.axonframework.intellij.ide.plugin.util.isAnnotated
 
 /**
  * Inspects aggregate classes on whether they have an EntityId defined. If not, we show a warning.
@@ -39,13 +38,25 @@ class JavaAggregateIdInspection : AbstractBaseJavaLocalInspectionTool() {
         if (!aClass.isAggregate()) {
             return null
         }
-        val isMissingFieldWithAnnotation = aClass.fields.none { field -> field.isAnnotated(AxonAnnotation.ENTITY_ID) }
-        if (isMissingFieldWithAnnotation) {
+        val entity = aClass.aggregateResolver().getEntityByName(aClass.qualifiedName!!)!!
+        if (entity.routingKey == null) {
             return arrayOf(
                 manager.createProblemDescriptor(
                     aClass,
                     aClass.identifyingElement!!.textRangeInParent,
                     aggregateIdDescription,
+                    ProblemHighlightType.WARNING,
+                    isOnTheFly,
+                )
+            )
+        }
+        // Show error when it's a void method
+        if (entity.routingKeyType == "void") {
+            return arrayOf(
+                manager.createProblemDescriptor(
+                    aClass,
+                    aClass.identifyingElement!!.textRangeInParent,
+                    aggregateIdVoidDescription,
                     ProblemHighlightType.WARNING,
                     isOnTheFly,
                 )

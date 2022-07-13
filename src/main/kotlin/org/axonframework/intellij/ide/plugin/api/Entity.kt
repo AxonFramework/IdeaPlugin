@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ data class Entity(
     val clazz: PsiClass,
     val parent: String?,
     val routingKey: String?,
+    val routingKeyType: String?,
     val members: List<EntityMember>
 )
 

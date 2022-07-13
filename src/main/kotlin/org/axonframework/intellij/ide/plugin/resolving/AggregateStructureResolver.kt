@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,9 @@ package org.axonframework.intellij.ide.plugin.resolving
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassType
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiMember
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
 import com.intellij.psi.search.searches.AnnotatedElementsSearch
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
@@ -115,17 +118,55 @@ class AggregateStructureResolver(private val project: Project) {
                 EntityMember(field, field.name, modelMember, isCollection, routingKey, eventForwardingMode)
             }
 
-        val annotatedField = clazz.fields.firstOrNull { it.isAnnotated(AxonAnnotation.ENTITY_ID) }
-        val annotatedMethod = clazz.methods.firstOrNull { it.isAnnotated(AxonAnnotation.ENTITY_ID) }
-        val routingKey = if (annotatedField != null) {
-            annotatedField.resolveAnnotationStringValue(AxonAnnotation.ENTITY_ID, "routingKey") ?: annotatedField.name
-        } else if (annotatedMethod != null) {
-            annotatedMethod.resolveAnnotationStringValue(AxonAnnotation.ENTITY_ID, "routingKey")
-                ?: annotatedMethod.name.toFieldRepresentation()
-        } else {
-            null
+        val routingKeyMember = findRoutingKeyMember(clazz)
+        val routingKey = routingKeyMember?.resolveRoutingKey()
+        val routingKeyType = routingKeyMember?.resolveRoutingKeyType()
+        return Entity(clazz.qualifiedName!!, clazz, parent?.qualifiedName, routingKey, routingKeyType, children)
+    }
+
+    private fun PsiMember.resolveRoutingKey(): String? {
+        val annotationValue = resolveAnnotationStringValue(AxonAnnotation.ENTITY_ID, "routingKey")
+        if (annotationValue != null) {
+            return annotationValue
         }
-        return Entity(clazz.qualifiedName!!, clazz, parent?.qualifiedName, routingKey, children)
+
+        if (this is PsiField) {
+            return name
+        }
+        if (this is PsiMethod) {
+            return name.toFieldRepresentation()
+        }
+        return null
+    }
+
+    private fun PsiMember.resolveRoutingKeyType(): String? {
+        if (this is PsiField) {
+            return type.toQualifiedName()
+        }
+        if (this is PsiMethod) {
+            return returnType.toQualifiedName()
+        }
+        return null
+    }
+
+    private fun findRoutingKeyMember(clazz: PsiClass): PsiMember? {
+        val ownField = clazz.fields.firstOrNull { it.isAnnotated(AxonAnnotation.ENTITY_ID) }
+        if (ownField != null) {
+            return ownField
+        }
+        val ownMethod = clazz.methods.firstOrNull { it.isAnnotated(AxonAnnotation.ENTITY_ID) }
+        if (ownMethod != null) {
+            return ownMethod
+        }
+
+        for (superPsiClass in clazz.supers) {
+            val result = findRoutingKeyMember(superPsiClass)
+            if (result != null) {
+                return result
+            }
+        }
+
+        return null
     }
 
     /**

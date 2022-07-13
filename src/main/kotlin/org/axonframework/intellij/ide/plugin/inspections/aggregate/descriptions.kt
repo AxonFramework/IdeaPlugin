@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,11 +18,16 @@ package org.axonframework.intellij.ide.plugin.inspections.aggregate
 
 
 const val aggregateIdStaticDescription =
-    """Inspects Java aggregate classes to check whether they have a field that the framework can use to identify it."""
+    """Inspects Java aggregate classes to check whether they have a member that the framework can use to identify it."""
 
 const val aggregateIdDescription =
-    """<html>Axon Framework requires a field annotated with @AggregateIdentifier to be able identify the aggregate.
-Please add such a field to the aggregate. Also see <a href="https://docs.axoniq.io/reference-guide/axon-framework/axon-framework-commands/modeling/aggregate"> the reference guide</a> for more information.
+    """<html>Axon Framework requires a member annotated with @AggregateIdentifier to be able identify the aggregate.
+Please add such a member to the aggregate. Also see <a href="https://docs.axoniq.io/reference-guide/axon-framework/axon-framework-commands/modeling/aggregate"> the reference guide</a> for more information.
+</html>"""
+
+const val aggregateIdVoidDescription =
+    """<html>You have annotated a method with @AggregateIdentifier, but this is a void method.
+Please return a valid value from this member. Also see <a href="https://docs.axoniq.io/reference-guide/axon-framework/axon-framework-commands/modeling/aggregate"> the reference guide</a> for more information.
 </html>"""
 
 const val emptyConstructorStaticDescription =

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ class JavaAggregateIdInspectionTest : AbstractAxonFixtureTestCase() {
         myFixture.openFileInEditor(file)
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         assertThat(highlights).anyMatch {
-            it.text == "MyAggregate" && it.description.contains("requires a field annotated with @AggregateIdentifier")
+            it.text == "MyAggregate" && it.description.contains("requires a member annotated with @AggregateIdentifier")
         }
     }
 
@@ -70,6 +70,87 @@ class JavaAggregateIdInspectionTest : AbstractAxonFixtureTestCase() {
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         assertThat(highlights).noneMatch { it.text == "MyAggregate" }
     }
+
+    fun `test should not detect when aggregate has an identifier defined by getter`() {
+        val file = addFile(
+            "MyAggregate.java", """            
+            @AggregateRoot
+            public class MyAggregate {
+                private String part1;
+                private String part2;
+    
+                @AggregateIdentifier
+                public String aggregateIdentifier() {
+                    return part1 + ":" + part2;
+                }
+                
+            }
+        """.trimIndent()
+        )
+
+        myFixture.enableInspections(JavaAggregateIdInspection())
+        myFixture.openFileInEditor(file)
+        val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
+        assertThat(highlights).noneMatch { it.text == "MyAggregate" }
+    }
+
+    fun `test should not detect when aggregate has a superclass with identifier`() {
+        addFile(
+            "MySuperAggregate.java", """            
+            @AggregateRoot
+            public class MySuperAggregate {
+                private String part1;
+                private String part2;
+    
+                @AggregateIdentifier
+                public String aggregateIdentifier() {
+                    return part1 + ":" + part2;
+                }
+                
+            }
+        """.trimIndent()
+        )
+        val file = addFile(
+            "MyNormalAggregate.java", """      
+            import test.MySuperAggregate;
+            
+            @AggregateRoot
+            public class MyNormalAggregate extends MySuperAggregate {
+                
+            }
+        """.trimIndent()
+        )
+
+        myFixture.enableInspections(JavaAggregateIdInspection())
+        myFixture.openFileInEditor(file)
+        val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
+        assertThat(highlights).noneMatch { it.text == "MyNormalAggregate" }
+    }
+
+    fun `test should detect when aggregate has an identifier defined by getter but has void return type`() {
+        val file = addFile(
+            "MyAggregate.java", """            
+            @AggregateRoot
+            public class MyAggregate {
+                private String part1;
+                private String part2;
+    
+                @AggregateIdentifier
+                public void aggregateIdentifier() {
+                }
+                
+            }
+        """.trimIndent()
+        )
+
+        myFixture.enableInspections(JavaAggregateIdInspection())
+        myFixture.openFileInEditor(file)
+        val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
+        assertThat(highlights).anyMatch {
+            it.text == "MyAggregate" && it.description.contains("You have annotated a method with @AggregateIdentifier, but this is a void method.")
+        }
+    }
+
 
     fun `test should also allow EntityId annotation`() {
         val file = addFile(

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJvmModifiersOwner
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiPrimitiveType
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiWildcardType
 import com.intellij.psi.impl.source.PsiClassReferenceType
@@ -54,6 +55,7 @@ fun PsiType?.toQualifiedName(): String? = when (this) {
     // Class<SomeClass> object. Extract the <SomeClass> and call this method recursively to resolve it
     is PsiImmediateClassType -> this.parameters.firstOrNull()?.toQualifiedName()
     is PsiWildcardType -> "java.lang.Object"
+    is PsiPrimitiveType -> if(name == "void") "void" else null
     else -> null
 }
 

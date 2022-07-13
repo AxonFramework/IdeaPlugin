@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,9 +20,8 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
-import org.axonframework.intellij.ide.plugin.util.hasAnnotation
-import org.axonframework.intellij.ide.plugin.util.isAnnotated
+import org.axonframework.intellij.ide.plugin.util.aggregateResolver
+import org.axonframework.intellij.ide.plugin.util.isAggregate
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.uast.UClass
@@ -42,15 +41,23 @@ class KotlinAggregateIdInspection : AbstractKotlinInspection() {
                     return
                 }
                 val uClass = element.toUElementOfType<UClass>() ?: return
-                if (!uClass.hasAnnotation(AxonAnnotation.AGGREGATE_ROOT)) {
+                if (!uClass.isAggregate()) {
                     return
                 }
-                val isMissingFieldWithAnnotation =
-                    uClass.fields.none { field -> field.isAnnotated(AxonAnnotation.ENTITY_ID) }
-                if (isMissingFieldWithAnnotation) {
+                val entity = uClass.aggregateResolver().getEntityByName(uClass.qualifiedName!!)!!
+                if (entity.routingKey == null) {
                     holder.registerProblem(
                         element,
                         aggregateIdDescription,
+                        ProblemHighlightType.WARNING,
+                        element.identifyingElement!!.textRangeInParent,
+                    )
+                }
+
+                if (entity.routingKeyType == "void") {
+                    holder.registerProblem(
+                        element,
+                        aggregateIdVoidDescription,
                         ProblemHighlightType.WARNING,
                         element.identifyingElement!!.textRangeInParent,
                     )
