@@ -151,8 +151,8 @@ fun PsiElement.deadlineReferenceResolver(): DeadlineManagerReferenceResolver = p
 fun Project.aggregateResolver(): AggregateStructureResolver = getService(AggregateStructureResolver::class.java)
 fun PsiElement.aggregateResolver(): AggregateStructureResolver = project.aggregateResolver()
 fun Project.versionService(): AxonVersionService = getService(AxonVersionService::class.java)
-fun Project.isAxonEnabled() = versionService().isAxonEnabled()
-fun PsiElement.isAxonEnabled() = project.versionService().isAxonEnabled()
+fun Project.isAxonEnabled() = versionService().isAxonEnabled(true)
+fun PsiElement.isAxonEnabled() = project.versionService().isAxonEnabled(true)
 
 fun PsiClass?.isAggregate() = this?.hasAnnotation(AxonAnnotation.AGGREGATE_ROOT) == true
 

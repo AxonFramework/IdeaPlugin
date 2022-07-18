@@ -2,6 +2,12 @@
 
 # Axon Framework plugin Changelog
 
+## [0.7.3]
+
+### Fixed
+- Issue where Axon version detection did not work properly, disabling the plugin while it should not.
+- NPE when analyzing Kotlin files for AggregateIdentifier inspection
+
 ## [0.7.2]
 
 ### Fixed
