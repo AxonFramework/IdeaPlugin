@@ -67,7 +67,7 @@ class ReportingService {
 
     private fun Project.addLibraryVersionsToExtras() {
         versionService().getAxonVersions().forEach { dep ->
-            Sentry.setExtra(dep.name, dep.toVersionString())
+            Sentry.setExtra(dep.dependency.moduleName, dep.toVersionString())
         }
     }
 }

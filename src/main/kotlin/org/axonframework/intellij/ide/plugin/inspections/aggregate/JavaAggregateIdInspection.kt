@@ -38,7 +38,7 @@ class JavaAggregateIdInspection : AbstractBaseJavaLocalInspectionTool() {
         if (!aClass.isAggregate()) {
             return null
         }
-        val entity = aClass.aggregateResolver().getEntityByName(aClass.qualifiedName!!)!!
+        val entity = aClass.qualifiedName?.let { aClass.aggregateResolver().getEntityByName(it) } ?: return emptyArray()
         if (entity.routingKey == null) {
             return arrayOf(
                 manager.createProblemDescriptor(

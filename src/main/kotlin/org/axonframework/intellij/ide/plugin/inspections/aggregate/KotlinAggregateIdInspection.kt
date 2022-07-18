@@ -44,7 +44,7 @@ class KotlinAggregateIdInspection : AbstractKotlinInspection() {
                 if (!uClass.isAggregate()) {
                     return
                 }
-                val entity = uClass.aggregateResolver().getEntityByName(uClass.qualifiedName!!)!!
+                val entity = uClass.qualifiedName?.let { uClass.aggregateResolver().getEntityByName(it) } ?: return
                 if (entity.routingKey == null) {
                     holder.registerProblem(
                         element,

@@ -23,10 +23,10 @@ import org.axonframework.intellij.ide.plugin.AbstractAxonFixtureTestCase
 internal class ProjectUtilsKtTest : AbstractAxonFixtureTestCase() {
     fun testGetAxonDependencies() {
         val axonVersions = project.versionService().getAxonVersions()
-        assertThat(axonVersions).anySatisfy { it.name == "axon-eventsourcing" && it.major == 4 }
-        assertThat(axonVersions).anySatisfy { it.name == "axon-modelling" && it.major == 4 }
-        assertThat(axonVersions).anySatisfy { it.name == "axon-messaging" && it.major == 4 }
-        assertThat(axonVersions).anySatisfy { it.name == "axon-configuration" && it.major == 4 }
+        assertThat(axonVersions).anySatisfy { it.dependency.moduleName == "axon-eventsourcing" && it.major == 4 }
+        assertThat(axonVersions).anySatisfy { it.dependency.moduleName == "axon-modelling" && it.major == 4 }
+        assertThat(axonVersions).anySatisfy { it.dependency.moduleName == "axon-messaging" && it.major == 4 }
+        assertThat(axonVersions).anySatisfy { it.dependency.moduleName == "axon-configuration" && it.major == 4 }
 
         assertThat(project.versionService().isAxonEnabled()).isTrue
         assertThat(project.versionService().isAxonEnabled(true)).isTrue

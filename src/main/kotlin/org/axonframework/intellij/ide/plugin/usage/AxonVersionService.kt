@@ -27,7 +27,8 @@ import com.intellij.openapi.roots.OrderEnumerator
 class AxonVersionService(val project: Project) {
     private var enabled = false
     private var messageShown = false
-    private val regex = Regex("(axon-.*)-(\\d+)\\.(\\d+)\\.(\\d+)(.*)\\.jar")
+
+    private val regex = Regex(".*(axon-.*)-(\\d+)\\.(\\d+)\\.(\\d+)(.*)\\.jar")
 
 
     init {
@@ -64,13 +65,13 @@ class AxonVersionService(val project: Project) {
         messageShown = true
     }
 
-    private fun showDisabledMessage(outdatedDeps: List<AxonDependency>) {
+    private fun showDisabledMessage(outdatedDeps: List<AxonDependencyVersion>) {
         NotificationGroupManager.getInstance()
             .getNotificationGroup("AxonNotificationGroup")
             .createNotification(
                 "Your project has an Axon Framework version older than 4. The plugin has been disabled. The specific dependencies are: " + outdatedDeps.joinToString(
                     separator = ","
-                ) { it.name + "(${it.toVersionString()})" }, NotificationType.ERROR
+                ) { it.dependency.moduleName + "(${it.toVersionString()})" }, NotificationType.ERROR
             )
             .notify(project)
     }
@@ -90,13 +91,10 @@ class AxonVersionService(val project: Project) {
         if(useCache) {
             return enabled
         }
-        val axonVersions = getAxonVersions()
-        return axonVersions.isNotEmpty() && axonVersions.all {
-            it.major >= 4
-        }
+        return getAxonVersions().outdated().isEmpty()
     }
 
-    private fun List<AxonDependency>.outdated() = filter { it.major < 4 }
+    private fun List<AxonDependencyVersion>.outdated() = filter { it.dependency.checkVersion && it.major < 4 }
 
     fun getAxonVersions() = OrderEnumerator.orderEntries(project)
         .librariesOnly()
@@ -104,20 +102,21 @@ class AxonVersionService(val project: Project) {
         .classes()
         .roots
         .filter { it.presentableName.matches(regex) }
-        .map {
+        .mapNotNull {
             extractVersion(it.name)
         }
 
-    private fun extractVersion(name: String): AxonDependency {
+    private fun extractVersion(name: String): AxonDependencyVersion? {
         val match = regex.find(name)!!
         val (moduleName, majorVersion, minorVersion, patchVersion, remaining) = match.destructured
-        return AxonDependency(moduleName,
+        val dependency = AxonDependency.values().firstOrNull { it.moduleName == moduleName } ?: return null
+        return AxonDependencyVersion(dependency,
             Integer.parseInt(majorVersion),
             Integer.parseInt(minorVersion),
             Integer.parseInt(patchVersion), remaining)
     }
 
-    data class AxonDependency(val name: String, val major: Int, val minor: Int, val patch: Int, val remaining: String) {
+    data class AxonDependencyVersion(val dependency: AxonDependency, val major: Int, val minor: Int, val patch: Int, val remaining: String) {
         fun toVersionString() = "$major.$minor.$patch$remaining"
     }
 }
