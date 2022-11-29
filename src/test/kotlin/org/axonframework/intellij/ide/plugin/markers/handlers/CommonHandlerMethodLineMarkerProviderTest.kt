@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Publisher)
+            OptionSummary("MyAggregate.handle(MyCommand):${actualLineNumber(7)}", null, AxonIcons.Publisher)
         )
     }
 
@@ -81,7 +81,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Publisher)
+            OptionSummary("MyAggregate.handle(MyCommand):${actualLineNumber(5)}", null, AxonIcons.Publisher)
         )
     }
 
@@ -109,7 +109,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("EventSourcingHandler MyAggregate", null, AxonIcons.Publisher)
+            OptionSummary("MyAggregate.handle(MyEventOne):${actualLineNumber(9)}", null, AxonIcons.Publisher)
         )
     }
 
@@ -142,7 +142,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("EventSourcingHandler MyAggregate", null, AxonIcons.Publisher)
+            OptionSummary("MyAggregate.handle(MyEventOne):${actualLineNumber(6)}", null, AxonIcons.Publisher)
         )
     }
 
@@ -170,7 +170,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Publisher)
+            OptionSummary("MyAggregate.handle(MyCommand):${actualLineNumber(14)}", null, AxonIcons.Publisher)
         )
     }
 
@@ -210,7 +210,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Publisher)
+            OptionSummary("MyAggregate.handle(MyCommand):${actualLineNumber(7)}", null, AxonIcons.Publisher)
         )
     }
 
@@ -239,7 +239,7 @@ class CommonHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() 
 
         assertThat(hasLineMarker(CommonHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommonHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Publisher)
+            OptionSummary("MyAggregate.handle(MyCommand):${actualLineNumber(14)}", null, AxonIcons.Publisher)
         )
     }
 }

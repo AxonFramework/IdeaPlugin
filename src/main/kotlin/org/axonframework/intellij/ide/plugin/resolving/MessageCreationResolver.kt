@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.axonframework.intellij.ide.plugin.resolving
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.util.CachedValue
 import org.axonframework.intellij.ide.plugin.api.MessageCreator
@@ -25,7 +24,6 @@ import org.axonframework.intellij.ide.plugin.resolving.creators.DefaultMessageCr
 import org.axonframework.intellij.ide.plugin.util.areAssignable
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
-import org.axonframework.intellij.ide.plugin.util.findParentHandlers
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
 import org.axonframework.intellij.ide.plugin.util.javaFacade
 import java.util.concurrent.ConcurrentHashMap
@@ -74,17 +72,9 @@ class MessageCreationResolver(private val project: Project) {
                 val methods = clazz.constructors + clazz.methods.filter { it.name.contains("build", ignoreCase = true) }
                 methods
                     .flatMap { MethodReferencesSearch.search(it, project.axonScope(), true) }
-                    .flatMap { ref -> createCreators(typeFqn, ref.element) }
+                    .map { ref -> DefaultMessageCreator(ref.element, typeFqn, false) }
                     .distinct()
             }
         }
-    }
-
-    private fun createCreators(payload: String, element: PsiElement): List<MessageCreator> {
-        val parentHandlers = element.findParentHandlers()
-        if (parentHandlers.isEmpty()) {
-            return listOf(DefaultMessageCreator(element, payload, null))
-        }
-        return parentHandlers.map { DefaultMessageCreator(element, payload, it) }
     }
 }

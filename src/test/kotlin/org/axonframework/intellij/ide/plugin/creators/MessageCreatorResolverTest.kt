@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
         )
         val creators = project.creatorResolver().getCreatorsForPayload("test.MyEvent2")
         Assertions.assertThat(creators).anyMatch {
-            it.payload == "test.MyEvent2" && it.renderText() == "EventSourcingHandler MyAggregate"
+            it.payload == "test.MyEvent2" && it.renderText().startsWith("MyAggregate.handle(MyEvent)")
         }
     }
 
@@ -102,7 +102,7 @@ class MessageCreatorResolverTest : AbstractAxonFixtureTestCase() {
         val creators = project.creatorResolver().getCreatorsForPayload("test.MyCommand")
         Assertions.assertThat(creators).anyMatch {
             it.payload == "test.MyCommand" &&
-                    it.renderText() == "Saga: fancy-saga"
+                    it.renderText().startsWith("MySaga.handle(MyEvent)")
         }
     }
 

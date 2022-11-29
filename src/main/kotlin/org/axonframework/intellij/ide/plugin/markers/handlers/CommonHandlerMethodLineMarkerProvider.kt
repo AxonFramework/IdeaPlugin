@@ -44,7 +44,6 @@ class CommonHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvider(
             emptyText = "No creators of this message payload were found",
             elements = ValidatingLazyValue(element) {
                 element.creatorResolver().getCreatorsForPayload(payload)
-                    .distinctBy { it.parentHandler }
             }).createLineMarkerInfo(element)
     }
 }

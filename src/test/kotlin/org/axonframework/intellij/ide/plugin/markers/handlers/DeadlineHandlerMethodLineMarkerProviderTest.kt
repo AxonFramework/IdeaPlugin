@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ class DeadlineHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase(
         )
         assertThat(hasLineMarker(DeadlineHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(DeadlineHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", null, AxonIcons.Publisher)
+            OptionSummary("MyAggregate.handle(MyCommand, DeadlineManager):${actualLineNumber(9)}", "my_special_deadline", AxonIcons.Publisher)
         )
     }
 }

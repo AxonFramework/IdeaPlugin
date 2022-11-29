@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.axonframework.intellij.ide.plugin.api
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import org.axonframework.intellij.ide.plugin.util.containingClassname
+import org.axonframework.intellij.ide.plugin.util.toViewText
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.getParentOfType
 import org.jetbrains.uast.toUElement
@@ -40,7 +40,7 @@ interface PsiElementWrapper {
     fun renderText(): String {
         val methodParent = element.toUElement()?.getParentOfType<UMethod>()
         if (methodParent != null) {
-            return methodParent.containingClassname() + "." + methodParent.name
+            return methodParent.toViewText()
         }
 
         if (element is PsiClass) {

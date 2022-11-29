@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ class CommandInterceptorLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
         )
         assertThat(hasLineMarker(CommandInterceptorLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommandInterceptorLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Handler)
+            OptionSummary("MyAggregate.handle(MyCommand)", "MyAggregate", AxonIcons.Handler)
         )
     }
 
@@ -84,7 +84,7 @@ class CommandInterceptorLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
         )
         assertThat(hasLineMarker(CommandInterceptorLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommandInterceptorLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Handler)
+            OptionSummary("MyAggregate.handle(MyCommand)", "MyAggregate", AxonIcons.Handler)
         )
     }
 
@@ -109,7 +109,7 @@ class CommandInterceptorLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
         )
         assertThat(hasLineMarker(CommandInterceptorLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommandInterceptorLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Handler)
+            OptionSummary("MyAggregate.handle(MyCommand)", "MyAggregate", AxonIcons.Handler)
         )
     }
 
@@ -139,7 +139,7 @@ class CommandInterceptorLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
         )
         assertThat(hasLineMarker(CommandInterceptorLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommandInterceptorLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", "MyEntity", AxonIcons.Handler)
+            OptionSummary("MyEntity.handle(MyCommand)", "MyEntity", AxonIcons.Handler)
         )
     }
 }

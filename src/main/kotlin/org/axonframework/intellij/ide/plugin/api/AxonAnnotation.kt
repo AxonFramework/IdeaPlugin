@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ enum class AxonAnnotation(val annotationName: String) {
     AGGREGATE_MEMBER("org.axonframework.modelling.command.AggregateMember"),
     ROUTING_KEY("org.axonframework.commandhandling.RoutingKey"),
     ENTITY_ID("org.axonframework.modelling.command.EntityId"),
-    PROCESSING_GROUP("org.axonframework.config.ProcessingGroup")
+    PROCESSING_GROUP("org.axonframework.config.ProcessingGroup"),
+    SAGA("org.axonframework.config.ProcessingGroup")
     ;
 }

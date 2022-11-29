@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.axonframework.intellij.ide.plugin.resolving.handlers.types
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.util.toShortName
+import org.axonframework.intellij.ide.plugin.util.toViewText
 
 /**
  * Represents a method being able to handle an event for sourcing an aggregate.
@@ -35,6 +35,10 @@ data class EventSourcingHandler(
     override val handlerType: MessageHandlerType = MessageHandlerType.EVENT_SOURCING
 
     override fun renderText(): String {
-        return "EventSourcingHandler " + entity.toShortName()
+        return element.toViewText()
+    }
+
+    override fun renderContainerText(): String {
+        return "EventSourcingHandler"
     }
 }

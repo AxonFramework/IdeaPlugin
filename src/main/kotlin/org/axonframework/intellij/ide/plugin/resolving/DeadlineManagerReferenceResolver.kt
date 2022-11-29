@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.axonframework.intellij.ide.plugin.resolving.creators.DefaultMessageCr
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 import org.axonframework.intellij.ide.plugin.util.deadlineMethodResolver
-import org.axonframework.intellij.ide.plugin.util.findParentHandlers
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.evaluateString
@@ -117,10 +116,6 @@ class DeadlineManagerReferenceResolver(val project: Project) {
     }
 
     private fun createCreators(payload: String, element: PsiElement): List<MessageCreator> {
-        val parentHandlers = element.findParentHandlers()
-        if (parentHandlers.isEmpty()) {
-            return listOf(DefaultMessageCreator(element, payload, null))
-        }
-        return parentHandlers.map { DefaultMessageCreator(element, payload, it) }
+        return listOf(DefaultMessageCreator(element, payload, true))
     }
 }

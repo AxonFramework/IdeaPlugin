@@ -50,7 +50,6 @@ class CommandHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvider
             emptyText = "No creators of this message payload were found",
             elements = ValidatingLazyValue(element) {
                 val creatingElements = element.creatorResolver().getCreatorsForPayload(payload)
-                    .distinctBy { it.parentHandler }
                 interceptingElements + creatingElements
             })
             .createLineMarkerInfo(element)

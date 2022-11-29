@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package org.axonframework.intellij.ide.plugin.resolving.creators
 
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
-import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageCreator
+import org.jetbrains.kotlin.idea.core.util.getLineNumber
 import javax.swing.Icon
 
 /**
@@ -34,7 +34,7 @@ import javax.swing.Icon
 data class DefaultMessageCreator(
     override val element: PsiElement,
     override val payload: String,
-    override val parentHandler: Handler?,
+    val isDeadline: Boolean = false,
 ) : MessageCreator {
 
     /**
@@ -45,9 +45,13 @@ data class DefaultMessageCreator(
     }
 
     override fun renderText(): String {
-        if (parentHandler != null) {
-            return parentHandler.renderText()
+        return super.renderText() + ":" + element.getLineNumber()
+    }
+
+    override fun renderContainerText(): String? {
+        if (isDeadline) {
+            return payload
         }
-        return super.renderText()
+        return null
     }
 }

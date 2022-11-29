@@ -54,7 +54,6 @@ class DeadlineHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvide
             emptyText = "No deadline schedule invocations could be found",
             elements = ValidatingLazyValue(element) {
                 element.deadlineReferenceResolver().findByDeadlineName(deadlineName)
-                    .distinctBy { it.parentHandler }
             }).createLineMarkerInfo(element)
     }
 }

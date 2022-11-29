@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.axonframework.intellij.ide.plugin.resolving.handlers.types
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
+import org.axonframework.intellij.ide.plugin.util.toViewText
 
 /**
  * Represents a method in a Saga that is able to handle an event
@@ -34,6 +35,10 @@ data class SagaEventHandler(
     override val handlerType: MessageHandlerType = MessageHandlerType.SAGA
 
     override fun renderText(): String {
-        return "Saga: $processingGroup"
+        return element.toViewText()
+    }
+
+    override fun renderContainerText(): String {
+        return processingGroup
     }
 }
