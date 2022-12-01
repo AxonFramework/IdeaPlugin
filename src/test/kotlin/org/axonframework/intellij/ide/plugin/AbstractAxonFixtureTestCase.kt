@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import org.axonframework.eventhandling.EventHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
 import org.axonframework.intellij.ide.plugin.markers.WrappedGoToRelatedItem
 import org.axonframework.modelling.command.AggregateMember
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import javax.swing.Icon
 
 /**
@@ -139,7 +138,7 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
         clazz: Class<out LineMarkerProvider>
     ): List<OptionSummary> {
         val gutters = myFixture.findGuttersAtCaret()
-        val marker = gutters.firstNotNullResult { getHandlerMethodMakerProviders(it, clazz) }
+        val marker = gutters.firstNotNullOf { getHandlerMethodMakerProviders(it, clazz) }
             ?: throw IllegalStateException("No gutter found")
         val items = marker.createGotoRelatedItems() as List<WrappedGoToRelatedItem>
         return items.map {

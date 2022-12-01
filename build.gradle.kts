@@ -23,9 +23,9 @@ plugins {
     // Java support
     id("java")
     // Kotlin support
-    id("org.jetbrains.kotlin.jvm") version "1.7.21"
+    id("org.jetbrains.kotlin.jvm") version "1.7.22"
     // Gradle IntelliJ Plugin
-    id("org.jetbrains.intellij") version "1.8.1"
+    id("org.jetbrains.intellij") version "1.10.0"
     // Gradle Changelog Plugin
     id("org.jetbrains.changelog") version "2.0.0"
     // Gradle Qodana Plugin
@@ -140,7 +140,7 @@ tasks {
 }
 
 dependencies {
-    implementation("io.sentry:sentry:6.4.1")
+    implementation("io.sentry:sentry:6.9.1")
 
     testImplementation("org.axonframework:axon-modelling:${properties("axonVersion")}")
     testImplementation("org.axonframework:axon-messaging:${properties("axonVersion")}")

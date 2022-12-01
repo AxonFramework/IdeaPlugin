@@ -2,6 +2,11 @@
 
 # Axon Framework plugin Changelog
 
+## [0.8.0]
+- Plugin is now compatible with IDEA 2022.3 (IDEA 223.*)
+- Upgraded various dependencies to go with the upgrade
+- Baselined plugin to JDK 17 and IDEA 2022.2. Plugin is now incompatible with versions 2022.1 and older.
+
 ## [0.7.3]
 
 ### Fixed
