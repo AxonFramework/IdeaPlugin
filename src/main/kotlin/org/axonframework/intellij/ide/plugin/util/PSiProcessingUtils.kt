@@ -76,7 +76,7 @@ fun PsiMethod.resolvePayloadType(): PsiType? {
             return value.type
         }
     }
-    val type = toUElement(UMethod::class.java)?.uastParameters?.getOrNull(0)?.typeReference?.type ?: return null
+    val type = (this as? UMethod ?: toUElement(UMethod::class.java))?.uastParameters?.getOrNull(0)?.typeReference?.type ?: return null
     return if (type is PsiClassType && type.hasParameters()) {
         // For example, CommandMessage<Class>
         type.parameters[0]
@@ -185,11 +185,11 @@ fun PsiElement.findParentHandlers(depth: Int = 0): List<Handler> {
 }
 
 fun String.toGetterRepresentation(): String {
-    return "get${this.replaceFirstChar { it.uppercase() }}"
+    return "get${this.capitalize()}"
 }
 
 fun String.toFieldRepresentation(): String {
     val removedGet = this.removePrefix("get")
-    return removedGet.replaceFirstChar { it.lowercase(Locale.getDefault()) }
+    return removedGet.decapitalize(Locale.getDefault())
 }
 
