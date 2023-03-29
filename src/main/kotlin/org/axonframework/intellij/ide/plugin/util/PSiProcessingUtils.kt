@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) (2010-2022). Axon Framework
+ *  Copyright (c) (2010-2023). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -185,11 +185,11 @@ fun PsiElement.findParentHandlers(depth: Int = 0): List<Handler> {
 }
 
 fun String.toGetterRepresentation(): String {
-    return "get${this.capitalize()}"
+    return "get${this.replaceFirstChar { it.uppercase() }}"
 }
 
 fun String.toFieldRepresentation(): String {
     val removedGet = this.removePrefix("get")
-    return removedGet.decapitalize(Locale.getDefault())
+    return removedGet.replaceFirstChar { it.lowercase(Locale.getDefault()) }
 }
 

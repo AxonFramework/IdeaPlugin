@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) 2022-(2010-2023). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ package org.axonframework.intellij.ide.plugin.markers
 
 import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.openapi.util.Iconable.ICON_FLAG_VISIBILITY
-import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.api.PsiElementWrapper
+import java.util.function.Supplier
 import javax.swing.Icon
 
 /**
@@ -33,7 +33,7 @@ import javax.swing.Icon
  * @see org.axonframework.intellij.ide.plugin.api.MessageCreator
  */
 class AxonCellRenderer(
-    private val elements: NotNullLazyValue<List<PsiElementWrapper>>
+    private val elements: Supplier<List<PsiElementWrapper>>
 ) : PsiElementListCellRenderer<PsiElement>() {
     /**
      * Renders the text in the line marker popup. Contains the name of the item
@@ -61,6 +61,6 @@ class AxonCellRenderer(
     override fun getIcon(element: PsiElement): Icon = onElement(element).getIcon()
 
     private fun onElement(element: PsiElement): PsiElementWrapper {
-        return elements.value.first { it.element == element }
+        return elements.get().first { it.element == element }
     }
 }

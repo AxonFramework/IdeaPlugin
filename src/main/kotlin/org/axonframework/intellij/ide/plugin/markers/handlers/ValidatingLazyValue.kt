@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) (2010-2022). Axon Framework
+ *  Copyright (c) (2010-2023). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,15 +18,19 @@ package org.axonframework.intellij.ide.plugin.markers.handlers
 
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
+import java.util.function.Supplier
 
 class ValidatingLazyValue<T : Any>(
     private val element: PsiElement,
     private val supplier: (PsiElement) -> List<T>,
-): NotNullLazyValue<List<T>>() {
-    override fun compute(): List<T> {
-        if(element.isValid) {
-            return supplier.invoke(element)
-        }
-        return emptyList()
+) : Supplier<List<T>> {
+    private val lazyValue = NotNullLazyValue.lazy {
+        if (element.isValid) {
+            supplier.invoke(element)
+        } else emptyList()
+    }
+
+    override fun get(): List<T> {
+        return lazyValue.value
     }
 }

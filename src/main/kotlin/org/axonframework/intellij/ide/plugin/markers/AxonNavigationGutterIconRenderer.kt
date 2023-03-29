@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) (2010-2022). Axon Framework
+ *  Copyright (c) (2010-2023). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.ui.awt.RelativePoint
 import org.axonframework.intellij.ide.plugin.api.PsiElementWrapper
 import java.awt.event.MouseEvent
+import java.util.function.Supplier
 import javax.swing.Icon
 
 
@@ -40,9 +41,9 @@ class AxonNavigationGutterIconRenderer(
     popupTitle: String,
     private val tooltipText: String?,
     emptyText: String?,
-    private val elements: NotNullLazyValue<List<PsiElementWrapper>>,
+    private val elements: Supplier<List<PsiElementWrapper>>,
 ) : NavigationGutterIconRenderer(popupTitle, emptyText, { AxonCellRenderer(elements) }, NotNullLazyValue.createValue {
-    elements.value.sortedBy { it.getSortKey() }.mapNotNull { p ->
+    elements.get().sortedBy { it.getSortKey() }.mapNotNull { p ->
         if(p.element.isValid) {
             val spm = SmartPointerManager.getInstance(p.element.project)
             spm.createSmartPsiElementPointer(p.element)
@@ -79,7 +80,7 @@ class AxonNavigationGutterIconRenderer(
             this,
             alignment,
             {
-                elements.value
+                elements.get()
                     .filter { it.element.isValid }
                     .map { WrappedGoToRelatedItem(it) }
             }
