@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("EventSourcingHandler MyAggregate", null, AxonIcons.Handler)
+            OptionSummary("MyAggregate.handle(MyEvent)", "EventSourcingHandler", AxonIcons.Handler)
         )
     }
 
@@ -76,7 +76,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("EventSourcingHandler MyAggregate", null, AxonIcons.Handler)
+            OptionSummary("MyAggregate.handle(MyEvent)", "EventSourcingHandler", AxonIcons.Handler)
         )
     }
 
@@ -103,7 +103,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Handler)
+            OptionSummary("MyAggregate.handle(MyCommand)", "MyAggregate", AxonIcons.Handler)
         )
     }
 
@@ -127,7 +127,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyCommand", "MyAggregate", AxonIcons.Handler)
+            OptionSummary("MyAggregate.handle(MyCommand)", "MyAggregate", AxonIcons.Handler)
         )
     }
 
@@ -152,7 +152,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyProcessingGroup.handle", "some-group", AxonIcons.Handler)
+            OptionSummary("MyProcessingGroup.handle(MyQuery)", "some-group", AxonIcons.Handler)
         )
     }
 
@@ -175,7 +175,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyProcessingGroup.handle", "test", AxonIcons.Handler)
+            OptionSummary("MyProcessingGroup.handle(MyQuery)", "test", AxonIcons.Handler)
         )
     }
 
@@ -201,7 +201,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyProcessingGroup", "awesome-group", AxonIcons.Handler)
+            OptionSummary("MyProcessingGroup.handle(MyEvent)", "awesome-group", AxonIcons.Handler)
         )
     }
 
@@ -226,7 +226,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyProcessingGroup", "test", AxonIcons.Handler)
+            OptionSummary("MyProcessingGroup.handle(MyEvent)", "test", AxonIcons.Handler)
         )
     }
 
@@ -273,7 +273,7 @@ class PublishMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
 
         assertThat(hasLineMarker(PublishMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(PublishMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("MyProcessingGroup", "test", AxonIcons.Handler)
+            OptionSummary("MyProcessingGroup.handle(MyBuilderBasedEvent)", "test", AxonIcons.Handler)
         )
     }
 }

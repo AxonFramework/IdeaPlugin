@@ -56,7 +56,7 @@ fun PsiType?.toQualifiedName(): String? = when (this) {
     // Class<SomeClass> object. Extract the <SomeClass> and call this method recursively to resolve it
     is PsiImmediateClassType -> this.parameters.firstOrNull()?.toQualifiedName()
     is PsiWildcardType -> "java.lang.Object"
-    is PsiPrimitiveType -> if(name == "void") "void" else null
+    is PsiPrimitiveType -> name
     else -> null
 }
 

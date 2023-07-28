@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.util.toShortName
+import org.axonframework.intellij.ide.plugin.util.toViewText
 import javax.swing.Icon
 
 /**
@@ -37,11 +37,11 @@ data class CommandHandlerInterceptor(
     override val handlerType: MessageHandlerType = MessageHandlerType.COMMAND_INTERCEPTOR
 
     override fun renderText(): String {
-        return "Command Interceptor of ${componentName.toShortName()}"
+        return element.toViewText()
     }
 
     override fun renderContainerText(): String {
-        return element.name
+        return "Command interceptor"
     }
 
     override fun getIcon(): Icon {

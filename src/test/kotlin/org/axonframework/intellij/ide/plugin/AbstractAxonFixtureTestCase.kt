@@ -102,6 +102,10 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
         "java.time.Instant",
     )
 
+    protected fun actualLineNumber(lineNumber: Int): Int {
+        return lineNumber + autoImports.size + 2
+    }
+
     /**
      * Adds a file to the project with given name/path and content.
      * You can skipp importing any Axon annotations defined in autoImports, they are added automagically.
@@ -113,7 +117,7 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
         var content = ""
         content += "package $pckg$newLineChar\n\n"
         autoImports.forEach { content += "import $it$newLineChar\n" }
-        content += ("\n" + text)
+        content += ("\n" + text.trim())
         // Save <caret> position
         val caretPosition = content.indexOf("<caret>")
         content = content.replace("<caret>", "")

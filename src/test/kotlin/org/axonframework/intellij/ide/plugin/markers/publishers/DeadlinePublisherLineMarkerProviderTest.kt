@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -140,7 +140,7 @@ class DeadlinePublisherLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
         )
         assertThat(hasLineMarker(DeadlinePublisherLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(DeadlinePublisherLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("Deadline my_special_deadline", null, AxonIcons.Handler)
+            OptionSummary("MyAggregate.handle()", null, AxonIcons.Handler)
         )
     }
 
@@ -164,7 +164,7 @@ class DeadlinePublisherLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
         )
         assertThat(hasLineMarker(DeadlinePublisherLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(DeadlinePublisherLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("Deadline my_special_deadline", null, AxonIcons.Handler)
+            OptionSummary("MyAggregate.handle()", null, AxonIcons.Handler)
         )
     }
 }

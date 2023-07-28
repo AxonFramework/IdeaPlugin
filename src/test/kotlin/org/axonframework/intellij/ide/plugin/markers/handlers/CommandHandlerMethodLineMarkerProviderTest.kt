@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -112,7 +112,7 @@ class CommandHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase()
 
         assertThat(hasLineMarker(CommandHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommandHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("Command Interceptor of MyAggregate", "intercept", AxonIcons.Interceptor)
+            OptionSummary("MyAggregate.intercept()", "Command interceptor", AxonIcons.Interceptor)
         )
     }
 
@@ -140,7 +140,7 @@ class CommandHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase()
 
         assertThat(hasLineMarker(CommandHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommandHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("Saga: test", null, AxonIcons.Publisher)
+            OptionSummary("MySaga.handleSagaEvent(MySagaTriggeringEvent):${actualLineNumber(7)}", null, AxonIcons.Publisher)
         )
     }
 
@@ -175,7 +175,7 @@ class CommandHandlerMethodLineMarkerProviderTest : AbstractAxonFixtureTestCase()
 
         assertThat(hasLineMarker(CommandHandlerMethodLineMarkerProvider::class.java)).isTrue
         assertThat(getLineMarkerOptions(CommandHandlerMethodLineMarkerProvider::class.java)).containsExactly(
-            OptionSummary("Saga: test", null, AxonIcons.Publisher)
+            OptionSummary("MySaga.handleSagaEvent(MySagaTriggeringEvent):${actualLineNumber(5)}", null, AxonIcons.Publisher)
         )
     }
 }

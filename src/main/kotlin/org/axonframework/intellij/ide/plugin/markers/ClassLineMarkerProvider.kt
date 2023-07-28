@@ -49,7 +49,7 @@ class ClassLineMarkerProvider : LineMarkerProvider {
             if (handlers.isNotEmpty()) {
                 return AxonNavigationGutterIconRenderer(
                     icon = AxonIcons.Axon,
-                    popupTitle = "Axon References To This Class",
+                    popupTitle = "Axon References To $qualifiedName",
                     tooltipText = "Navigate to message handlers and creations",
                     emptyText = "No references were found",
                     elements = NotNullLazyValue.createValue {

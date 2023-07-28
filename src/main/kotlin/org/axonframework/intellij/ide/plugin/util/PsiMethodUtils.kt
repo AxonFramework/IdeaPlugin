@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,23 @@ import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
  */
 fun PsiMethod.findProcessingGroup(): String {
     val containingClass = this.containingClass ?: return ""
-    return containingClass.resolveAnnotationStringValue(AxonAnnotation.PROCESSING_GROUP, "value") ?: toPackageName()
+    return containingClass.resolveAnnotationStringValue(AxonAnnotation.PROCESSING_GROUP, "value")
+        ?: if (this.isAnnotated(AxonAnnotation.SAGA_EVENT_HANDLER)) {
+            containingClassFqn()
+        } else toPackageName()
+}
+
+fun PsiMethod.toViewText(): String {
+    return buildString {
+        append(containingClassname())
+        if(!isConstructor) {
+            append(".")
+            append(name)
+        }
+        append("(")
+        append(parameterList.parameters.joinToString(separator = ", ") { it.type.toQualifiedName()?.toShortName() ?: "Unknown" })
+        append(")")
+    }
 }
 
 fun PsiMethod.containingClassname() = containingClass?.name ?: ""

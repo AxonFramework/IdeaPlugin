@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) (2010-2022). Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,12 +27,5 @@ interface MessageCreator : PsiElementWrapper {
      * it's the payload type.
      */
     val payload: String
-
-    /**
-     * The parent handler that published the message. For example, if this MessageCreator represents an event
-     * created by a CommandHandler, the parentHandler will be that CommandHandler.
-     * The same applied for commands created by a SagaEventHandler, among others.
-     */
-    val parentHandler: Handler?
 }
 
