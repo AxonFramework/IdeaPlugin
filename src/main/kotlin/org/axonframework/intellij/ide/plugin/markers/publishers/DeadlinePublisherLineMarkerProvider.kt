@@ -87,6 +87,9 @@ class DeadlinePublisherLineMarkerProvider : LineMarkerProvider {
         }
         if (matchingMethods.isNotEmpty()) {
             val parameterIndex = element.deadlineMethodResolver().getDeadlineParameterIndex(matchingMethods[0]) ?: return null
+            if(methodCall.valueArguments.size <= parameterIndex) {
+                return null
+            }
             return methodCall.valueArguments[parameterIndex].evaluateString()
         }
         return null
