@@ -19,15 +19,11 @@ package org.axonframework.intellij.ide.plugin.markers
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.navigation.NavigationGutterIconRenderer
-import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.navigation.GotoRelatedItem
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPointerManager
-import com.intellij.psi.util.PsiUtilCore
-import com.intellij.ui.awt.RelativePoint
 import org.axonframework.intellij.ide.plugin.api.PsiElementWrapper
-import java.awt.event.MouseEvent
 import java.util.function.Supplier
 import javax.swing.Icon
 
@@ -61,14 +57,6 @@ class AxonNavigationGutterIconRenderer(
 
     override fun getAlignment(): Alignment {
         return Alignment.LEFT
-    }
-
-    override fun navigateToItems(event: MouseEvent?) {
-        if (event != null) {
-            val elements = PsiUtilCore.toPsiElementArray(targetElements.filter { it.isValid })
-            val popup = NavigationUtil.getPsiElementPopup(elements, myCellRenderer.compute(), myPopupTitle)
-            popup.show(RelativePoint(event))
-        }
     }
 
     fun createLineMarkerInfo(element: PsiElement): LineMarkerInfo<*> {
