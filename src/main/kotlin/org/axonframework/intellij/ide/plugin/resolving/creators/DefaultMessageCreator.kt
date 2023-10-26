@@ -35,7 +35,7 @@ data class DefaultMessageCreator(
     override val element: PsiElement,
     override val payload: String,
     override val parentHandler: Handler?,
-) : MessageCreator {
+) : MessageCreator, PsiElement by element {
 
     /**
      * Returns the correct icon for the creator

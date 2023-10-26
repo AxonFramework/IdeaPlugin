@@ -18,13 +18,13 @@ package org.axonframework.intellij.ide.plugin.markers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
+import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.ClassReferenceHierarcyItem
 import org.axonframework.intellij.ide.plugin.api.Entity
-import org.axonframework.intellij.ide.plugin.markers.handlers.ValidatingLazyValue
 import org.axonframework.intellij.ide.plugin.util.aggregateResolver
 import org.axonframework.intellij.ide.plugin.util.creatorResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
@@ -47,29 +47,27 @@ class ClassLineMarkerProvider : LineMarkerProvider {
         if (!uElement.isAggregate()) {
             val handlers = element.handlerResolver().findHandlersForType(qualifiedName)
             if (handlers.isNotEmpty()) {
-                return AxonNavigationGutterIconRenderer(
-                    icon = AxonIcons.Axon,
-                    popupTitle = "Axon References To This Class",
-                    tooltipText = "Navigate to message handlers and creations",
-                    emptyText = "No references were found",
-                    elements = NotNullLazyValue.createValue {
+                return NavigationGutterIconBuilder.create(AxonIcons.Axon)
+                    .setPopupTitle("Axon References To This Class")
+                    .setTooltipText("Navigate to message handlers and creations")
+                    .setEmptyPopupText("No references were found")
+                    .setTargets(NotNullLazyValue.lazy {
                         val publishers = element.creatorResolver().getCreatorsForPayload(qualifiedName)
                         handlers + publishers
-                    }).createLineMarkerInfo(element)
+                    })
+                    .createLineMarkerInfo(element)
             }
         }
 
         val owner = element.aggregateResolver().getTopEntityOfEntityWithName(qualifiedName) ?: return null
         val items = createHierarchy(owner, null, 0)
         if (items.isNotEmpty()) {
-            return AxonNavigationGutterIconRenderer(
-                icon = AxonIcons.Axon,
-                popupTitle = "Related Models",
-                tooltipText = "Navigate to entities in the same command model hierarchy",
-                emptyText = "No related entities were found",
-                elements = ValidatingLazyValue(element)  {
-                    items
-                }).createLineMarkerInfo(element)
+            return NavigationGutterIconBuilder.create(AxonIcons.Axon)
+                .setPopupTitle("Related Models")
+                .setTooltipText("Navigate to entities in the same command model hierarchy")
+                .setEmptyPopupText("No related entities were found")
+                .setTargets(NotNullLazyValue.lazy { items })
+                .createLineMarkerInfo(element)
         }
 
         return null

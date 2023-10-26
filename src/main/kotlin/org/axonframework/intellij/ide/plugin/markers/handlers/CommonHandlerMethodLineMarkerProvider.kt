@@ -17,10 +17,12 @@
 package org.axonframework.intellij.ide.plugin.markers.handlers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
+import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
+import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.markers.AxonNavigationGutterIconRenderer
+import org.axonframework.intellij.ide.plugin.markers.AxonNavigationTargetRenderer
 import org.axonframework.intellij.ide.plugin.util.creatorResolver
 
 /**
@@ -37,14 +39,15 @@ class CommonHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvider(
             return null
         }
 
-        return AxonNavigationGutterIconRenderer(
-            icon = AxonIcons.Handler,
-            popupTitle = "Payload Creators",
-            tooltipText = "Navigate to creators of $payload",
-            emptyText = "No creators of this message payload were found",
-            elements = ValidatingLazyValue(element) {
+        return NavigationGutterIconBuilder.create(AxonIcons.Handler)
+            .setTargets(NotNullLazyValue.lazy {
                 element.creatorResolver().getCreatorsForPayload(payload)
                     .distinctBy { it.parentHandler }
-            }).createLineMarkerInfo(element)
+            })
+            .setTargetRenderer { AxonNavigationTargetRenderer.INSTANCE }
+            .setPopupTitle("Payload Creators")
+            .setTooltipText("Navigate to creators of $payload")
+            .setEmptyPopupText("No creators of this message payload were found")
+            .createLineMarkerInfo(element)
     }
 }

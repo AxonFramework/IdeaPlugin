@@ -50,7 +50,7 @@ abstract class AbstractHandlerLineMarkerProvider : LineMarkerProvider {
                 // Do nothing, IntelliJ does not even want us to log it
                 return null
             }
-            // We don't want to do anything on errors here. As is shown by Sentry exception catching, the process is error-=prone
+            // We don't want to do anything on errors here. As is shown by Sentry exception catching, the process is error-prone
             // mostly due to Kotlin plugin internals. We don't want to pester the user with it.
             // Generally, the issue will resolve itself on the next line marker pass anyway.
             logger<AbstractHandlerLineMarkerProvider>().error("Got an exception while analyzing line markers in class {}", e, this::class.java.name)

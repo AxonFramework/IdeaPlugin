@@ -17,11 +17,13 @@
 package org.axonframework.intellij.ide.plugin.markers.handlers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
+import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
+import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.api.MessageType
-import org.axonframework.intellij.ide.plugin.markers.AxonNavigationGutterIconRenderer
+import org.axonframework.intellij.ide.plugin.markers.AxonNavigationTargetRenderer
 import org.axonframework.intellij.ide.plugin.resolving.handlers.types.CommandHandler
 import org.axonframework.intellij.ide.plugin.util.aggregateResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
@@ -48,12 +50,8 @@ class CommandInterceptorLineMarkerProvider : AbstractHandlerLineMarkerProvider()
         // An interceptor without payload is fine, default to Object to match all
         val actualPayload = payload ?: "java.lang.Object"
 
-        return AxonNavigationGutterIconRenderer(
-            icon = AxonIcons.Interceptor,
-            popupTitle = "Commands Intercepted",
-            tooltipText = "Navigate to command handlers that are intercepted",
-            emptyText = "No intercepted command handlers were found",
-            elements = ValidatingLazyValue(element) {
+        return NavigationGutterIconBuilder.create(AxonIcons.Interceptor)
+            .setTargets(NotNullLazyValue.lazy {
                 val members = element.aggregateResolver().getEntityAndAllChildrenRecursively(className)
                 element.handlerResolver().findHandlersForType(actualPayload, MessageType.COMMAND)
                     .filterIsInstance<CommandHandler>()
@@ -62,6 +60,10 @@ class CommandInterceptorLineMarkerProvider : AbstractHandlerLineMarkerProvider()
                         members.any { member -> member.name == name }
                     }
             })
-            .createLineMarkerInfo(element)
+            .setTargetRenderer { AxonNavigationTargetRenderer.INSTANCE }
+            .setPopupTitle("Commands Intercepted")
+            .setTooltipText("Navigate to command handlers that are intercepted")
+            .setEmptyPopupText("No intercepted command handlers were found")
+            .createLineMarkerInfo(element, )
     }
 }

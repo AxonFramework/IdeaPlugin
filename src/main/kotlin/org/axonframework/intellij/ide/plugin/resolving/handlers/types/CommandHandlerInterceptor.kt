@@ -16,6 +16,7 @@
 
 package org.axonframework.intellij.ide.plugin.resolving.handlers.types
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.Handler
@@ -33,7 +34,7 @@ data class CommandHandlerInterceptor(
     override val element: PsiMethod,
     override val payload: String,
     val componentName: String,
-) : Handler {
+) : Handler, PsiElement by element {
     override val handlerType: MessageHandlerType = MessageHandlerType.COMMAND_INTERCEPTOR
 
     override fun renderText(): String {

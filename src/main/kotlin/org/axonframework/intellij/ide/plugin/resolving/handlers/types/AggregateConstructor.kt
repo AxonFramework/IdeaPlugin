@@ -16,6 +16,7 @@
 
 package org.axonframework.intellij.ide.plugin.resolving.handlers.types
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
@@ -30,7 +31,7 @@ import org.axonframework.intellij.ide.plugin.util.toShortName
 data class AggregateConstructor(
     override val element: PsiMethod,
     override val payload: String,
-) : Handler {
+) : Handler, PsiElement by element {
     override val handlerType: MessageHandlerType = MessageHandlerType.COMMAND
 
     override fun renderText(): String {

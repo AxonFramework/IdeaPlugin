@@ -16,6 +16,7 @@
 
 package org.axonframework.intellij.ide.plugin.resolving.handlers.types
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
@@ -36,7 +37,7 @@ data class EventHandler(
     override val element: PsiMethod,
     override val payload: String,
     val processingGroup: String,
-) : Handler {
+) : Handler, PsiElement by element {
     override val handlerType: MessageHandlerType = MessageHandlerType.EVENT
 
     override fun renderText(): String {
