@@ -11,7 +11,7 @@ updates:
             - "Priority 1: Must"
         # Add reviewers
         reviewers:
-            - "Morlack"
+            - "CodeDrivenMitch"
     -   package-ecosystem: "github-actions"
         directory: "/"
         schedule:
@@ -22,4 +22,4 @@ updates:
             - "Priority 1: Must"
         # Add reviewers
         reviewers:
-            - "Morlack"
+            - "CodeDrivenMitch"
