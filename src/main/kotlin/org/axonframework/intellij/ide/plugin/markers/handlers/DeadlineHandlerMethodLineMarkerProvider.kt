@@ -17,11 +17,13 @@
 package org.axonframework.intellij.ide.plugin.markers.handlers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
+import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
+import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.markers.AxonNavigationGutterIconRenderer
+import org.axonframework.intellij.ide.plugin.markers.AxonNavigationTargetRenderer
 import org.axonframework.intellij.ide.plugin.util.deadlineReferenceResolver
 import org.axonframework.intellij.ide.plugin.util.resolveAnnotationStringValue
 import org.jetbrains.uast.UAnnotation
@@ -47,14 +49,16 @@ class DeadlineHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvide
             ?: payload
             ?: return null
 
-        return AxonNavigationGutterIconRenderer(
-            icon = AxonIcons.Handler,
-            popupTitle = "Deadline Schedulers",
-            tooltipText = "Navigate to schedule invocation of this deadline",
-            emptyText = "No deadline schedule invocations could be found",
-            elements = ValidatingLazyValue(element) {
+
+        return NavigationGutterIconBuilder.create(AxonIcons.Handler)
+            .setTargets(NotNullLazyValue.lazy {
                 element.deadlineReferenceResolver().findByDeadlineName(deadlineName)
                     .distinctBy { it.parentHandler }
-            }).createLineMarkerInfo(element)
+            })
+            .setTargetRenderer { AxonNavigationTargetRenderer.INSTANCE }
+            .setPopupTitle("Deadline Schedulers")
+            .setTooltipText("Navigate to schedule invocation of this deadline")
+            .setEmptyPopupText("No deadline schedule invocations could be found")
+            .createLineMarkerInfo(element)
     }
 }

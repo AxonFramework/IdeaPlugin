@@ -31,7 +31,7 @@ class ClassReferenceHierarcyItem(
     private val field: PsiField?,
     override val element: PsiElement = field ?: clazz,
     val depth: Int
-) : PsiElementWrapper {
+) : PsiElementWrapper, PsiElement by element {
 
     override fun getIcon(): Icon {
         return AxonIcons.Axon

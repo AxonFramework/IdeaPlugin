@@ -21,6 +21,7 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.daemon.impl.LineMarkersPass
+import com.intellij.navigation.GotoRelatedItem
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.java.LanguageLevel
@@ -32,7 +33,7 @@ import com.intellij.util.PathUtil
 import org.axonframework.config.ProcessingGroup
 import org.axonframework.eventhandling.EventHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
-import org.axonframework.intellij.ide.plugin.markers.WrappedGoToRelatedItem
+import org.axonframework.intellij.ide.plugin.api.PsiElementWrapper
 import org.axonframework.modelling.command.AggregateMember
 import javax.swing.Icon
 
@@ -140,9 +141,11 @@ abstract class AbstractAxonFixtureTestCase : LightJavaCodeInsightFixtureTestCase
         val gutters = myFixture.findGuttersAtCaret()
         val marker = gutters.firstNotNullOf { getHandlerMethodMakerProviders(it, clazz) }
             ?: throw IllegalStateException("No gutter found")
-        val items = marker.createGotoRelatedItems() as List<WrappedGoToRelatedItem>
-        return items.map {
-            OptionSummary(it.wrapper.renderText(), it.wrapper.renderContainerText(), it.wrapper.getIcon())
+        val items = marker.createGotoRelatedItems()
+        return items
+            .map { it.element }
+            .filterIsInstance<PsiElementWrapper>().map {
+                OptionSummary(it.renderText(), it.renderContainerText(), it.getIcon())
         }
     }
 

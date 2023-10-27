@@ -30,7 +30,7 @@ import javax.swing.Icon
  * @see Handler
  * @see MessageCreator
  */
-interface PsiElementWrapper {
+interface PsiElementWrapper : PsiElement{
     val element: PsiElement
 
 

@@ -16,6 +16,7 @@
 
 package org.axonframework.intellij.ide.plugin.resolving.handlers.types
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
@@ -31,7 +32,7 @@ data class CommandHandler(
     override val element: PsiMethod,
     override val payload: String,
     val componentName: String,
-) : Handler {
+) : Handler, PsiElement by element {
     override val handlerType: MessageHandlerType = MessageHandlerType.COMMAND
 
     override fun renderContainerText(): String {

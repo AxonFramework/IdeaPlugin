@@ -18,14 +18,16 @@ package org.axonframework.intellij.ide.plugin.markers.publishers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
+import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
+import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
+import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.markers.AxonNavigationGutterIconRenderer
-import org.axonframework.intellij.ide.plugin.markers.handlers.ValidatingLazyValue
+import org.axonframework.intellij.ide.plugin.markers.AxonNavigationTargetRenderer
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
 import org.axonframework.intellij.ide.plugin.resolving.handlers.types.CommandHandlerInterceptor
 import org.axonframework.intellij.ide.plugin.resolving.handlers.types.DeadlineHandler
@@ -73,14 +75,12 @@ class PublishMethodLineMarkerProvider : LineMarkerProvider {
             return null
         }
 
-        return AxonNavigationGutterIconRenderer(
-            icon = AxonIcons.Publisher,
-            popupTitle = "Axon Message Handlers",
-            tooltipText = "Navigate to Axon message handlers",
-            emptyText = "No message handlers were found",
-            elements = ValidatingLazyValue(element)  {
-                handlers
-            })
+        return NavigationGutterIconBuilder.create(AxonIcons.Publisher)
+            .setTargets(handlers)
+            .setTargetRenderer { AxonNavigationTargetRenderer.INSTANCE }
+            .setPopupTitle("Axon Message Handlers")
+            .setTooltipText("Navigate to Axon message handlers")
+            .setEmptyPopupText("No message handlers were found")
             .createLineMarkerInfo(element)
     }
 

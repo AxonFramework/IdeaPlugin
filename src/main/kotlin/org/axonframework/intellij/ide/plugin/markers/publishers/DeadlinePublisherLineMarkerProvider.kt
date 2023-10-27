@@ -18,13 +18,16 @@ package org.axonframework.intellij.ide.plugin.markers.publishers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
+import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
+import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
+import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import org.axonframework.intellij.ide.plugin.AxonIcons
-import org.axonframework.intellij.ide.plugin.markers.AxonNavigationGutterIconRenderer
-import org.axonframework.intellij.ide.plugin.markers.handlers.ValidatingLazyValue
+import org.axonframework.intellij.ide.plugin.markers.AxonNavigationTargetRenderer
 import org.axonframework.intellij.ide.plugin.resolving.handlers.types.DeadlineHandler
 import org.axonframework.intellij.ide.plugin.util.deadlineMethodResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
@@ -55,18 +58,17 @@ class DeadlinePublisherLineMarkerProvider : LineMarkerProvider {
             else -> null
         } ?: return null
 
-
-
-        return AxonNavigationGutterIconRenderer(
-            icon = AxonIcons.Publisher,
-            popupTitle = "Axon Deadline Handlers",
-            tooltipText = "Navigate to Axon deadline handlers",
-            emptyText = "No deadline handlers were found",
-            elements = ValidatingLazyValue(element)  {
+        return NavigationGutterIconBuilder.create(AxonIcons.Publisher)
+            .setTargets(NotNullLazyValue.lazy {
                 element.project.handlerResolver().findAllHandlers()
                     .filterIsInstance<DeadlineHandler>()
                     .filter { it.deadlineName == deadlineName }
-            }).createLineMarkerInfo(element)
+            })
+            .setTargetRenderer { AxonNavigationTargetRenderer.INSTANCE }
+            .setPopupTitle("Axon Deadline Handlers")
+            .setTooltipText("Navigate to Axon deadline handlers")
+            .setEmptyPopupText("No deadline handlers were found")
+            .createLineMarkerInfo(element)
     }
 
     /*
