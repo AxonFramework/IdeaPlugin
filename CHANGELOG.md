@@ -2,6 +2,9 @@
 
 # Axon Framework plugin Changelog
 
+## [0.8.4]
+- Plugin is now compatible with IDEA 2023.3 (IDEA 233.*) (Thanks to @maartenn)
+
 ## [0.8.3]
 - Move to built-in gutter renderer to prevent exception (#235)
 - Fix exception on deadline manager methods when arguments are not filled
