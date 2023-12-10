@@ -47,12 +47,14 @@ While the instance is running, you can run `./gradlew buildPlugin` for a hot rel
 
 To check compatibility with the most common IntelliJ versions run `./gradlew runPluginVerifier`.
 
-## Development process
+## Development process and release
 
 - Features are developed on branches
 - The pull request should contain a changelog entry added to the "Unreleased" section
 - When ready for release, `CHANGELOG.md` and `gradle.properties` are updated with the new version
-- A tag is created with name `vx.x.x` on that commit and pushed. Github Actions will automatically publish that version
+- Create a Github release for that version, titled `x.x.x` and with a new tag created called `vx.x.x`. Take the CHANGELOG content for that version
+- Github Actions will automatically publish the version to the JetBrains Plugin Repository, because a new tag was created
+- Jetbrains will take up to 3 business days to approve the plugin release. Often it's a matter of hours though
 
 There are no minor release branches, since we don't need patch versions on older versions of the plugin. Users will always update to the
 latest version and will ignore earlier patches, so the `master` branch is leading.
