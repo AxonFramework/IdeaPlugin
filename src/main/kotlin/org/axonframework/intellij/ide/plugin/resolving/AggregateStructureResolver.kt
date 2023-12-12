@@ -97,13 +97,18 @@ class AggregateStructureResolver(private val project: Project) {
         .flatMap {
             AnnotatedElementsSearch.searchPsiClasses(it.psiClass, project.axonScope()).findAll()
         }
-        .mapNotNull { inspect(it, null) }
+        .mapNotNull { inspect(it, emptyList()) }
         .flatMap { it.flatten() }
 
-    private fun inspect(clazz: PsiClass, parent: PsiClass?): Entity? {
+    private fun inspect(clazz: PsiClass, parents: List<PsiClass>, depth: Int = 0): Entity? {
         if (clazz.isEnum) {
             return null
         }
+        if(parents.contains(clazz) || depth > 20) {
+            // Guard for infinite recursion; we already have this class indexed, or we exceed an exorbitant depth
+            return null
+        }
+        val parent = parents.lastOrNull()
         val children = clazz.fields.toList()
             .filter { it.isAnnotated(AxonAnnotation.AGGREGATE_MEMBER) }
             .mapNotNull { field ->
@@ -112,7 +117,7 @@ class AggregateStructureResolver(private val project: Project) {
                 val qualifiedName = psiType.toQualifiedName() ?: return@mapNotNull null
                 val targetClass = clazz.javaFacade().findClass(qualifiedName, clazz.project.axonScope())
                     ?: return@mapNotNull null
-                val modelMember = inspect(targetClass, clazz) ?: return@mapNotNull null
+                val modelMember = inspect(targetClass, parents + clazz, depth + 1) ?: return@mapNotNull null
                 val routingKey = field.resolveAnnotationStringValue(AxonAnnotation.AGGREGATE_MEMBER, "routingKey")
                 val eventForwardingMode = field.resolveAnnotationClassValue(AxonAnnotation.AGGREGATE_MEMBER, "eventForwardingMode")
                 EntityMember(field, field.name, modelMember, isCollection, routingKey, eventForwardingMode)

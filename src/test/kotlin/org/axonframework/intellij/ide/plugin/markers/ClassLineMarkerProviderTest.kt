@@ -102,6 +102,28 @@ class ClassLineMarkerProviderTest : AbstractAxonFixtureTestCase() {
         )
     }
 
+    fun `test shows line marker on aggregate of hierarchy when recursive`() {
+        addFile(
+            "MyAggregate.kt", """
+            class RecursiveAggregateMember {
+                @AggregateMember
+                private var subItems: List<RecursiveAggregateMember>
+            }
+            
+            @AggregateRoot
+            class MyAggregate {<caret>
+                @AggregateMember
+                private lateinit var singleMember: RecursiveAggregateMember
+            }
+        """.trimIndent(), open = true
+        )
+        Assertions.assertThat(hasLineMarker(ClassLineMarkerProvider::class.java)).isTrue
+        Assertions.assertThat(getLineMarkerOptions(ClassLineMarkerProvider::class.java)).containsExactly(
+            OptionSummary("MyAggregate", null, AxonIcons.Axon),
+            OptionSummary("- RecursiveAggregateMember", null, AxonIcons.Axon),
+        )
+    }
+
     fun `test shows line marker on child of hierarchy`() {
         addFile(
             "MyAggregate.kt", """
