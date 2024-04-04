@@ -2,6 +2,9 @@
 
 # Axon Framework plugin Changelog
 
+## [0.8.6]
+- Plugin is now compatible with IDEA 2024.1 (IDEA 241.*)
+
 ## [0.8.5]
 - Fix StackOverflow issue when aggregate model is recursive (https://github.com/AxonFramework/IdeaPlugin/issues/261)
 
