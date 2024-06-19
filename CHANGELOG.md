@@ -2,6 +2,9 @@
 
 # Axon Framework plugin Changelog
 
+## [0.8.7]
+- Plugin is now compatible with IDEA 2024.2 (IDEA 242.*)
+
 ## [0.8.6]
 - Plugin is now compatible with IDEA 2024.1 (IDEA 241.*)
 
