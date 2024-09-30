@@ -90,6 +90,12 @@ intellijPlatform {
                 untilBuild = properties("pluginUntilBuild")
             }
         }
+
+        freeArgs = listOf(
+            "-mute TemplateWordInPluginId"
+        )
+
+
     }
 }
 
