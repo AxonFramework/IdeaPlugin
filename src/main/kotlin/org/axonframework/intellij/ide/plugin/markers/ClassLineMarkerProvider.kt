@@ -55,6 +55,7 @@ class ClassLineMarkerProvider : LineMarkerProvider {
                         val publishers = element.creatorResolver().getCreatorsForPayload(qualifiedName)
                         handlers + publishers
                     })
+                    .setTargetRenderer { AxonNavigationTargetRenderer.INSTANCE }
                     .createLineMarkerInfo(element)
             }
         }
@@ -67,6 +68,7 @@ class ClassLineMarkerProvider : LineMarkerProvider {
                 .setTooltipText("Navigate to entities in the same command model hierarchy")
                 .setEmptyPopupText("No related entities were found")
                 .setTargets(NotNullLazyValue.lazy { items })
+                .setTargetRenderer { AxonNavigationTargetRenderer.INSTANCE }
                 .createLineMarkerInfo(element)
         }
 

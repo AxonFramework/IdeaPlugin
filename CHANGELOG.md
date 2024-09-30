@@ -2,6 +2,9 @@
 
 # Axon Framework plugin Changelog
 
+## [0.8.8]
+- Fix classes not rendering the correct value in popup of classes
+
 ## [0.8.7]
 - Plugin is now compatible with IDEA 2024.2 (IDEA 242.*)
 
