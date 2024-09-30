@@ -18,11 +18,11 @@ package org.axonframework.intellij.ide.plugin.resolving
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.util.CachedValue
 import org.axonframework.intellij.ide.plugin.api.MessageCreator
 import org.axonframework.intellij.ide.plugin.resolving.creators.DefaultMessageCreator
-import org.axonframework.intellij.ide.plugin.util.areAssignable
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 import org.axonframework.intellij.ide.plugin.util.findParentHandlers
@@ -38,7 +38,6 @@ import java.util.concurrent.ConcurrentHashMap
  * the PSI is modified (code is edited) or is collected by the garbage collector.
  */
 class MessageCreationResolver(private val project: Project) {
-    private val handlerResolver = project.handlerResolver()
     private val psiFacade = project.javaFacade()
     private val constructorsByPayloadCache = ConcurrentHashMap<String, CachedValue<List<MessageCreator>>>()
 
@@ -59,25 +58,19 @@ class MessageCreationResolver(private val project: Project) {
     }
 
     private fun findByPayload(payload: String): List<MessageCreator> {
-        val matchingHandlers = handlerResolver.findAllHandlers()
-            .map { it.payload }
-            .filter { areAssignable(project, payload, it) }
-        val classesForQualifiedName = listOf(payload).plus(matchingHandlers)
-            .distinct()
-        return resolveCreatorsForFqns(classesForQualifiedName)
-    }
+        val classes = psiFacade.findClass(payload, project.axonScope())?.let { clazz ->
+            listOf(clazz) + ClassInheritorsSearch.search(clazz, project.axonScope(), true)
+        } ?: return emptyList()
 
-    private fun resolveCreatorsForFqns(fqns: List<String>): List<MessageCreator> {
-        return fqns.flatMap { typeFqn ->
-            psiFacade.findClasses(typeFqn, project.axonScope()).flatMap { clazz ->
+        return classes
+            .flatMap { clazz ->
                 // Account for constructors and builder methods (builder(), toBuilder(), etc)
                 val methods = clazz.constructors + clazz.methods.filter { it.name.contains("build", ignoreCase = true) }
                 methods
                     .flatMap { MethodReferencesSearch.search(it, project.axonScope(), true) }
-                    .flatMap { ref -> createCreators(typeFqn, ref.element) }
+                    .flatMap { ref -> createCreators(clazz.qualifiedName!!, ref.element) }
                     .distinct()
             }
-        }
     }
 
     private fun createCreators(payload: String, element: PsiElement): List<MessageCreator> {

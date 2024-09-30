@@ -2,6 +2,10 @@
 
 # Axon Framework plugin Changelog
 
+## [0.8.8]
+- Fix class hierarchy not being taken into account for handler and creator resolving.
+- Remove wrong implementation of interceptor support, to possibly be re-implemented in a future release in a better form.
+
 ## [0.8.7]
 - Plugin is now compatible with IDEA 2024.2 (IDEA 242.*)
 

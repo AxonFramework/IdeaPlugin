@@ -184,6 +184,12 @@ fun PsiElement.findParentHandlers(depth: Int = 0): List<Handler> {
     return references.flatMap { it.element.findParentHandlers(depth + 1) }
 }
 
+
+
+fun PsiClass.findCompleteSupers(): List<PsiClass> {
+    return this.supers.flatMap { it.findCompleteSupers() } + this
+}
+
 fun String.toGetterRepresentation(): String {
     return "get${this.capitalize()}"
 }

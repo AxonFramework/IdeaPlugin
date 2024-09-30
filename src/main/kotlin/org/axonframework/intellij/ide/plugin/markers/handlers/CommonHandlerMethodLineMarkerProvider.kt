@@ -29,7 +29,7 @@ import org.axonframework.intellij.ide.plugin.util.creatorResolver
  * Provides a gutter icon on all generic handler methods
  */
 class CommonHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvider() {
-    private val blacklistedTypes = listOf(MessageHandlerType.DEADLINE, MessageHandlerType.COMMAND, MessageHandlerType.COMMAND_INTERCEPTOR)
+    private val blacklistedTypes = listOf(MessageHandlerType.DEADLINE)
     override fun createLineMarker(
         element: PsiElement,
         handlerType: MessageHandlerType,

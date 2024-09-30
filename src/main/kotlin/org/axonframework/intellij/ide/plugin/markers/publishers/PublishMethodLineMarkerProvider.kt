@@ -18,8 +18,6 @@ package org.axonframework.intellij.ide.plugin.markers.publishers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
-import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
-import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.psi.PsiElement
@@ -29,7 +27,6 @@ import org.axonframework.intellij.ide.plugin.AxonIcons
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.markers.AxonNavigationTargetRenderer
 import org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
-import org.axonframework.intellij.ide.plugin.resolving.handlers.types.CommandHandlerInterceptor
 import org.axonframework.intellij.ide.plugin.resolving.handlers.types.DeadlineHandler
 import org.axonframework.intellij.ide.plugin.util.containingClassFqn
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
@@ -66,11 +63,9 @@ class PublishMethodLineMarkerProvider : LineMarkerProvider {
             else -> null
         } ?: return null
 
-        val allHandlers = element.handlerResolver().findHandlersForType(payload)
+        val handlers = element.handlerResolver().findHandlersForType(payload)
             // Hide DeadlineHandlers here. These are handled by a more specific LineMarkerProvider
             .filter { it !is DeadlineHandler }
-        val isCommand = allHandlers.all { it.handlerType == MessageHandlerType.COMMAND }
-        val handlers = allHandlers.filter { it !is CommandHandlerInterceptor || isCommand } // Only show interceptors when is a command
         if (handlers.isEmpty()) {
             return null
         }

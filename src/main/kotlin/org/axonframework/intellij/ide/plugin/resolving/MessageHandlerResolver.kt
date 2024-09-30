@@ -17,19 +17,22 @@
 package org.axonframework.intellij.ide.plugin.resolving
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.search.searches.ClassInheritorsSearch
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageType
 import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.AggregateConstructorSearcher
-import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.CommandHandlerInterceptorSearcher
 import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.CommandHandlerSearcher
 import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.DeadlineHandlerSearcher
 import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.EventHandlerSearcher
 import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.EventSourcingHandlerSearcher
 import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.QueryHandlerSearcher
 import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.SagaEventHandlerSearcher
-import org.axonframework.intellij.ide.plugin.util.areAssignable
+import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
+import org.axonframework.intellij.ide.plugin.util.findCompleteSupers
 
 /**
  * Searches the codebase for Message handlers based on the annotations defined in MessageHandlerType.
@@ -41,7 +44,6 @@ import org.axonframework.intellij.ide.plugin.util.createCachedValue
  */
 class MessageHandlerResolver(private val project: Project) {
     private val searchers = listOf(
-        CommandHandlerInterceptorSearcher(),
         CommandHandlerSearcher(),
         EventHandlerSearcher(),
         EventSourcingHandlerSearcher(),
@@ -61,18 +63,27 @@ class MessageHandlerResolver(private val project: Project) {
     fun findHandlersForType(
         qualifiedName: String,
         messageType: MessageType? = null,
-        reverseAssign: Boolean = false
     ): List<Handler> {
+        val baseClass = JavaPsiFacade.getInstance(project).findClasses(qualifiedName, project.axonScope()).firstOrNull()
+            ?: return emptyList()
+
+        val additionalSupersOrImplementors = searchRelatedClasses(baseClass)
+        val completeList = listOf(qualifiedName) + additionalSupersOrImplementors
         return handlerCache.value
             .filter { messageType == null || it.handlerType.messageType == messageType }
-            .filter {
-                if (reverseAssign) areAssignable(project, qualifiedName, it.payload) else areAssignable(
-                    project,
-                    it.payload,
-                    qualifiedName
-                )
-            }
+            .filter { completeList.contains(it.payload) }
             .filter { it.element.isValid }
+    }
+
+    private fun searchRelatedClasses(baseClass: PsiClass): List<String> {
+        val implementors = ClassInheritorsSearch.search(baseClass, project.axonScope(), true)
+            .mapNotNull { it.qualifiedName }
+            .distinct()
+
+        // The supers call only returns one level at a time. We need to do this recursively
+        return implementors + baseClass.findCompleteSupers()
+            .mapNotNull { it.qualifiedName }
+            .distinct()
     }
 
     fun findAllHandlers(): List<Handler> = handlerCache.value
