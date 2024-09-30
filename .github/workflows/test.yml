@@ -27,7 +27,7 @@ jobs:
             -   name: Verify plugin
                 uses: gradle/gradle-build-action@v2.9.0
                 with:
-                    arguments: runPluginVerifier
+                    arguments: verifyPlugin
 concurrency:
     group: ${{github.workflow}}-${{github.head_ref || github.run_id }}
     cancel-in-progress: true
