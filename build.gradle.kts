@@ -92,7 +92,8 @@ intellijPlatform {
         }
 
         freeArgs = listOf(
-            "-mute TemplateWordInPluginId"
+            // Mute some inspections that should be ignored (as we already uploaded and the id can't be changed)
+            "-mute", "TemplateWordInPluginId,ForbiddenPluginIdPrefix"
         )
 
 
