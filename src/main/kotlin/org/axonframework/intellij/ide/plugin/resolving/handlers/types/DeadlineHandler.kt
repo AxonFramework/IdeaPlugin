@@ -24,7 +24,7 @@ import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 /**
  * Represents a method being able to a deadline message. Invoked when a deadline expires.
  *
- * @See org.axonframework.intellij.ide.plugin.handlers.searchers.DeadlineHandlerSearcher
+ * @See org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.DeadlineHandlerSearcher
  */
 data class DeadlineHandler(
     override val element: PsiMethod,

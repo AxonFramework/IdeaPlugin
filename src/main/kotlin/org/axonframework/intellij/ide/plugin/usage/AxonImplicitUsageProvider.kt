@@ -76,7 +76,7 @@ class AxonImplicitUsageProvider : ImplicitUsageProvider {
     }
 
 
-    private fun UMethod.isAnnotatedWithAxon() = AxonAnnotation.values().any {
+    private fun UMethod.isAnnotatedWithAxon() = AxonAnnotation.entries.any {
         isAnnotated(it)
     }
 

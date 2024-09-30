@@ -29,7 +29,7 @@ import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 /**
  * Searches for any command interceptors. Currently, limited to Aggregates only.
  *
- * @see org.axonframework.intellij.ide.plugin.handlers.types.CommandHandlerInterceptor
+ * @see org.axonframework.intellij.ide.plugin.resolving.handlers.types.CommandHandlerInterceptor
  */
 class CommandHandlerInterceptorSearcher : AbstractHandlerSearcher(MessageHandlerType.COMMAND_INTERCEPTOR) {
     override fun createMessageHandler(method: PsiMethod, annotation: PsiClass?): Handler? {

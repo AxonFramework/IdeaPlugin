@@ -28,7 +28,7 @@ import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 /**
  * Searches for any saga event handlers.
  *
- * @see org.axonframework.intellij.ide.plugin.handlers.types.SagaEventHandler
+ * @see org.axonframework.intellij.ide.plugin.resolving.handlers.types.SagaEventHandler
  */
 class SagaEventHandlerSearcher : AbstractHandlerSearcher(MessageHandlerType.SAGA) {
     override fun createMessageHandler(method: PsiMethod, annotation: PsiClass?): Handler? {

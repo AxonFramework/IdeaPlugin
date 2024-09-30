@@ -4,6 +4,8 @@
 
 ## [0.8.8]
 - Plugin is now compatible with IDEA 2024.3 (IDEA 243.*) with minimum version of 2024.2
+- Fix various deprecation warnings
+- Fix various javadoc issues
 
 ## [0.8.7]
 - Plugin is now compatible with IDEA 2024.2 (IDEA 242.*)

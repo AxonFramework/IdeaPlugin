@@ -26,7 +26,7 @@ import org.axonframework.intellij.ide.plugin.util.toShortName
  * Represents a constructor invocation of an Aggregate.
  * This is often done during command handling, where aggregate A creates an instance of aggregate B.
  *
- * @see org.axonframework.intellij.ide.plugin.handlers.searchers.AggregateConstructorSearcher
+ * @see org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.AggregateConstructorSearcher
  */
 data class AggregateConstructor(
     override val element: PsiMethod,
