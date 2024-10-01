@@ -28,7 +28,7 @@ import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 /**
  * Searches for any event handlers that are not part of the aggregate model.
  *
- * @see org.axonframework.intellij.ide.plugin.handlers.types.EventHandler
+ * @see org.axonframework.intellij.ide.plugin.resolving.handlers.types.EventHandler
  */
 class EventHandlerSearcher : AbstractHandlerSearcher(MessageHandlerType.EVENT) {
     override fun createMessageHandler(method: PsiMethod, annotation: PsiClass?): Handler? {

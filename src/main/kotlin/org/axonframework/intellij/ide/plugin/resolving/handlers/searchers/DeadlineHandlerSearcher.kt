@@ -31,7 +31,7 @@ import org.axonframework.intellij.ide.plugin.util.toQualifiedName
  * If there is not payload specific, the payload is java.lang.Object as fallback.
  * In addition, deadline handlers have a name.
  *
- * @see org.axonframework.intellij.ide.plugin.handlers.types.DeadlineHandler
+ * @see org.axonframework.intellij.ide.plugin.resolving.handlers.types.DeadlineHandler
  */
 class DeadlineHandlerSearcher : AbstractHandlerSearcher(MessageHandlerType.DEADLINE) {
     override fun createMessageHandler(method: PsiMethod, annotation: PsiClass?): Handler {

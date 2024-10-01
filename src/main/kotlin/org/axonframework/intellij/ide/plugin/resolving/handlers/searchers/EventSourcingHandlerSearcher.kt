@@ -28,7 +28,7 @@ import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 /**
  * Searches for any event handlers in aggregates that source the state of the aggregates.
  *
- * @see org.axonframework.intellij.ide.plugin.handlers.types.EventSourcingHandler
+ * @see org.axonframework.intellij.ide.plugin.resolving.handlers.types.EventSourcingHandler
  */
 class EventSourcingHandlerSearcher : AbstractHandlerSearcher(MessageHandlerType.EVENT_SOURCING) {
     override fun createMessageHandler(method: PsiMethod, annotation: PsiClass?): Handler? {

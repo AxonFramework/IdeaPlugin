@@ -48,7 +48,6 @@ import org.jetbrains.uast.toUElementOfType
  *
  * @see DeadlineHandler
  * @see org.axonframework.intellij.ide.plugin.resolving.DeadlineManagerMethodResolver
- * @see org.axonframework.intellij.ide.plugin.creators.searchers.DeadlineMessageCreatorSearcher
  */
 class DeadlinePublisherLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {

@@ -25,6 +25,7 @@ enum class AxonAnnotation(val annotationName: String) {
     EVENT_SOURCING_HANDLER("org.axonframework.eventsourcing.EventSourcingHandler"),
     QUERY_HANDLER("org.axonframework.queryhandling.QueryHandler"),
     COMMAND_HANDLER_INTERCEPTOR("org.axonframework.modelling.command.CommandHandlerInterceptor"),
+    MESSAGE_HANDLER_INTERCEPTOR("org.axonframework.messaging.interceptors.MessageHandlerInterceptor"),
     SAGA_EVENT_HANDLER("org.axonframework.modelling.saga.SagaEventHandler"),
     DEADLINE_HANDLER("org.axonframework.deadline.annotation.DeadlineHandler"),
     RESET_HANDLER("org.axonframework.eventhandling.ResetHandler"),
