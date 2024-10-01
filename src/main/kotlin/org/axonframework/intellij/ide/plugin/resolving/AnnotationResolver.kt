@@ -78,7 +78,7 @@ class AnnotationResolver(val project: Project) {
             .firstOrNull { it.value.any { annClass -> annClass.psiClass.qualifiedName == qualifiedName } }
             ?.key
             ?: return null
-        return MessageHandlerType.values().firstOrNull { it.annotation == annotation }
+        return MessageHandlerType.entries.firstOrNull { it.annotation == annotation }
     }
 
     /**
@@ -108,7 +108,7 @@ class AnnotationResolver(val project: Project) {
      */
     private fun computeAnnotations(): Map<AxonAnnotation, List<ResolvedAnnotation>> {
         val libAnnotations = libraryAnnotationCache.getLibraryAnnotations()
-        return AxonAnnotation.values().associateWith { axonAnn ->
+        return AxonAnnotation.entries.associateWith { axonAnn ->
             val specificLibAnnotations = libAnnotations.filter { axonAnn == it.axonAnnotation }
             specificLibAnnotations.flatMap { descAnn ->
                 scanDescendants(axonAnn, descAnn, project.axonScope())
@@ -175,7 +175,7 @@ class AnnotationResolver(val project: Project) {
         }
 
         private fun updateLibraryAnnotations() {
-            libraryAnnotations = AxonAnnotation.values().flatMap { scanAnnotation(it, project.allScope()) }
+            libraryAnnotations = AxonAnnotation.entries.flatMap { scanAnnotation(it, project.allScope()) }
             libraryInitialized = true
         }
     }

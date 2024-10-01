@@ -28,7 +28,7 @@ import javax.swing.Icon
  * Represents a method that is able to intercept a command.
  *
  * @param componentName The fully qualified name of the class intercepting the command
- * @see org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerInterceptorSearcher
+ * @see org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.CommandHandlerInterceptorSearcher
  */
 data class CommandHandlerInterceptor(
     override val element: PsiMethod,

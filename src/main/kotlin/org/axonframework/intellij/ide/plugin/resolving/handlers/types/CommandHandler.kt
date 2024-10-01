@@ -26,7 +26,7 @@ import org.axonframework.intellij.ide.plugin.util.toShortName
  * Represents a method being able to handle a command.
  *
  * @param componentName The fully qualified name of the class handling the command.
- * @See org.axonframework.intellij.ide.plugin.handlers.searchers.CommandHandlerSearcher
+ * @See org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.CommandHandlerSearcher
  */
 data class CommandHandler(
     override val element: PsiMethod,

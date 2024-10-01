@@ -43,7 +43,7 @@ enum class MessageHandlerType(
             if (annotationName == null) {
                 return false
             }
-            return values().any { type -> type.annotationName == annotationName }
+            return entries.any { type -> type.annotationName == annotationName }
         }
     }
 }
