@@ -19,7 +19,7 @@ jobs:
             -   name: Verify plugin
                 uses: gradle/gradle-build-action@v2.9.0
                 with:
-                    arguments: runPluginVerifier
+                    arguments: verifyPlugin
 
             -   name: Publish plugin
                 uses: gradle/gradle-build-action@v2.9.0

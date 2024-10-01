@@ -28,7 +28,7 @@ import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 /**
  * Searches for any command handlers
  *
- * @see org.axonframework.intellij.ide.plugin.handlers.types.CommandHandler
+ * @see org.axonframework.intellij.ide.plugin.resolving.handlers.types.CommandHandler
  */
 class CommandHandlerSearcher : AbstractHandlerSearcher(MessageHandlerType.COMMAND) {
     override fun createMessageHandler(method: PsiMethod, annotation: PsiClass?): Handler? {

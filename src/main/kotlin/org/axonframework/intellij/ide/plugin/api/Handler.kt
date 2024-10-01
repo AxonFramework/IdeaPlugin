@@ -25,7 +25,7 @@ import javax.swing.Icon
  * Parent interface of any Handler, providing methods to describe the handler in interface elements.
  *
  * @see org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
- * @see org.axonframework.intellij.ide.plugin.handlers.searchers.AbstractHandlerSearcher
+ * @see org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.AbstractHandlerSearcher
  */
 interface Handler : PsiElementWrapper {
     /**

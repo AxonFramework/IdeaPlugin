@@ -110,7 +110,7 @@ class AxonVersionService(val project: Project) {
     private fun extractVersion(name: String): AxonDependencyVersion? {
         val match = regex.find(name)!!
         val (moduleName, majorVersion, minorVersion, patchVersion, remaining) = match.destructured
-        val dependency = AxonDependency.values().firstOrNull { it.moduleName == moduleName } ?: return null
+        val dependency = AxonDependency.entries.firstOrNull { it.moduleName == moduleName } ?: return null
         return AxonDependencyVersion(dependency,
             Integer.parseInt(majorVersion),
             Integer.parseInt(minorVersion),

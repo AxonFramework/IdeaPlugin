@@ -29,7 +29,7 @@ import org.axonframework.intellij.ide.plugin.util.containingClassname
  *
  * @param processingGroup The name of the component handling the event, based on package or ProcessingGroup annotation
  *
- * @See org.axonframework.intellij.ide.plugin.handlers.searchers.EventHandlerSearcher
+ * @See org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.EventHandlerSearcher
  * @see SagaEventHandler
  * @see EventSourcingHandler
  */
