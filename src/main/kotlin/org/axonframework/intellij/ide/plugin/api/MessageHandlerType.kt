@@ -32,7 +32,6 @@ enum class MessageHandlerType(
     EVENT_SOURCING(AxonAnnotation.EVENT_SOURCING_HANDLER, MessageType.EVENT),
     QUERY(AxonAnnotation.QUERY_HANDLER, MessageType.QUERY),
     DEADLINE(AxonAnnotation.DEADLINE_HANDLER, MessageType.DEADLINE),
-    COMMAND_INTERCEPTOR(AxonAnnotation.COMMAND_HANDLER_INTERCEPTOR, MessageType.COMMAND),
     SAGA(AxonAnnotation.SAGA_EVENT_HANDLER, MessageType.EVENT),
     ;
 

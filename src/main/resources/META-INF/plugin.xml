@@ -35,11 +35,7 @@
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.publishers.DeadlinePublisherLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.CommandHandlerMethodLineMarkerProvider"/>
-        <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.CommonHandlerMethodLineMarkerProvider"/>
-        <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.CommandInterceptorLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.DeadlineHandlerMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="JAVA"
@@ -47,11 +43,7 @@
         <codeInsight.lineMarkerProvider language="kotlin"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.publishers.PublishMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin"
-                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.CommandHandlerMethodLineMarkerProvider"/>
-        <codeInsight.lineMarkerProvider language="kotlin"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.CommonHandlerMethodLineMarkerProvider"/>
-        <codeInsight.lineMarkerProvider language="kotlin"
-                                        implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.CommandInterceptorLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin"
                                         implementationClass="org.axonframework.intellij.ide.plugin.markers.handlers.DeadlineHandlerMethodLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin"

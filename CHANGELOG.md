@@ -7,6 +7,8 @@
 - Plugin is now compatible with IDEA 2024.3 (IDEA 243.*) with minimum version of 2024.2
 - Fix various deprecation warnings
 - Fix various javadoc issues
+- Fix class hierarchy not being taken into account for handler and creator resolving.
+- Remove wrong implementation of interceptor support, to possibly be re-implemented in a future release in a better form.
 
 ## [0.8.7]
 - Plugin is now compatible with IDEA 2024.2 (IDEA 242.*)
