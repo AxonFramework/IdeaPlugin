@@ -59,7 +59,7 @@ class KotlinSagaAssociationPropertyInspection : AbstractKotlinInspection() {
                     return
                 val payload = method.resolvePayloadType() ?: return
                 val payloadClass = method.project.toClass(payload) ?: return
-                if (payloadClass.hasAccessor(attribute)) {
+                if (payloadClass.hasAccessor(attribute, true)) {
                     return
                 }
                 val annotation = method.resolveAnnotation(AxonAnnotation.SAGA_EVENT_HANDLER) ?: return

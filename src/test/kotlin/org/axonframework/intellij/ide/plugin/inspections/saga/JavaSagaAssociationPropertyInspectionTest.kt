@@ -73,7 +73,7 @@ class JavaSagaAssociationPropertyInspectionTest : AbstractAxonFixtureTestCase() 
         myFixture.openFileInEditor(file)
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).noneMatch {
-            it.text == "handle" && it.description.contains("The message does not declare a property")
+            it.description.contains("The message does not declare a property")
         }
     }
 
@@ -100,7 +100,40 @@ class JavaSagaAssociationPropertyInspectionTest : AbstractAxonFixtureTestCase() 
         myFixture.openFileInEditor(file)
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).noneMatch {
-            it.text == "handle" && it.description.contains("The message does not declare a property")
+            it.description.contains("The message does not declare a property")
+        }
+    }
+
+    fun `test should detect defined property in superclass`() {
+        addFile(
+            "MyBaseMessage.java", """
+            public abstract class MyBaseMessage {
+                String some;
+            }
+        """.trimIndent()
+        )
+        addFile(
+            "MyMessage.java", """
+            public class MyMessage extends test.MyBaseMessage {
+            }
+        """.trimIndent()
+        )
+        val file = addFile(
+            "MyHandler.java", """
+                import test.MyMessage;
+                
+            public class MyHandler {
+                @SagaEventHandler(associationProperty = "some")
+                public void handle(MyMessage message) {}
+            }
+        """.trimIndent()
+        )
+
+        myFixture.enableInspections(JavaSagaAssociationPropertyInspection())
+        myFixture.openFileInEditor(file)
+        val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
+        Assertions.assertThat(highlights).noneMatch {
+            it.description.contains("The message does not declare a property")
         }
     }
 
@@ -129,7 +162,42 @@ class JavaSagaAssociationPropertyInspectionTest : AbstractAxonFixtureTestCase() 
         myFixture.openFileInEditor(file)
         val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
         Assertions.assertThat(highlights).noneMatch {
-            it.text == "handle" && it.description.contains("The message does not declare a property")
+            it.description.contains("The message does not declare a property")
+        }
+    }
+
+    fun `test should detect defined getter in superclass`() {
+        addFile(
+            "MyBaseMessage.java", """
+            public abstract class MyBaseMessage {
+                String getSome() {
+                    return ""; 
+                }
+            }
+        """.trimIndent()
+        )
+        addFile(
+            "MyMessage.java", """
+            public class MyMessage extends test.MyBaseMessage {
+            }
+        """.trimIndent()
+        )
+        val file = addFile(
+            "MyHandler.java", """
+                import test.MyMessage;
+                
+            public class MyHandler {
+                @SagaEventHandler(associationProperty = "some")
+                public void handle(MyMessage message) {}
+            }
+        """.trimIndent()
+        )
+
+        myFixture.enableInspections(JavaSagaAssociationPropertyInspection())
+        myFixture.openFileInEditor(file)
+        val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
+        Assertions.assertThat(highlights).noneMatch {
+            it.description.contains("The message does not declare a property")
         }
     }
 }
