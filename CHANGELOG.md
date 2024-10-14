@@ -2,6 +2,9 @@
 
 # Axon Framework plugin Changelog
 
+## [0.8.9]
+- Fix false highlights about non existing properties when they are defined in a superclass #307 Thanks to @guymahieu
+
 ## [0.8.8]
 - Fix classes not rendering the correct value in popup of classes
 - Plugin is now compatible with IDEA 2024.3 (IDEA 243.*) with minimum version of 2024.2
