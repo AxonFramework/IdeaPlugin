@@ -96,13 +96,32 @@ fun Project.toClass(type: PsiType, scope: GlobalSearchScope = this.axonScope()):
 /**
  * Checks whether the PsiClass has an accessor with that name. That means either a field, or a function with getter-style naming
  */
-fun PsiClass.hasAccessor(name: String): Boolean = this.getAccessor(name) != null
+fun PsiClass.hasAccessor(name: String, scanHierarchy: Boolean = false): Boolean = this.getAccessor(name, scanHierarchy) != null
 
 /**
  * Gets the PsiElement representing an accessor with that name. That means either a field, or a function with getter-style naming
+ * Will traverse the class hierarchy if true is passed as value for the scanHierarchy parameter
  */
-fun PsiClass.getAccessor(name: String): PsiElement? {
-    return fields.firstOrNull { it.name == name } ?: methods.firstOrNull { it.name == name.toGetterRepresentation() }
+fun PsiClass.getAccessor(name: String, scanHierarchy: Boolean = false): PsiElement? {
+    return getAccessorImpl(name, scanHierarchy)
+}
+
+private fun PsiClass.getAccessorImpl(name: String, scanHierarchy: Boolean = false): PsiElement? {
+    val foundField = fields.firstOrNull { it.name == name }
+    if (foundField != null) {
+        return foundField
+    }
+    val foundMethod = methods.firstOrNull { it.name == name.toGetterRepresentation() }
+    if (foundMethod != null) {
+        return foundMethod
+    }
+    if (scanHierarchy && superClass != null) {
+        val fromSuperclass = superClass?.getAccessorImpl(name, true)
+        if (fromSuperclass != null) {
+            return fromSuperclass
+        }
+    }
+    return null
 }
 
 /**

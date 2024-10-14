@@ -49,7 +49,7 @@ class JavaSagaAssociationPropertyInspection : AbstractBaseJavaLocalInspectionToo
             return null
         val payload = method.resolvePayloadType() ?: return null
         val payloadClass = method.project.toClass(payload) ?: return null
-        if (payloadClass.hasAccessor(attribute)) {
+        if (payloadClass.hasAccessor(attribute, true)) {
             return null
         }
         val annotation = method.resolveAnnotation(AxonAnnotation.SAGA_EVENT_HANDLER) ?: return null
