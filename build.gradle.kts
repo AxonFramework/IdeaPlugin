@@ -148,7 +148,7 @@ dependencies {
         testFramework(TestFrameworkType.Plugin.Java)
     }
 
-    implementation("io.sentry:sentry:6.32.0")
+    implementation("io.sentry:sentry:7.18.1")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.axonframework:axon-modelling:${properties("axonVersion")}")
