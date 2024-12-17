@@ -123,6 +123,10 @@
         <errorHandler implementation="org.axonframework.intellij.ide.plugin.support.AxonErrorReportSubmitter"/>
     </extensions>
 
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <supportsKotlinPluginMode supportsK2="true" />
+    </extensions>
+
     <actions>
         <action id="AxonReferenceGuideAction" text="Axon Reference Guide"
                 class="org.axonframework.intellij.ide.plugin.actions.AxonReferenceGuideAction">
