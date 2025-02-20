@@ -2,6 +2,9 @@
 
 # Axon Framework plugin Changelog
 
+## [0.9.1]
+- Disable plugin when Axon Framework 5 or greater is detected. The plugin is not compatible with Axon Framework 5 and greater at this time, as it is an experimental branch. Future versions of the plugin will be compatible with Axon Framework 5 and greater, once it approaches release readiness.
+
 ## [0.9.0]
 - Plugin is now compatible with IDEA 2024.3 (IDEA 243.*) with minimum version of 2024.3
 - Make plugin compatible with the K2 mode of IntelliJ IDEA
