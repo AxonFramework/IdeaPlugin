@@ -26,7 +26,8 @@ import com.intellij.openapi.roots.OrderEnumerator
 
 class AxonVersionService(val project: Project) {
     private var enabled = false
-    private var messageShown = false
+    private var messageShownOutdated = false
+    private var messageShownExperimental = false
 
     private val regex = Regex(".*(axon-.*)-(\\d+)\\.(\\d+)\\.(\\d+)(.*)\\.jar")
 
@@ -48,21 +49,27 @@ class AxonVersionService(val project: Project) {
         }
 
         val outdatedDeps = versions.outdated()
-        if (outdatedDeps.isEmpty()) {
+        val experimentalDeps = versions.experimental()
+        if (outdatedDeps.isEmpty() && experimentalDeps.isEmpty()) {
             enabled = true
-            if(messageShown) {
-                showReEnabledMessage()
+            if (messageShownOutdated) {
+                showReEnabledMessageForOutdatedDeps()
+            }
+            if (messageShownExperimental) {
+                showReEnabledMessageForExperimentalDeps()
             }
             return
         }
-        enabled = false
-        if (messageShown) {
-            // Was already shown before
-            return
-        }
 
-        showDisabledMessage(outdatedDeps)
-        messageShown = true
+        enabled = false
+        if (!messageShownOutdated && outdatedDeps.isNotEmpty()) {
+            showDisabledMessage(outdatedDeps)
+            messageShownOutdated = true
+        }
+        if (!messageShownExperimental && experimentalDeps.isNotEmpty()) {
+            showExperimentalMessage(experimentalDeps)
+            messageShownExperimental = true
+        }
     }
 
     private fun showDisabledMessage(outdatedDeps: List<AxonDependencyVersion>) {
@@ -76,7 +83,30 @@ class AxonVersionService(val project: Project) {
             .notify(project)
     }
 
-    private fun showReEnabledMessage() {
+    private fun showExperimentalMessage(outdatedDeps: List<AxonDependencyVersion>) {
+        NotificationGroupManager.getInstance()
+            .getNotificationGroup("AxonNotificationGroup")
+            .createNotification(
+                "Your project has an Axon Framework version greater than 4, which is experimental. The specific dependencies are: " + outdatedDeps.joinToString(
+                    separator = ","
+                ) { it.dependency.moduleName + "(${it.toVersionString()})" }, NotificationType.ERROR
+            )
+            .notify(project)
+    }
+
+    private fun showReEnabledMessageForOutdatedDeps() {
+        NotificationGroupManager.getInstance()
+            .getNotificationGroup("AxonNotificationGroup")
+            .createNotification(
+                "Your project no longer has any experimental Axon Framework dependencies. Plugin functionality has been re-enabled.",
+                NotificationType.INFORMATION
+            )
+            .notify(project)
+        messageShownOutdated = false
+    }
+
+
+    private fun showReEnabledMessageForExperimentalDeps() {
         NotificationGroupManager.getInstance()
             .getNotificationGroup("AxonNotificationGroup")
             .createNotification(
@@ -84,17 +114,18 @@ class AxonVersionService(val project: Project) {
                 NotificationType.INFORMATION
             )
             .notify(project)
-        messageShown = false
+        messageShownExperimental = false
     }
 
     fun isAxonEnabled(useCache: Boolean = false): Boolean {
-        if(useCache) {
+        if (useCache) {
             return enabled
         }
         return getAxonVersions().outdated().isEmpty()
     }
 
     private fun List<AxonDependencyVersion>.outdated() = filter { it.dependency.checkVersion && it.major < 4 }
+    private fun List<AxonDependencyVersion>.experimental() = filter { it.dependency.checkVersion && it.major > 4 }
 
     fun getAxonVersions() = OrderEnumerator.orderEntries(project)
         .librariesOnly()
@@ -111,13 +142,21 @@ class AxonVersionService(val project: Project) {
         val match = regex.find(name)!!
         val (moduleName, majorVersion, minorVersion, patchVersion, remaining) = match.destructured
         val dependency = AxonDependency.entries.firstOrNull { it.moduleName == moduleName } ?: return null
-        return AxonDependencyVersion(dependency,
+        return AxonDependencyVersion(
+            dependency,
             Integer.parseInt(majorVersion),
             Integer.parseInt(minorVersion),
-            Integer.parseInt(patchVersion), remaining)
+            Integer.parseInt(patchVersion), remaining
+        )
     }
 
-    data class AxonDependencyVersion(val dependency: AxonDependency, val major: Int, val minor: Int, val patch: Int, val remaining: String) {
+    data class AxonDependencyVersion(
+        val dependency: AxonDependency,
+        val major: Int,
+        val minor: Int,
+        val patch: Int,
+        val remaining: String
+    ) {
         fun toVersionString() = "$major.$minor.$patch$remaining"
     }
 }
