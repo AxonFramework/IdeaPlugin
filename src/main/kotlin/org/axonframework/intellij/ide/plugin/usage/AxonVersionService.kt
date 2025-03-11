@@ -23,13 +23,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.roots.OrderEnumerator
+import com.intellij.openapi.vfs.VfsUtilCore
+import java.util.Properties
+import java.util.jar.JarFile
 
 class AxonVersionService(val project: Project) {
     private var enabled = false
     private var messageShownOutdated = false
     private var messageShownExperimental = false
 
-    private val regex = Regex(".*(axon-.*)-(\\d+)\\.(\\d+)\\.(\\d+)(.*)\\.jar")
+    private val versionRegex = Regex("(\\d+)\\.(\\d+)\\.(\\d+)(.*)")
 
 
     init {
@@ -127,26 +130,49 @@ class AxonVersionService(val project: Project) {
     private fun List<AxonDependencyVersion>.outdated() = filter { it.dependency.checkVersion && it.major < 4 }
     private fun List<AxonDependencyVersion>.experimental() = filter { it.dependency.checkVersion && it.major > 4 }
 
-    fun getAxonVersions() = OrderEnumerator.orderEntries(project)
+    fun getAxonVersions(): List<AxonDependencyVersion> = OrderEnumerator.orderEntries(project)
         .librariesOnly()
         .productionOnly()
         .classes()
         .roots
-        .filter { !it.presentableName.contains("inspector") }
-        .filter { it.presentableName.matches(regex) }
-        .mapNotNull {
-            extractVersion(it.name)
+        .filter { it.presentableName.contains("axon") }
+        .flatMap { root ->
+            val jarFile = VfsUtilCore.virtualToIoFile(root)
+            if (jarFile.extension == "jar") {
+                val jar = JarFile(jarFile)
+                jar.entries()
+                    .toList()
+                    .filter { it.name.startsWith("META-INF/maven/") && it.name.endsWith("pom.properties") }
+                    .mapNotNull { entry ->
+                        jar.getInputStream(entry).use { input ->
+                            // Process the input stream as needed
+                            val properties = Properties().apply { load(input) }
+                            extractVersion(properties)
+                        }
+                    }
+            } else {
+                emptyList()
+            }
         }
 
-    private fun extractVersion(name: String): AxonDependencyVersion? {
-        val match = regex.find(name)!!
-        val (moduleName, majorVersion, minorVersion, patchVersion, remaining) = match.destructured
-        val dependency = AxonDependency.entries.firstOrNull { it.moduleName == moduleName } ?: return null
+    private fun extractVersion(properties: Properties): AxonDependencyVersion? {
+        val groupId = properties.getProperty("groupId")
+        val artifactId = properties.getProperty("artifactId")
+        val version = properties.getProperty("version")
+        if(groupId.isNullOrEmpty() || artifactId.isNullOrEmpty() || version.isNullOrEmpty()) {
+            return null
+        }
+        val dependency = AxonDependency.entries.firstOrNull { it.groupId == groupId && it.artifactId == artifactId }
+        if(dependency == null) {
+            return null
+        }
+        val (majorVersion, minorVersion, patchVersion, remaining) = versionRegex.find(version)!!.destructured
         return AxonDependencyVersion(
             dependency,
             Integer.parseInt(majorVersion),
             Integer.parseInt(minorVersion),
-            Integer.parseInt(patchVersion), remaining
+            Integer.parseInt(patchVersion),
+            remaining
         )
     }
 
