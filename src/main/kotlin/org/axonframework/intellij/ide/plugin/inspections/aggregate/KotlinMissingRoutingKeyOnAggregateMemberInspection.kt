@@ -57,9 +57,11 @@ class KotlinMissingRoutingKeyOnAggregateMemberInspection : AbstractKotlinInspect
                 val routingKey = entityMember.routingKey
                     ?: entity.routingKey
                     ?: return
-                if (method.hasAnnotation(AxonAnnotation.EVENT_SOURCING_HANDLER) &&
-                    entityMember.eventForwardingMode != "org.axonframework.modelling.command.ForwardMatchingInstances"
-                ) {
+                val isEventSourcingHandler = method.hasAnnotation(AxonAnnotation.EVENT_SOURCING_HANDLER)
+                if(!isEventSourcingHandler && !method.hasAnnotation(AxonAnnotation.COMMAND_HANDLER)) {
+                    return
+                }
+                if (isEventSourcingHandler && entityMember.eventForwardingMode != "org.axonframework.modelling.command.ForwardMatchingInstances") {
                     return
                 }
                 val payload = method.resolvePayloadType() ?: return

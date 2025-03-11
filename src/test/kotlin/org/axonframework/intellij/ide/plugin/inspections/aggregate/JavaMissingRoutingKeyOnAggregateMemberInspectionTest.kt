@@ -61,6 +61,45 @@ class JavaMissingRoutingKeyOnAggregateMemberInspectionTest : AbstractAxonFixture
         }
     }
 
+    fun `test will not show problem if has no handler annotation`() {
+        addFile(
+            "MyCommand.java", """
+            class MyCommand {}
+        """.trimIndent()
+        )
+
+        addFile(
+            "MyEntity.java", """
+            import test.MyCommand;
+            
+            class MyEntity {
+              @EntityId
+              private String myEntityId;
+              
+              public void handle(MyCommand command) {}
+            }
+        """.trimIndent(), open = true
+        )
+
+        addFile(
+            "MyAggregate.java", """
+            import test.MyEntity;
+            import java.util.List;
+            
+            @AggregateRoot
+            class MyAggregate {
+              @AggregateMember
+              List<MyEntity> entities;
+        """.trimIndent()
+        )
+
+        myFixture.enableInspections(JavaMissingRoutingKeyOnAggregateMemberInspection())
+        val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
+        Assertions.assertThat(highlights).noneMatch {
+            it.text == "handle" && it.description.contains("The payload requires a myEntityId property or getter")
+        }
+    }
+
     fun `test will not show problem when key is present`() {
         addFile(
             "MyCommand.java", """

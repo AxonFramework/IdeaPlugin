@@ -61,6 +61,45 @@ class KotlinMissingRoutingKeyOnAggregateMemberInspectionTest : AbstractAxonFixtu
         }
     }
 
+    fun `test will not show problem if has no handler annotation`() {
+        addFile(
+            "MyCommand.kt", """
+            class MyCommand {}
+        """.trimIndent()
+        )
+
+        addFile(
+            "MyEntity.kt", """
+            import test.MyCommand
+            
+            class MyEntity {
+              @EntityId
+              private lateinit var myEntityId: String
+              
+              fun handle(command: MyCommand) {}
+            }
+        """.trimIndent(), open = true
+        )
+
+        addFile(
+            "MyAggregate.kt", """
+            import test.MyEntity
+            import java.util.List
+            
+            @AggregateRoot
+            class MyAggregate {
+              @AggregateMember
+              private lateinit var entities: List<MyEntity>
+        """.trimIndent()
+        )
+
+        myFixture.enableInspections(KotlinMissingRoutingKeyOnAggregateMemberInspection())
+        val highlights = myFixture.doHighlighting(HighlightSeverity.WARNING)
+        Assertions.assertThat(highlights).noneMatch {
+            it.text == "handle" && it.description.contains("The payload requires a myEntityId property or getter")
+        }
+    }
+
     fun `test will not show problem when key is present`() {
         addFile(
             "MyCommand.kt", """
