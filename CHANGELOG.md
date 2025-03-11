@@ -3,6 +3,7 @@
 # Axon Framework plugin Changelog
 
 ## [0.9.2]
+- No longer show the routing key inspection warning when the method is not annotated with a relevant handler annotation.
 - Fix false positive on versions not equal to 4
 
 ## [0.9.1]

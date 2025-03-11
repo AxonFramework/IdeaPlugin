@@ -48,9 +48,12 @@ class JavaMissingRoutingKeyOnAggregateMemberInspection : AbstractBaseJavaLocalIn
             ?: entity.routingKey
             ?: return null
 
-        if (method.hasAnnotation(AxonAnnotation.EVENT_SOURCING_HANDLER) &&
-            entityMember.eventForwardingMode != "org.axonframework.modelling.command.ForwardMatchingInstances"
-        ) {
+        val isEventSourcingHandler = method.hasAnnotation(AxonAnnotation.EVENT_SOURCING_HANDLER)
+        if(!isEventSourcingHandler && !method.hasAnnotation(AxonAnnotation.COMMAND_HANDLER)) {
+            return null
+        }
+
+        if (isEventSourcingHandler && entityMember.eventForwardingMode != "org.axonframework.modelling.command.ForwardMatchingInstances") {
             return null
         }
         val payload = method.resolvePayloadType() ?: return null
