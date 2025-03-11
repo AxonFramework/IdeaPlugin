@@ -16,35 +16,42 @@
 
 package org.axonframework.intellij.ide.plugin.usage
 
-enum class AxonDependency(val moduleName: String, val checkVersion: Boolean = true) {
-    Core("axon-core"), // Axon 2 only
-    Integration("axon-integration"), // Axon 2 only
-    SpringMessaging("axon-springmessaging"), // Axon 2 only
-    DistributedCommandBus("axon-distributed-commandbus"), // Axon 2 only
-    Spring("axon-spring"), // Axon 3 and 4
-    SpringAutoconfigure("axon-spring-boot-autoconfigure"), // Axon 3 and 4
-    SpringStarter("axon-spring-boot-starter"), // Axon 3 and 4
-    Messaging("axon-messaging"), // Axon 4 only
-    EventSourcing("axon-eventsourcing"), // Axon 4 only
-    Modelling("axon-modelling"), // Axon 4 only
-    Configuration("axon-configuration"), // Axon 4 only
-    Test("axon-test"), // Axon 2, 3 and 4
-    Metrics("axon-metrics"), // Axon 3 and 4
-    Legacy("axon-legacy"), // Axon 3 and 4
-    Micrometer("axon-micrometer"), // Axon 4 only
-    Disruptor("axon-disruptor"), // Axon 4 only
-    ServerConnector("axon-server-connector"), // Axon 4 only
+enum class AxonDependency(
+    val groupId: String,
+    val artifactId: String,
+    val checkVersion: Boolean = true
+) {
+    Core("org.axonframework", "axon-core"), // Axon 2 only
+    Integration("org.axonframework", "axon-integration"), // Axon 2 only
+    SpringMessaging("org.axonframework", "axon-springmessaging"), // Axon 2 only
+    DistributedCommandBus("org.axonframework", "axon-distributed-commandbus"), // Axon 2 only
+    Spring("org.axonframework", "axon-spring"), // Axon 3 and 4
+    SpringAutoconfigure("org.axonframework", "axon-spring-boot-autoconfigure"), // Axon 3 and 4
+    SpringStarter("org.axonframework", "axon-spring-boot-starter"), // Axon 3 and 4
+    Messaging("org.axonframework", "axon-messaging"), // Axon 4 only
+    EventSourcing("org.axonframework", "axon-eventsourcing"), // Axon 4 only
+    Modelling("org.axonframework", "axon-modelling"), // Axon 4 only
+    Configuration("org.axonframework", "axon-configuration"), // Axon 4 only
+    Test("org.axonframework", "axon-test"), // Axon 2, 3 and 4
+    Metrics("org.axonframework", "axon-metrics"), // Axon 3 and 4
+    Legacy("org.axonframework", "axon-legacy"), // Axon 3 and 4
+    Micrometer("org.axonframework", "axon-micrometer"), // Axon 4 only
+    Disruptor("org.axonframework", "axon-disruptor"), // Axon 4 only
+    ServerConnector("org.axonframework", "axon-server-connector"), // Axon 4 only
 
     // Extensions, used for reporting during bugs, not for version check
-    Mongo("axon-mongo", false),
-    Mongo3("axon-mongo3", false),
-    Amqp("axon-amqp", false),
-    Jgroups("axon-jgroups", false),
-    Reactor("axon-reactor", false),
-    Kotlin("axon-kotlin", false),
-    Kafka("axon-kafka", false),
-    Multitenancy("axon-multitenancy", false),
-    SpringCloud("axon-springcloud", false),
-    Tracing("axon-tracing", false),
-    Cdi("axon-cdi", false),
+    Mongo("org.axonframework.extensions.mongo", "axon-mongo", false),
+    Amqp("org.axonframework", "axon-amqp", false),
+    Jgroups("org.axonframework.extensions.jgroups", "axon-jgroups", false),
+    Reactor("org.axonframework.extensions.reactor", "axon-reactor", false),
+    Kotlin("org.axonframework.extensions.kotlin", "axon-kotlin", false),
+    Kafka("org.axonframework.extensions.kafka", "axon-kafka", false),
+    Multitenancy("org.axonframework.extensions.multitenancy", "axon-multitenancy", false),
+    SpringCloud("org.axonframework.extensions.springcloud", "axon-springcloud", false),
+    Tracing("org.axonframework.extensions.tracing", "axon-tracing", false),
+    Cdi("org.axonframework.extensions.cdi", "axon-cdi", false),
+    ;
+
+    val moduleName: String
+        get() = "$groupId:$artifactId"
 }

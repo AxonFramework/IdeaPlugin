@@ -4,6 +4,7 @@
 
 ## [0.9.2]
 - No longer show the routing key inspection warning when the method is not annotated with a relevant handler annotation.
+- Fix false positive on versions not equal to 4
 
 ## [0.9.1]
 - Disable plugin when Axon Framework 5 or greater is detected. The plugin is not compatible with Axon Framework 5 and greater at this time, as it is an experimental branch. Future versions of the plugin will be compatible with Axon Framework 5 and greater, once it approaches release readiness.
