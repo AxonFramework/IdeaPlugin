@@ -19,7 +19,7 @@ jobs:
                     distribution: 'zulu'
 
             -   name: Validate Gradle wrapper
-                uses: gradle/wrapper-validation-action@v1
+                uses: gradle/wrapper-validation-action@v3
             -   name: Test plugin
                 uses: gradle/gradle-build-action@v2.12.0
                 with:
