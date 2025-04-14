@@ -46,7 +46,7 @@ intellijPlatform {
         version = properties("pluginVersion")
         ideaVersion {
             sinceBuild = properties("pluginSinceBuild")
-            untilBuild = properties("pluginUntilBuild")
+            untilBuild = provider { null }
         }
 
 
@@ -87,7 +87,7 @@ intellijPlatform {
                 types = listOf(IntelliJPlatformType.IntellijIdeaCommunity)
                 channels = listOf(ProductRelease.Channel.RELEASE, ProductRelease.Channel.EAP)
                 sinceBuild = properties("pluginSinceBuild")
-                untilBuild = properties("pluginUntilBuild")
+                untilBuild = provider { null }
             }
         }
 
