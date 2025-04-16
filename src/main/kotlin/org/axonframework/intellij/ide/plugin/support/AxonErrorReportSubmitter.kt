@@ -16,7 +16,6 @@
 
 package org.axonframework.intellij.ide.plugin.support
 
-import com.intellij.diagnostic.AbstractMessage
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
@@ -54,7 +53,7 @@ class AxonErrorReportSubmitter : ErrorReportSubmitter() {
         object : Task.Backgroundable(project, "Sending error report") {
             override fun run(indicator: ProgressIndicator) {
                 try {
-                    val original: Throwable = (events[0].data as AbstractMessage?)?.throwable ?: return
+                    val original: Throwable = events[0].throwable ?: return
                     service.reportException(project, original, additionalInfo)
                     consumer.consume(SubmittedReportInfo(SubmittedReportInfo.SubmissionStatus.NEW_ISSUE))
                     showThankYou()
