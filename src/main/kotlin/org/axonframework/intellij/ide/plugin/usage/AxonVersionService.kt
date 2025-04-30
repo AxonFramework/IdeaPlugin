@@ -156,24 +156,29 @@ class AxonVersionService(val project: Project) {
         }
 
     private fun extractVersion(properties: Properties): AxonDependencyVersion? {
-        val groupId = properties.getProperty("groupId")
-        val artifactId = properties.getProperty("artifactId")
-        val version = properties.getProperty("version")
-        if(groupId.isNullOrEmpty() || artifactId.isNullOrEmpty() || version.isNullOrEmpty()) {
+        try {
+            val groupId = properties.getProperty("groupId")
+            val artifactId = properties.getProperty("artifactId")
+            val version = properties.getProperty("version")
+            if (groupId.isNullOrEmpty() || artifactId.isNullOrEmpty() || version.isNullOrEmpty()) {
+                return null
+            }
+            val dependency = AxonDependency.entries.firstOrNull { it.groupId == groupId && it.artifactId == artifactId }
+            if (dependency == null) {
+                return null
+            }
+            val (majorVersion, minorVersion, patchVersion, remaining) = versionRegex.find(version)?.destructured ?: return null
+            return AxonDependencyVersion(
+                dependency,
+                Integer.parseInt(majorVersion),
+                Integer.parseInt(minorVersion),
+                Integer.parseInt(patchVersion),
+                remaining
+            )
+        } catch (e: Exception) {
+            // Ignore
             return null
         }
-        val dependency = AxonDependency.entries.firstOrNull { it.groupId == groupId && it.artifactId == artifactId }
-        if(dependency == null) {
-            return null
-        }
-        val (majorVersion, minorVersion, patchVersion, remaining) = versionRegex.find(version)!!.destructured
-        return AxonDependencyVersion(
-            dependency,
-            Integer.parseInt(majorVersion),
-            Integer.parseInt(minorVersion),
-            Integer.parseInt(patchVersion),
-            remaining
-        )
     }
 
     data class AxonDependencyVersion(
