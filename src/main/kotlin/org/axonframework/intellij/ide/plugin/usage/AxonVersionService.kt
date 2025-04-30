@@ -135,6 +135,7 @@ class AxonVersionService(val project: Project) {
         .productionOnly()
         .classes()
         .roots
+        .filter { it.presentableName.contains("axon") }
         .flatMap { root ->
             val jarFile = VfsUtilCore.virtualToIoFile(root)
             if (jarFile.extension == "jar") {
