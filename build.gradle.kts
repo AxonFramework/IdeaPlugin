@@ -141,7 +141,7 @@ dependencies {
         intellijIdeaCommunity(properties("platformVersion"))
         bundledPlugin("com.intellij.java")
         bundledPlugin("org.jetbrains.kotlin")
-        pluginVerifier()
+        pluginVerifier(version="1.383")
         zipSigner()
         instrumentationTools()
 
