@@ -2,6 +2,9 @@
 
 # Axon Framework plugin Changelog
 
+## [0.9.4]
+- Fix NPE in version check when using a malformed version string for an Axon dependency
+
 ## [0.9.3]
 - Remove build-until from plugin.xml, as we generally stay compatible with IDEA
 

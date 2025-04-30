@@ -16,6 +16,7 @@
 
 package org.axonframework.intellij.ide.plugin.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
@@ -46,5 +47,9 @@ class ReportFeedbackAction : AnAction(AxonIcons.Axon) {
             }
             service.reportFeedback(e.project, feedback)
         }
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
     }
 }
