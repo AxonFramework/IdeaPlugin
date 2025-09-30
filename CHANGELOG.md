@@ -2,6 +2,9 @@
 
 # Axon Framework plugin Changelog
 
+## [0.9.5]
+- Prevent crash when opening project with Axon Framework 5
+
 ## [0.9.4]
 - Fix NPE in version check when using a malformed version string for an Axon dependency
 
