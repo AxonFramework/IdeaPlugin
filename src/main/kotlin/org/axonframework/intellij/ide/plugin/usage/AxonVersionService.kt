@@ -34,7 +34,6 @@ class AxonVersionService(val project: Project) {
 
     private val versionRegex = Regex("(\\d+)\\.(\\d+)\\.(\\d+)(.*)")
 
-
     init {
         // Listen to root changes (meaning library changes) and recheck
         project.messageBus.connect().subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
@@ -124,7 +123,8 @@ class AxonVersionService(val project: Project) {
         if (useCache) {
             return enabled
         }
-        return getAxonVersions().outdated().isEmpty()
+        val versions = getAxonVersions()
+        return versions.outdated().isEmpty() && versions.experimental().isEmpty()
     }
 
     private fun List<AxonDependencyVersion>.outdated() = filter { it.dependency.checkVersion && it.major < 4 }
