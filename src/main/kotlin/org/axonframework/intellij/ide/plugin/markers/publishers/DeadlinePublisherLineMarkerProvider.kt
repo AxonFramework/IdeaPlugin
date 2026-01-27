@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) (2010-2022). Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,6 +31,7 @@ import org.axonframework.intellij.ide.plugin.markers.AxonNavigationTargetRendere
 import org.axonframework.intellij.ide.plugin.resolving.handlers.types.DeadlineHandler
 import org.axonframework.intellij.ide.plugin.util.deadlineMethodResolver
 import org.axonframework.intellij.ide.plugin.util.handlerResolver
+import org.axonframework.intellij.ide.plugin.util.isAxon4Project
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
@@ -51,6 +52,10 @@ import org.jetbrains.uast.toUElementOfType
  */
 class DeadlinePublisherLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
+        // Only run this line marker on Axon 4 projects (Deadlines removed in Axon 5)
+        if (!element.project.isAxon4Project()) {
+            return null
+        }
         val deadlineName = when (element.containingFile.fileType) {
             is JavaFileType -> getDeadlineNameForJava(element)
             is KotlinFileType -> getDeadlineNameForKotlin(element)

@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.util.hasAccessor
 import org.axonframework.intellij.ide.plugin.util.hasAnnotation
+import org.axonframework.intellij.ide.plugin.util.isAxon4Project
 import org.axonframework.intellij.ide.plugin.util.resolveAnnotation
 import org.axonframework.intellij.ide.plugin.util.resolveAnnotationStringValue
 import org.axonframework.intellij.ide.plugin.util.resolveAnnotationValue
@@ -35,6 +36,10 @@ import org.axonframework.intellij.ide.plugin.util.toClass
  */
 class JavaSagaAssociationPropertyInspection : AbstractBaseJavaLocalInspectionTool() {
     override fun checkMethod(method: PsiMethod, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
+        // Only run this inspection on Axon 4 projects (Sagas removed in Axon 5)
+        if (!method.project.isAxon4Project()) {
+            return null
+        }
         if (!method.hasAnnotation(AxonAnnotation.SAGA_EVENT_HANDLER)) {
             return null
         }

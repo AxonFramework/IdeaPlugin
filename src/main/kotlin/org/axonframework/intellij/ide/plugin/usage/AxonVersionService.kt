@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) (2010-2023). Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,8 @@ import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.roots.OrderEnumerator
 import com.intellij.openapi.vfs.VfsUtilCore
+import org.axonframework.intellij.ide.plugin.api.AxonVersion
+import org.axonframework.intellij.ide.plugin.api.VersionedComponentFactory
 import java.util.Properties
 import java.util.jar.JarFile
 
@@ -31,6 +33,8 @@ class AxonVersionService(val project: Project) {
     private var enabled = false
     private var messageShownOutdated = false
     private var messageShownExperimental = false
+    private var detectedVersion: AxonVersion = AxonVersion.UNKNOWN
+    private var cachedFactory: VersionedComponentFactory? = null
 
     private val versionRegex = Regex("(\\d+)\\.(\\d+)\\.(\\d+)(.*)")
 
@@ -48,12 +52,27 @@ class AxonVersionService(val project: Project) {
         val versions = getAxonVersions()
         if (versions.isEmpty()) {
             enabled = false
+            detectedVersion = AxonVersion.UNKNOWN
+            cachedFactory = null
+            return
         }
 
         val outdatedDeps = versions.outdated()
-        val experimentalDeps = versions.experimental()
-        if (outdatedDeps.isEmpty() && experimentalDeps.isEmpty()) {
+        val unsupportedDeps = versions.unsupported()
+        if (outdatedDeps.isEmpty() && unsupportedDeps.isEmpty()) {
             enabled = true
+
+            // Detect version (v4 or v5)
+            val maxMajorVersion = versions.maxOfOrNull { it.major } ?: 4
+            detectedVersion = when (maxMajorVersion) {
+                4 -> AxonVersion.V4
+                5 -> AxonVersion.V5
+                else -> AxonVersion.UNKNOWN
+            }
+
+            // Create factory for detected version
+            cachedFactory = createFactory(detectedVersion)
+
             if (messageShownOutdated) {
                 showReEnabledMessageForOutdatedDeps()
             }
@@ -64,17 +83,20 @@ class AxonVersionService(val project: Project) {
         }
 
         enabled = false
+        detectedVersion = AxonVersion.UNKNOWN
+        cachedFactory = null
+
         if (!messageShownOutdated && outdatedDeps.isNotEmpty()) {
-            showDisabledMessage(outdatedDeps)
+            showOutdatedMessage(outdatedDeps)
             messageShownOutdated = true
         }
-        if (!messageShownExperimental && experimentalDeps.isNotEmpty()) {
-            showExperimentalMessage(experimentalDeps)
+        if (!messageShownExperimental && unsupportedDeps.isNotEmpty()) {
+            showNotYetSupported(unsupportedDeps)
             messageShownExperimental = true
         }
     }
 
-    private fun showDisabledMessage(outdatedDeps: List<AxonDependencyVersion>) {
+    private fun showOutdatedMessage(outdatedDeps: List<AxonDependencyVersion>) {
         NotificationGroupManager.getInstance()
             .getNotificationGroup("AxonNotificationGroup")
             .createNotification(
@@ -85,11 +107,11 @@ class AxonVersionService(val project: Project) {
             .notify(project)
     }
 
-    private fun showExperimentalMessage(outdatedDeps: List<AxonDependencyVersion>) {
+    private fun showNotYetSupported(outdatedDeps: List<AxonDependencyVersion>) {
         NotificationGroupManager.getInstance()
             .getNotificationGroup("AxonNotificationGroup")
             .createNotification(
-                "Your project has an Axon Framework version greater than 4, which is experimental. The specific dependencies are: " + outdatedDeps.joinToString(
+                "Your project has an Axon Framework version greater than 5, which is not yet supported. The specific dependencies are: " + outdatedDeps.joinToString(
                     separator = ","
                 ) { it.dependency.moduleName + "(${it.toVersionString()})" }, NotificationType.ERROR
             )
@@ -124,11 +146,36 @@ class AxonVersionService(val project: Project) {
             return enabled
         }
         val versions = getAxonVersions()
-        return versions.outdated().isEmpty() && versions.experimental().isEmpty()
+        return versions.outdated().isEmpty() && versions.unsupported().isEmpty()
+    }
+
+    /**
+     * Returns the detected Axon Framework version in the project.
+     * @return The detected Axon version (V4, V5, or UNKNOWN)
+     */
+    fun getVersion(): AxonVersion {
+        return detectedVersion
+    }
+
+    /**
+     * Returns the component factory for the detected Axon version.
+     * This factory creates version-specific components.
+     * @return The component factory, or null if no valid version is detected
+     */
+    fun getComponentFactory(): VersionedComponentFactory? {
+        return cachedFactory
+    }
+
+    private fun createFactory(version: AxonVersion): VersionedComponentFactory? {
+        return when (version) {
+            AxonVersion.V4 -> Axon4ComponentFactory()
+            AxonVersion.V5 -> Axon5ComponentFactory()
+            AxonVersion.UNKNOWN -> null
+        }
     }
 
     private fun List<AxonDependencyVersion>.outdated() = filter { it.dependency.checkVersion && it.major < 4 }
-    private fun List<AxonDependencyVersion>.experimental() = filter { it.dependency.checkVersion && it.major > 4 }
+    private fun List<AxonDependencyVersion>.unsupported() = filter { it.dependency.checkVersion && it.major > 5 }
 
     fun getAxonVersions(): List<AxonDependencyVersion> = OrderEnumerator.orderEntries(project)
         .librariesOnly()

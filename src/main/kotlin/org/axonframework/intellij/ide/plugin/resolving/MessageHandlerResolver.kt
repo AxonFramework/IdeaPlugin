@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 package org.axonframework.intellij.ide.plugin.resolving
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
@@ -23,13 +24,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageType
-import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.AggregateConstructorSearcher
-import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.CommandHandlerSearcher
-import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.DeadlineHandlerSearcher
-import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.EventHandlerSearcher
-import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.EventSourcingHandlerSearcher
-import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.QueryHandlerSearcher
-import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.SagaEventHandlerSearcher
+import org.axonframework.intellij.ide.plugin.usage.AxonVersionService
 import org.axonframework.intellij.ide.plugin.util.axonScope
 import org.axonframework.intellij.ide.plugin.util.createCachedValue
 import org.axonframework.intellij.ide.plugin.util.findCompleteSupers
@@ -40,18 +35,17 @@ import org.axonframework.intellij.ide.plugin.util.findCompleteSupers
  * Results are cached based on the Psi modifications of IntelliJ. This means the calculations are invalidated when
  * the PSI is modified (code is edited) or is collected by the garbage collector.
  *
+ * Uses version-specific searchers provided by the VersionedComponentFactory to support both Axon 4 and 5.
+ *
  * @see org.axonframework.intellij.ide.plugin.api.MessageHandlerType
+ * @see org.axonframework.intellij.ide.plugin.api.VersionedComponentFactory
  */
 class MessageHandlerResolver(private val project: Project) {
-    private val searchers = listOf(
-        CommandHandlerSearcher(),
-        EventHandlerSearcher(),
-        EventSourcingHandlerSearcher(),
-        QueryHandlerSearcher(),
-        SagaEventHandlerSearcher(),
-        AggregateConstructorSearcher(),
-        DeadlineHandlerSearcher(),
-    )
+    private val versionService = project.service<AxonVersionService>()
+
+    private val searchers by lazy {
+        versionService.getComponentFactory()?.createHandlerSearchers() ?: emptyList()
+    }
 
     private val handlerCache = project.createCachedValue {
         executeFindMessageHandlers()
