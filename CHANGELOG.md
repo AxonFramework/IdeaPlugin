@@ -2,6 +2,9 @@
 
 # Axon Framework plugin Changelog
 
+## [0.10.0]
+- Initial support for Axon Framework 5. This includes navigation support for message handlers and detection of EventSourcedEntity structure. 
+
 ## [0.9.5]
 - Prevent crash when opening project with Axon Framework 5
 

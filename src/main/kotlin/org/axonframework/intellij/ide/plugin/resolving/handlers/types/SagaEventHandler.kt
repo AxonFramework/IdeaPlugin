@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,7 +25,7 @@ import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
  * Represents a method in a Saga that is able to handle an event
  *
  * @param processingGroup The name of the saga handling the event, based on package or ProcessingGroup annotation
- * @See org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.SagaEventHandlerSearcher
+ * @See org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.axon4.SagaEventHandlerSearcher
  */
 data class SagaEventHandler(
     override val element: PsiMethod,

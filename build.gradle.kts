@@ -87,7 +87,7 @@ intellijPlatform {
                 types = listOf(IntelliJPlatformType.IntellijIdeaCommunity)
                 channels = listOf(ProductRelease.Channel.RELEASE)
                 sinceBuild = properties("pluginSinceBuild")
-                untilBuild = provider { null }
+                untilBuild = "252.*"
             }
         }
 
@@ -95,8 +95,6 @@ intellijPlatform {
             // Mute some inspections that should be ignored (as we already uploaded and the id can't be changed)
             "-mute", "TemplateWordInPluginId,ForbiddenPluginIdPrefix"
         )
-
-
     }
 }
 
@@ -147,7 +145,7 @@ dependencies {
         intellijIdeaCommunity(properties("platformVersion"))
         bundledPlugin("com.intellij.java")
         bundledPlugin("org.jetbrains.kotlin")
-        pluginVerifier(version="1.383")
+        pluginVerifier()
         zipSigner()
         instrumentationTools()
 
