@@ -19,6 +19,7 @@ import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.models.ProductRelease
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 fun properties(key: String) = project.findProperty(key).toString()
@@ -120,7 +121,7 @@ tasks {
             targetCompatibility = it
         }
         withType<KotlinCompile> {
-            kotlinOptions.jvmTarget = it
+            compilerOptions.jvmTarget.set(JvmTarget.fromTarget(it))
         }
     }
 
@@ -147,7 +148,6 @@ dependencies {
         bundledPlugin("org.jetbrains.kotlin")
         pluginVerifier()
         zipSigner()
-        instrumentationTools()
 
         testFramework(TestFrameworkType.Plugin.Java)
     }
