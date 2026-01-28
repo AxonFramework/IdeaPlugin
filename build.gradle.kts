@@ -155,11 +155,15 @@ dependencies {
     implementation("io.sentry:sentry:6.32.0")
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.assertj:assertj-core:3.25.2")
+    testImplementation("org.assertj:assertj-core:3.27.0")
 
     // NOTE: No Axon dependencies needed at compile time!
     // Tests dynamically download JARs from Maven Central and add via PsiTestUtil.
     // See AbstractAxonFixtureTestCase and AbstractAxon5FixtureTestCase.
+    testImplementation("org.axonframework:axon-modelling:${properties("axonVersion")}")
+    testImplementation("org.axonframework:axon-messaging:${properties("axonVersion")}")
+    testImplementation("org.axonframework:axon-eventsourcing:${properties("axonVersion")}")
+    testImplementation("org.axonframework:axon-configuration:${properties("axonVersion")}")
 }
 
 // Configure project's dependencies
