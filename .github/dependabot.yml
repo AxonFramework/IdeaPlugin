@@ -1,25 +1,34 @@
 version: 2
+
 updates:
     -   package-ecosystem: gradle
         directory: "/"
         schedule:
-            interval: daily
-        open-pull-requests-limit: 10
-        # Specify labels for pull requests
+            interval: weekly
+            day: "sunday"
+        open-pull-requests-limit: 5
         labels:
             - "Type: Dependency Upgrade"
             - "Priority 1: Must"
-        # Add reviewers
-        reviewers:
-            - "CodeDrivenMitch"
+        groups:
+            github-dependencies:
+                update-types:
+                    - "patch"
+                    - "minor"
+                    - "major"
+
     -   package-ecosystem: "github-actions"
         directory: "/"
         schedule:
-        # Check for updates to GitHub Actions every weekday
-            interval: "daily"
+            interval: weekly
+            day: "sunday"
+        open-pull-requests-limit: 5
         labels:
             - "Type: Dependency Upgrade"
             - "Priority 1: Must"
-        # Add reviewers
-        reviewers:
-            - "CodeDrivenMitch"
+        groups:
+            github-dependencies:
+                update-types:
+                    - "patch"
+                    - "minor"
+                    - "major"
