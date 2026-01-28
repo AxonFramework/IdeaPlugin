@@ -24,7 +24,9 @@ import org.axonframework.intellij.ide.plugin.util.toShortName
 
 /**
  * Represents an entity creator constructor annotated with @EntityCreator in Axon Framework 5.
- * This constructor accepts the first event as a payload and creates the entity based on that event.
+ * This constructor can accept the first event as a payload and creates the entity based on that event.
+ * It will only be detected as message handler if it has a payload defined. Otherwise, it's just a constructor invocation,
+ * not a message handler.
  *
  * Pattern: `@EntityCreator MyEntity(MyCreatedEvent event)`
  *

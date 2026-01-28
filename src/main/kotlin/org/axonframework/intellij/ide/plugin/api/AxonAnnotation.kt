@@ -37,7 +37,7 @@ enum class AxonAnnotation(
     ),
     EVENT_SOURCING_HANDLER(
         "org.axonframework.eventsourcing.EventSourcingHandler",
-        "org.axonframework.eventsourcing.EventSourcingHandler"
+        "org.axonframework.eventsourcing.annotation.EventSourcingHandler"
     ),
     QUERY_HANDLER(
         "org.axonframework.queryhandling.QueryHandler",
@@ -45,11 +45,11 @@ enum class AxonAnnotation(
     ),
     COMMAND_HANDLER_INTERCEPTOR(
         "org.axonframework.modelling.command.CommandHandlerInterceptor",
-        "org.axonframework.modelling.command.CommandHandlerInterceptor"
+        null
     ),
     MESSAGE_HANDLER_INTERCEPTOR(
         "org.axonframework.messaging.interceptors.MessageHandlerInterceptor",
-        "org.axonframework.messaging.core.interception.annotation.MessageHandlerInterceptor"
+        null,
     ),
     SAGA_EVENT_HANDLER(
         "org.axonframework.modelling.saga.SagaEventHandler",

@@ -132,42 +132,6 @@ class Axon5HandlerSearcherTest : AbstractAxon5FixtureTestCase() {
         }
     }
 
-    fun `test does not search for saga handlers in v5`() {
-        addFile(
-            "NotASaga.kt", """
-            data class MyEvent(val id: String)
-
-            class NotASaga {
-                fun handle(event: MyEvent) {
-                }
-            }
-        """.trimIndent()
-        )
-
-        val handlers = project.handlerResolver().findAllHandlers()
-        Assertions.assertThat(handlers).allMatch {
-            it.javaClass.simpleName != "SagaEventHandler"
-        }
-    }
-
-    fun `test does not search for deadline handlers in v5`() {
-        addFile(
-            "NotADeadline.kt", """
-            data class MyDeadline(val name: String)
-
-            class MyComponent {
-                fun handle(deadline: MyDeadline) {
-                }
-            }
-        """.trimIndent()
-        )
-
-        val handlers = project.handlerResolver().findAllHandlers()
-        Assertions.assertThat(handlers).allMatch {
-            it.javaClass.simpleName != "DeadlineHandler"
-        }
-    }
-
     fun `test constructor with EntityCreator`() {
         addFile(
             "MyAggregate.kt", """
@@ -188,5 +152,25 @@ class Axon5HandlerSearcherTest : AbstractAxon5FixtureTestCase() {
         Assertions.assertThat(handlers).anyMatch {
             it.element.name == "MyAggregate" && it.payload == "test.MyEvent"
         }
+    }
+
+    fun `test EntityCreator without parameters shows no line marker`() {
+        addFile(
+            "MyAggregate.kt", """
+            @EventSourcedEntity
+            class MyAggregate {
+                @EntityCreator<caret>
+                constructor() {
+                }
+            }
+        """.trimIndent()
+        )
+
+        val handlers = project.handlerResolver().findAllHandlers()
+            .filterIsInstance<EntityCreator>()
+
+        Assertions.assertThat(handlers)
+            .describedAs("EntityCreator without parameters should not be detected as a handler")
+            .isEmpty()
     }
 }

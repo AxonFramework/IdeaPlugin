@@ -39,7 +39,7 @@ import org.axonframework.intellij.ide.plugin.util.toClass
 class JavaMissingRoutingKeyOnAggregateMemberInspection : AbstractBaseJavaLocalInspectionTool() {
 
     override fun checkMethod(method: PsiMethod, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
-        // Only run this inspection on Axon 4 projects
+        // Only run this inspection on Axon 4 projects, as Aggregates no longer exist in Axon 5
         if (!method.project.isAxon4Project()) {
             return null
         }

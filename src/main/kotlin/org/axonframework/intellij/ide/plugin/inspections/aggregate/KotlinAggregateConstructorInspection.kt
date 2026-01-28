@@ -42,7 +42,7 @@ class KotlinAggregateConstructorInspection : AbstractKotlinInspection() {
                 if (element !is KtClass) {
                     return
                 }
-                // Only run this inspection on Axon 4 projects
+                // Only run this inspection on Axon 4 projects, as Aggregates no longer exist in Axon 5
                 if (!element.project.isAxon4Project()) {
                     return
                 }

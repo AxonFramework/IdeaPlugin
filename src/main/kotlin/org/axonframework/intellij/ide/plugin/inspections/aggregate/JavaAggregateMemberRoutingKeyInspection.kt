@@ -35,7 +35,7 @@ class JavaAggregateMemberRoutingKeyInspection : AbstractBaseJavaLocalInspectionT
         manager: InspectionManager,
         isOnTheFly: Boolean
     ): Array<ProblemDescriptor>? {
-        // Only run this inspection on Axon 4 projects
+        // Only run this inspection on Axon 4 projects, as Aggregates no longer exist in Axon 5
         if (!aClass.project.isAxon4Project()) {
             return null
         }
