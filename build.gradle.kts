@@ -155,7 +155,7 @@ dependencies {
     testImplementation("org.axonframework:axon-messaging:${properties("axonVersion")}")
     testImplementation("org.axonframework:axon-eventsourcing:${properties("axonVersion")}")
     testImplementation("org.axonframework:axon-configuration:${properties("axonVersion")}")
-    testImplementation("org.assertj:assertj-core:3.27.0")
+    testImplementation("org.assertj:assertj-core:3.27.7")
 }
 
 // Configure project's dependencies
