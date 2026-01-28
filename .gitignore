@@ -79,3 +79,4 @@ release.properties
 
 ### IntelliJ plugin ###
 META-INF/plugin.xml
+src/test/resources/libraries/

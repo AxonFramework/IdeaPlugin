@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) (2010-2023). Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -171,9 +171,13 @@ fun Project.aggregateResolver(): AggregateStructureResolver = getService(Aggrega
 fun PsiElement.aggregateResolver(): AggregateStructureResolver = project.aggregateResolver()
 fun Project.versionService(): AxonVersionService = getService(AxonVersionService::class.java)
 fun Project.isAxonEnabled() = versionService().isAxonEnabled(true)
-fun PsiElement.isAxonEnabled() = project.versionService().isAxonEnabled(true)
 
-fun PsiClass?.isAggregate() = this?.hasAnnotation(AxonAnnotation.AGGREGATE_ROOT) == true
+fun PsiClass?.isAggregate(): Boolean {
+    if (this == null) return false
+    // Check for both v4 (@AggregateRoot) and v5 (@EventSourcedEntity) entity annotations
+    return isAnnotated(AxonAnnotation.AGGREGATE_ROOT) ||
+            isAnnotated(AxonAnnotation.EVENT_SOURCED_ENTITY)
+}
 
 /**
  * Checks whether the element is annotated with one of axon's annotations

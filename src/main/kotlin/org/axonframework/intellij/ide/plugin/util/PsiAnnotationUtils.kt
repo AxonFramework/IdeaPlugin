@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,12 +16,16 @@
 
 package org.axonframework.intellij.ide.plugin.util
 
+import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiAnnotationMemberValue
 import com.intellij.psi.PsiModifierListOwner
 import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
+import org.axonframework.intellij.ide.plugin.api.AxonVersion
 import org.axonframework.intellij.ide.plugin.resolving.AnnotationResolver
 import org.axonframework.intellij.ide.plugin.resolving.ResolvedAnnotation
+import org.axonframework.intellij.ide.plugin.usage.AxonVersionService
 import org.jetbrains.uast.UClassLiteralExpression
 import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.getParentOfType
@@ -112,4 +116,15 @@ fun PsiModifierListOwner.resolveAnnotationClassValue(annotation: AxonAnnotation,
 
 private fun resolveAttributeStringValue(attribute: PsiAnnotationMemberValue?): String? {
     return attribute?.toUElement()?.getParentOfType(UExpression::class.java)?.evaluate() as String? ?: return null
+}
+
+/**
+ * Checks if the project is running Axon Framework 4.
+ * Inspections that are Axon 4-specific should use this to avoid running on Axon 5 projects.
+ *
+ * @return true if Axon 4 is detected, false otherwise
+ */
+fun Project.isAxon4Project(): Boolean {
+    val versionService = this.service<AxonVersionService>()
+    return versionService.getVersion() == AxonVersion.V4
 }

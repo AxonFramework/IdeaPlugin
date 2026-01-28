@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,25 +14,25 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.resolving.handlers.searchers
+package org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.common
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.resolving.handlers.types.EventSourcingHandler
-import org.axonframework.intellij.ide.plugin.util.containingClassFqn
+import org.axonframework.intellij.ide.plugin.resolving.handlers.types.QueryHandler
+import org.axonframework.intellij.ide.plugin.util.findProcessingGroup
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 
 /**
- * Searches for any event handlers in aggregates that source the state of the aggregates.
+ * Searches for any query handlers.
  *
- * @see org.axonframework.intellij.ide.plugin.resolving.handlers.types.EventSourcingHandler
+ * @see org.axonframework.intellij.ide.plugin.resolving.handlers.types.QueryHandler
  */
-class EventSourcingHandlerSearcher : AbstractHandlerSearcher(MessageHandlerType.EVENT_SOURCING) {
+class QueryHandlerSearcher : AbstractHandlerSearcher(MessageHandlerType.QUERY) {
     override fun createMessageHandler(method: PsiMethod, annotation: PsiClass?): Handler? {
         val payloadType = method.resolvePayloadType()?.toQualifiedName() ?: return null
-        return EventSourcingHandler(method, payloadType, method.containingClassFqn())
+        return QueryHandler(method, payloadType, method.findProcessingGroup())
     }
 }

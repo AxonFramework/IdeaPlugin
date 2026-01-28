@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) (2010-2023). Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -87,7 +87,7 @@ intellijPlatform {
                 types = listOf(IntelliJPlatformType.IntellijIdeaCommunity)
                 channels = listOf(ProductRelease.Channel.RELEASE)
                 sinceBuild = properties("pluginSinceBuild")
-                untilBuild = provider { null }
+                untilBuild = "252.*"
             }
         }
 
@@ -95,8 +95,6 @@ intellijPlatform {
             // Mute some inspections that should be ignored (as we already uploaded and the id can't be changed)
             "-mute", "TemplateWordInPluginId,ForbiddenPluginIdPrefix"
         )
-
-
     }
 }
 
@@ -134,6 +132,12 @@ tasks {
         // Disable for hot-reload to work
         enabled = false
     }
+
+    test {
+        // Pass Axon versions to tests as system properties
+        systemProperty("axonVersion", properties("axonVersion"))
+        systemProperty("axon5Version", properties("axon5Version"))
+    }
 }
 
 dependencies {
@@ -141,7 +145,7 @@ dependencies {
         intellijIdeaCommunity(properties("platformVersion"))
         bundledPlugin("com.intellij.java")
         bundledPlugin("org.jetbrains.kotlin")
-        pluginVerifier(version="1.383")
+        pluginVerifier()
         zipSigner()
         instrumentationTools()
 
@@ -151,11 +155,15 @@ dependencies {
     implementation("io.sentry:sentry:6.32.0")
 
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.assertj:assertj-core:3.27.0")
+
+    // NOTE: No Axon dependencies needed at compile time!
+    // Tests dynamically download JARs from Maven Central and add via PsiTestUtil.
+    // See AbstractAxonFixtureTestCase and AbstractAxon5FixtureTestCase.
     testImplementation("org.axonframework:axon-modelling:${properties("axonVersion")}")
     testImplementation("org.axonframework:axon-messaging:${properties("axonVersion")}")
     testImplementation("org.axonframework:axon-eventsourcing:${properties("axonVersion")}")
     testImplementation("org.axonframework:axon-configuration:${properties("axonVersion")}")
-    testImplementation("org.assertj:assertj-core:3.27.0")
 }
 
 // Configure project's dependencies

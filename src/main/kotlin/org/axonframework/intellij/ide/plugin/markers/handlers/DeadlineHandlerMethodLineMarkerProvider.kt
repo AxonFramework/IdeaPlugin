@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) (2010-2022). Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,6 +25,7 @@ import org.axonframework.intellij.ide.plugin.api.AxonAnnotation
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 import org.axonframework.intellij.ide.plugin.markers.AxonNavigationTargetRenderer
 import org.axonframework.intellij.ide.plugin.util.deadlineReferenceResolver
+import org.axonframework.intellij.ide.plugin.util.isAxon4Project
 import org.axonframework.intellij.ide.plugin.util.resolveAnnotationStringValue
 import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.getContainingUMethod
@@ -41,6 +42,10 @@ class DeadlineHandlerMethodLineMarkerProvider : AbstractHandlerLineMarkerProvide
         handlerType: MessageHandlerType,
         payload: String?
     ): LineMarkerInfo<*>? {
+        // Only run this line marker on Axon 4 projects (Deadlines removed in Axon 5)
+        if (!element.project.isAxon4Project()) {
+            return null
+        }
         if (handlerType != MessageHandlerType.DEADLINE) {
             return null
         }

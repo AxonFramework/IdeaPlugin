@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,7 +26,7 @@ import org.axonframework.intellij.ide.plugin.util.toShortName
  * Represents a method being able to handle a command.
  *
  * @param componentName The fully qualified name of the class handling the command.
- * @See org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.CommandHandlerSearcher
+ * @See org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.common.CommandHandlerSearcher
  */
 data class CommandHandler(
     override val element: PsiMethod,

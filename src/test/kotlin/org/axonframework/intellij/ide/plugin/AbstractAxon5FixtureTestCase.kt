@@ -24,28 +24,25 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.PsiTestUtil
 
 /**
- * Mother test class which all Axon tests should inherit from. Does the following:
- * - Adds Axon libraries
- * - Configures the correct Mock JDK
- * - Adds the addFile method which adds a java or kotlin file
- * - The addFile method adds a lot of imports automatically
- * - Adds utility methods to retrieve line markers
- *
- *
+ * Base test class for Axon Framework 5 tests. Adds Axon 5 libraries and provides
+ * test utilities with v5-specific imports.
  */
-abstract class AbstractAxonFixtureTestCase : AbstractBaseAxonFixtureTestCase() {
+abstract class AbstractAxon5FixtureTestCase : AbstractBaseAxonFixtureTestCase() {
     override fun setUp() {
         super.setUp()
 
-        // Download and add Axon 4 JARs from Maven Central
-        val axon4Version = System.getProperty("axonVersion") ?: "4.10.1"
+        // Download and add Axon 5 JARs
+        val axon5Version = System.getProperty("axon5Version") ?: "5.0.0"
         val librariesDir = java.io.File("src/test/resources/libraries")
         librariesDir.mkdirs()
 
-        addAxon4Library("axon-configuration", axon4Version, librariesDir)
-        addAxon4Library("axon-messaging", axon4Version, librariesDir)
-        addAxon4Library("axon-modelling", axon4Version, librariesDir)
-        addAxon4Library("axon-eventsourcing", axon4Version, librariesDir)
+        addAxon5Library("axon-messaging", axon5Version, librariesDir)
+        addAxon5Library("axon-modelling", axon5Version, librariesDir)
+        addAxon5Library("axon-eventsourcing", axon5Version, librariesDir)
+
+        // Force version detection to run after adding libraries
+        // This ensures the plugin recognizes this as an Axon 5 project
+        project.getService(org.axonframework.intellij.ide.plugin.usage.AxonVersionService::class.java).runCheck()
 
         /* Mock the Instant class, or some tests won't run */
         addFile(
@@ -59,7 +56,7 @@ abstract class AbstractAxonFixtureTestCase : AbstractBaseAxonFixtureTestCase() {
         )
     }
 
-    private fun addAxon4Library(artifactName: String, version: String, librariesDir: java.io.File) {
+    private fun addAxon5Library(artifactName: String, version: String, librariesDir: java.io.File) {
         val jarFile = java.io.File(librariesDir, "$artifactName-$version.jar")
 
         // Download from Maven Central if not exists
@@ -79,7 +76,8 @@ abstract class AbstractAxonFixtureTestCase : AbstractBaseAxonFixtureTestCase() {
             }
         }
 
-        PsiTestUtil.addLibrary(module, jarFile.absolutePath)
+        // Add as project library (production scope) so version detection works
+        PsiTestUtil.addProjectLibrary(module, "$artifactName-$version", listOf(jarFile.absolutePath))
     }
 
     override fun getTestDataPath(): String {
@@ -96,32 +94,31 @@ abstract class AbstractAxonFixtureTestCase : AbstractBaseAxonFixtureTestCase() {
 
     /**
      * Automatically added to source files in testcases, for convenience
+     * These are Axon 5 imports
      */
     private val autoImports = listOf(
-        "org.axonframework.config.ProcessingGroup",
-        "org.axonframework.eventhandling.EventHandler",
-        "org.axonframework.eventsourcing.EventSourcingHandler",
-        "org.axonframework.modelling.command.AggregateLifecycle",
-        "org.axonframework.modelling.command.AggregateRoot",
-        "org.axonframework.commandhandling.CommandHandler",
-        "org.axonframework.commandhandling.RoutingKey",
-        "org.axonframework.modelling.command.CommandHandlerInterceptor",
-        "org.axonframework.modelling.command.TargetAggregateIdentifier",
-        "org.axonframework.modelling.command.AggregateIdentifier",
-        "org.axonframework.modelling.command.EntityId",
-        "org.axonframework.modelling.command.AggregateMember",
-        "org.axonframework.queryhandling.QueryHandler",
-        "org.axonframework.modelling.saga.SagaEventHandler",
-        "org.axonframework.deadline.annotation.DeadlineHandler",
-        "org.axonframework.deadline.DeadlineManager",
+        // Axon 5 handler annotations (different package)
+        "org.axonframework.messaging.commandhandling.annotation.CommandHandler",
+        "org.axonframework.messaging.eventhandling.annotation.EventHandler",
+        "org.axonframework.messaging.queryhandling.annotation.QueryHandler",
+        "org.axonframework.eventsourcing.annotation.EventSourcingHandler",
+
+        // Axon 5 event sourcing annotations
+        "org.axonframework.eventsourcing.annotation.EventSourcedEntity",
+        "org.axonframework.eventsourcing.annotation.reflection.EntityCreator",
+
+        // Message annotations (new in v5)
+        "org.axonframework.commandhandling.Command",
+        "org.axonframework.eventhandling.Event",
+        "org.axonframework.queryhandling.Query",
+
+        // Common
         "java.time.Instant",
     )
 
     /**
      * Adds a file to the project with given name/path and content.
-     * You can skipp importing any Axon annotations defined in autoImports, they are added automagically.
-     *
-     * @see autoImports
+     * Auto-imports Axon 5 annotations.
      */
     fun addFile(name: String, text: String, pckg: String = "test", open: Boolean = false): VirtualFile {
         val newLineChar = if (name.endsWith(".java")) ";" else ""
@@ -135,8 +132,6 @@ abstract class AbstractAxonFixtureTestCase : AbstractBaseAxonFixtureTestCase() {
         // Add file and optionally open it
         val file = myFixture.addFileToProject(name, content).virtualFile
         if (open) {
-            // Move cursor to <caret> position. For some reason, the IDEA test won't do it,
-            // while it is documented it should. Just do it ourselves.
             myFixture.openFileInEditor(file)
             if (caretPosition != -1) {
                 myFixture.editor.caretModel.moveToOffset(caretPosition)
@@ -145,4 +140,3 @@ abstract class AbstractAxonFixtureTestCase : AbstractBaseAxonFixtureTestCase() {
         return file
     }
 }
-

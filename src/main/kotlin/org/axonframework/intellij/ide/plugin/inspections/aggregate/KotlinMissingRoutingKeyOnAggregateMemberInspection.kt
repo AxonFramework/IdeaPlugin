@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) 2022-(2010-2023). Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,6 +25,7 @@ import org.axonframework.intellij.ide.plugin.util.aggregateResolver
 import org.axonframework.intellij.ide.plugin.util.containingClassFqn
 import org.axonframework.intellij.ide.plugin.util.hasAccessor
 import org.axonframework.intellij.ide.plugin.util.hasAnnotation
+import org.axonframework.intellij.ide.plugin.util.isAxon4Project
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toClass
 import org.jetbrains.kotlin.idea.codeinsight.api.classic.inspections.AbstractKotlinInspection
@@ -44,6 +45,10 @@ class KotlinMissingRoutingKeyOnAggregateMemberInspection : AbstractKotlinInspect
         return object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement) {
                 if (element !is KtNamedFunction) {
+                    return
+                }
+                // Only run this inspection on Axon 4 projects, as Aggregates no longer exist in Axon 5
+                if (!element.project.isAxon4Project()) {
                     return
                 }
                 val method = element.toUElementOfType<UMethod>() ?: return

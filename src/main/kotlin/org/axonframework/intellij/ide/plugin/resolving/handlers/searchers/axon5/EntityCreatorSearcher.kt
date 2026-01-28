@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,25 +14,31 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.resolving.handlers.searchers
+package org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.axon5
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.resolving.handlers.types.EventHandler
-import org.axonframework.intellij.ide.plugin.util.findProcessingGroup
+import org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.common.AbstractHandlerSearcher
+import org.axonframework.intellij.ide.plugin.resolving.handlers.types.EntityCreator
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toQualifiedName
 
 /**
- * Searches for any event handlers that are not part of the aggregate model.
+ * Searches for entity creator constructors annotated with @EntityCreator in Axon Framework 5.
+ * This constructor can accept the first event as a payload and creates the entity based on that event.
+ * It will only be detected as message handler if it has a payload defined. Otherwise, it's just a constructor invocation,
+ * not a message handler.
  *
- * @see org.axonframework.intellij.ide.plugin.resolving.handlers.types.EventHandler
+ * Pattern: `@EntityCreator MyEntity(MyCreatedEvent event)`
+ *
+ * @see EntityCreator
  */
-class EventHandlerSearcher : AbstractHandlerSearcher(MessageHandlerType.EVENT) {
+class EntityCreatorSearcher : AbstractHandlerSearcher(MessageHandlerType.ENTITY_CREATOR) {
     override fun createMessageHandler(method: PsiMethod, annotation: PsiClass?): Handler? {
+        // Resolve the payload type from the first parameter (the event)
         val payloadType = method.resolvePayloadType()?.toQualifiedName() ?: return null
-        return EventHandler(method, payloadType, method.findProcessingGroup())
+        return EntityCreator(method, payloadType)
     }
 }

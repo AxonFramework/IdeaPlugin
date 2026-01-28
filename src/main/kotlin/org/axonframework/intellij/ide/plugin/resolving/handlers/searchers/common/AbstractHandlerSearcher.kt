@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.axonframework.intellij.ide.plugin.resolving.handlers.searchers
+package org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.common
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
@@ -34,7 +34,7 @@ import org.axonframework.intellij.ide.plugin.util.axonScope
  * - Add the Type to `MessageHandlerType`
  * - Create a `Handler` implementation, responsible for containing all data related to the handler.
  * - Create a `HandlerSearcher` implementation, responsible for creating the `Handler` instance.
- * - Add your handler to `MessageHandlerResolver.searchers` list
+ * - Add your handler to the factory's createHandlerSearchers method
  *
  * @see org.axonframework.intellij.ide.plugin.resolving.MessageHandlerResolver
  * @see Handler

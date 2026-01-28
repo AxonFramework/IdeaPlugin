@@ -20,31 +20,25 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.axonframework.intellij.ide.plugin.api.Handler
 import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
-import org.axonframework.intellij.ide.plugin.util.containingClassname
+import org.axonframework.intellij.ide.plugin.util.toShortName
 
 /**
- * Represents a method being able to handle an event. There are more specific event handlers (`EventSourcingHandler` and
- * `SagaEventHandler`) that are not included here. These have their own representation, despite being meta-annotated
- * by `@EventHandler`
+ * Represents an entity creator constructor annotated with @EntityCreator in Axon Framework 5.
+ * This constructor can accept the first event as a payload and creates the entity based on that event.
+ * It will only be detected as message handler if it has a payload defined. Otherwise, it's just a constructor invocation,
+ * not a message handler.
  *
- * @param processingGroup The name of the component handling the event, based on package or ProcessingGroup annotation
+ * Pattern: `@EntityCreator MyEntity(MyCreatedEvent event)`
  *
- * @See org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.common.EventHandlerSearcher
- * @see SagaEventHandler
- * @see EventSourcingHandler
+ * @see org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.axon5.EntityCreatorSearcher
  */
-data class EventHandler(
+data class EntityCreator(
     override val element: PsiMethod,
     override val payload: String,
-    val processingGroup: String,
 ) : Handler, PsiElement by element {
-    override val handlerType: MessageHandlerType = MessageHandlerType.EVENT
+    override val handlerType: MessageHandlerType = MessageHandlerType.EVENT_SOURCING
 
     override fun renderText(): String {
-        return element.containingClassname().ifEmpty { "Event Processor" }
-    }
-
-    override fun renderContainerText(): String {
-        return processingGroup
+        return "Entity creation: " + payload.toShortName()
     }
 }

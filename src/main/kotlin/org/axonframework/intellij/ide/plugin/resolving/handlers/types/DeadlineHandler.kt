@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +24,7 @@ import org.axonframework.intellij.ide.plugin.api.MessageHandlerType
 /**
  * Represents a method being able to a deadline message. Invoked when a deadline expires.
  *
- * @See org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.DeadlineHandlerSearcher
+ * @See org.axonframework.intellij.ide.plugin.resolving.handlers.searchers.axon4.DeadlineHandlerSearcher
  */
 data class DeadlineHandler(
     override val element: PsiMethod,

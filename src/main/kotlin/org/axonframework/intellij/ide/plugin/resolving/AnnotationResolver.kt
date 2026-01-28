@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) (2010-2022). Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -117,10 +117,14 @@ class AnnotationResolver(val project: Project) {
     }
 
     private fun scanAnnotation(annotation: AxonAnnotation, scope: GlobalSearchScope): List<ResolvedAnnotation> {
-        val clazz = project.javaFacade().findClass(annotation.annotationName, scope)
-            ?: return listOf()
-        val start = ResolvedAnnotation(annotation, clazz, null)
-        return scanDescendants(annotation, start, scope)
+        // Search for all versions of this annotation (v4 and v5)
+        val allAnnotationNames = annotation.getAllAnnotationNames()
+        return allAnnotationNames.flatMap { annotationName ->
+            val clazz = project.javaFacade().findClass(annotationName, scope)
+                ?: return@flatMap emptyList()
+            val start = ResolvedAnnotation(annotation, clazz, null)
+            scanDescendants(annotation, start, scope)
+        }
     }
 
     private fun scanDescendants(
