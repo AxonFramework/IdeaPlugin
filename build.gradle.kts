@@ -31,7 +31,7 @@ plugins {
     // Gradle IntelliJ Plugin
     id("org.jetbrains.intellij.platform") version "2.6.0"
     // Gradle Changelog Plugin
-    id("org.jetbrains.changelog") version "2.2.1"
+    id("org.jetbrains.changelog") version "2.5.0"
     // Gradle Qodana Plugin
     id("org.jetbrains.qodana") version "0.1.13"
 }
