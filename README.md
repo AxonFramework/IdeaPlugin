@@ -1,7 +1,7 @@
 Axon Framework IntelliJ Plugin
 ===================================
 <!-- Plugin description -->
-Supports developers while writing applications using [Axon Framework](https://axoniq.io/product-overview/axon-framework) version 4.x.
+Supports developers while writing applications using [Axon Framework](https://axoniq.io/product-overview/axon-framework) version 4.x and 5.x.
 
 Axon Framework helps build scalable, extensible, and maintainable applications by supporting developers to apply Domain-Driven Design (DDD),
 Command-Query Responsibility Separation (CQRS), and Event Sourcing (ES). The framework provides a message-driven architecture with dedicated
