@@ -2,7 +2,7 @@
 
 # Axon Framework plugin Changelog
 
-## [0.11.0]
+## [0.10.1]
 - Updated the logos and icons.
 
 ## [0.10.0]
