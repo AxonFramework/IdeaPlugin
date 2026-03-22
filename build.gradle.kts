@@ -28,7 +28,7 @@ plugins {
     // Java support
     id("java")
     // Kotlin support
-    id("org.jetbrains.kotlin.jvm") version "2.3.10"
+    id("org.jetbrains.kotlin.jvm") version "2.3.20"
     // Gradle IntelliJ Plugin
     id("org.jetbrains.intellij.platform") version "2.13.1"
     // Gradle Changelog Plugin
@@ -152,7 +152,7 @@ dependencies {
         testFramework(TestFrameworkType.Plugin.Java)
     }
 
-    implementation("io.sentry:sentry:8.35.0")
+    implementation("io.sentry:sentry:8.36.0")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.assertj:assertj-core:3.27.7")
