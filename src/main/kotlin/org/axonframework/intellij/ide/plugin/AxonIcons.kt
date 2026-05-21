@@ -1,11 +1,11 @@
 /*
- *  Copyright (c) 2022. Axon Framework
+ *  Copyright (c) 2022-2026. Axon Framework
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,5 +30,5 @@ object AxonIcons {
     val HandlerIntercepted = IconLoader.getIcon("/icons/handler_intercepted.svg", AxonIcons::class.java)
     val Publisher = IconLoader.getIcon("/icons/publisher.svg", AxonIcons::class.java)
     val Interceptor = IconLoader.getIcon("/icons/interceptor.svg", AxonIcons::class.java)
-    val Axon = IconLoader.getIcon("/META-INF/pluginIcon.svg", AxonIcons::class.java)
+    val Axon = IconLoader.getIcon("/icons/class.svg", AxonIcons::class.java)
 }
