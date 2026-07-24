@@ -29,7 +29,6 @@ import org.axonframework.intellij.ide.plugin.util.resolveAnnotationStringValue
 import org.axonframework.intellij.ide.plugin.util.resolveAnnotationValue
 import org.axonframework.intellij.ide.plugin.util.resolvePayloadType
 import org.axonframework.intellij.ide.plugin.util.toClass
-import org.jetbrains.kotlin.asJava.elements.KtLightPsiLiteral
 import org.jetbrains.kotlin.idea.codeinsight.api.classic.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.uast.UMethod
@@ -68,9 +67,9 @@ class KotlinSagaAssociationPropertyInspection : AbstractKotlinInspection() {
                     return
                 }
                 val annotation = method.resolveAnnotation(AxonAnnotation.SAGA_EVENT_HANDLER) ?: return
-                val property = annotation.findAttributeValue("associationProperty") as KtLightPsiLiteral? ?: return
+                val property = annotation.findAttributeValue("associationProperty") ?: return
                 holder.registerProblem(
-                    property.kotlinOrigin,
+                    property.navigationElement,
                     associationPropertyDescription,
                     ProblemHighlightType.WARNING,
                     null as TextRange?,
