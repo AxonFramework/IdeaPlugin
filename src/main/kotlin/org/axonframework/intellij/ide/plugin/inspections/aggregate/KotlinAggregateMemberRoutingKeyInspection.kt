@@ -23,9 +23,10 @@ import com.intellij.psi.PsiElementVisitor
 import org.axonframework.intellij.ide.plugin.util.aggregateResolver
 import org.axonframework.intellij.ide.plugin.util.isAxon4Project
 import org.jetbrains.kotlin.idea.codeinsight.api.classic.inspections.AbstractKotlinInspection
-import org.jetbrains.kotlin.idea.refactoring.memberInfo.qualifiedClassNameForRendering
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.uast.UClass
+import org.jetbrains.uast.toUElementOfType
 
 
 /**
@@ -44,7 +45,8 @@ class KotlinAggregateMemberRoutingKeyInspection : AbstractKotlinInspection() {
                 if (!element.project.isAxon4Project()) {
                     return
                 }
-                val entity = element.aggregateResolver().getEntityByName(element.qualifiedClassNameForRendering()) ?: return
+                val uClass = element.toUElementOfType<UClass>() ?: return
+                val entity = uClass.qualifiedName?.let { uClass.aggregateResolver().getEntityByName(it) } ?: return
                 entity.members.filter { it.isCollection && it.member.routingKey == null }.map { child ->
                     val ktField = element.declarations.filterIsInstance<KtProperty>().first { it.name == child.fieldName }
                     holder.registerProblem(
