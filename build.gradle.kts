@@ -88,7 +88,7 @@ intellijPlatform {
                 types = listOf(IntelliJPlatformType.IntellijIdeaCommunity)
                 channels = listOf(ProductRelease.Channel.RELEASE)
                 sinceBuild = properties("pluginSinceBuild")
-                untilBuild = "252.*"
+                untilBuild = "262.*"
             }
         }
 
