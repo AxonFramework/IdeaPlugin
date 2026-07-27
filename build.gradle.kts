@@ -88,7 +88,7 @@ intellijPlatform {
                 types = listOf(IntelliJPlatformType.IntellijIdeaCommunity)
                 channels = listOf(ProductRelease.Channel.RELEASE)
                 sinceBuild = properties("pluginSinceBuild")
-                untilBuild = "252.*"
+                untilBuild = "262.*"
             }
         }
 
@@ -143,7 +143,13 @@ tasks {
 
 dependencies {
     intellijPlatform {
-        intellijIdeaCommunity(properties("platformVersion"))
+        // Set -PlocalIdePath=/path/to/ide to test/run against a local IDE installation
+        // instead of downloading the version pinned in gradle.properties.
+        if (project.hasProperty("localIdePath")) {
+            local(file(properties("localIdePath")))
+        } else {
+            intellijIdeaCommunity(properties("platformVersion"))
+        }
         bundledPlugin("com.intellij.java")
         bundledPlugin("org.jetbrains.kotlin")
         pluginVerifier()
