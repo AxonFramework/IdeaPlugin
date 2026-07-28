@@ -2,6 +2,9 @@
 
 # Axon Framework plugin Changelog
 
+## [0.10.1]
+- Fix internal Kotlin plugin API breakage on IntelliJ 2026.2+
+
 ## [0.10.0]
 - Initial support for Axon Framework 5. This includes navigation support for message handlers and detection of EventSourcedEntity structure. 
 
