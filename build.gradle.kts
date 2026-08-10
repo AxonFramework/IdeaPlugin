@@ -158,7 +158,7 @@ dependencies {
         testFramework(TestFrameworkType.Plugin.Java)
     }
 
-    implementation("io.sentry:sentry:8.51.0")
+    implementation("io.sentry:sentry:8.52.0")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.assertj:assertj-core:3.27.7")
