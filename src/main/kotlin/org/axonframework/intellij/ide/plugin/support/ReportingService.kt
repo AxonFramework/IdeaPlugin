@@ -16,7 +16,7 @@
 
 package org.axonframework.intellij.ide.plugin.support
 
-import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import io.sentry.Sentry
@@ -30,7 +30,7 @@ import org.axonframework.intellij.ide.plugin.util.versionService
  */
 class ReportingService {
     init {
-        val pluginDescriptor = PluginManager.getInstance().findEnabledPlugin(PluginId.getId("io.axoniq.ide.intellij"))
+        val pluginDescriptor = PluginManagerCore.getPlugin(PluginId.getId("io.axoniq.ide.intellij"))
 
         Sentry.init { options ->
             options.dsn = "https://9b77d81e7522478daeb1351e9e651222@o1158005.ingest.sentry.io/6240788"
