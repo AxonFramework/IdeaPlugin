@@ -16,8 +16,6 @@
 
 package org.axonframework.intellij.ide.plugin.support
 
-import com.intellij.ide.plugins.PluginManagerCore
-import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import io.sentry.Sentry
 import io.sentry.SentryEvent
@@ -25,16 +23,16 @@ import io.sentry.UserFeedback
 import io.sentry.protocol.Message
 import org.axonframework.intellij.ide.plugin.util.versionService
 
+private val PLUGIN_XML_VERSION_TAG = Regex("<version>(.*?)</version>")
+
 /**
  * Responsible for reporting feedback and exceptions to Sentry.
  */
 class ReportingService {
     init {
-        val pluginDescriptor = PluginManagerCore.getPlugin(PluginId.getId("io.axoniq.ide.intellij"))
-
         Sentry.init { options ->
             options.dsn = "https://9b77d81e7522478daeb1351e9e651222@o1158005.ingest.sentry.io/6240788"
-            options.release = pluginDescriptor?.version
+            options.release = readPluginVersion()
             options.isAttachServerName = false
             options.sampleRate = 1.0
             options.tracesSampleRate = 0.1
@@ -70,4 +68,14 @@ class ReportingService {
             Sentry.setExtra(dep.dependency.moduleName, dep.toVersionString())
         }
     }
+
+    /**
+     * Reads the plugin's own version from its bundled plugin.xml, avoiding PluginManager APIs
+     * that IntelliJ marks @ApiStatus.Internal (getPlugin, getPlugins, findEnabledPlugin, ...).
+     */
+    private fun readPluginVersion(): String? =
+        javaClass.getResourceAsStream("/META-INF/plugin.xml")
+            ?.bufferedReader()
+            ?.use { it.readText() }
+            ?.let { PLUGIN_XML_VERSION_TAG.find(it)?.groupValues?.get(1) }
 }
